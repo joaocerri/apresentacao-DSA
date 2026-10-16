@@ -3,959 +3,2079 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Árvores AVL & Recursão - Estruturas de Dados</title>
+  <title>Estrutura de Dados: Recursão, Árvore Binária e AVL</title>
   
-  <!-- Fontes de Alta Fidelidade -->
+  <!-- Google Fonts: Space Grotesk + Plus Jakarta Sans + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  
   <style>
-    /* ==========================================================
-       DESIGN SYSTEM - OLED DARK MODE & GLASSMORPHISM
-       ========================================================== */
     :root {
-      --bg-base: #04060B;
-      --bg-surface: rgba(13, 19, 33, 0.72);
-      --bg-surface-elevated: rgba(22, 33, 56, 0.75);
+      --bg-dark: #07090e;
+      --bg-surface: rgba(15, 23, 42, 0.7);
+      --bg-card: rgba(30, 41, 59, 0.55);
+      
+      --cyan-neon: #00f2fe;
+      --blue-electric: #4facfe;
+      --purple-neon: #8b5cf6;
+      --emerald-neon: #10b981;
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      
       --border-subtle: rgba(255, 255, 255, 0.08);
-      --border-glow: rgba(99, 102, 241, 0.35);
-
-      --text-main: #F8FAFC;
-      --text-muted: #94A3B8;
-      --text-faint: #475569;
-
-      --accent-primary: #6366F1;
-      --accent-secondary: #06B6D4;
-      --accent-emerald: #10B981;
-      --accent-rose: #F43F5E;
-      --accent-amber: #F59E0B;
-      --accent-violet: #8B5CF6;
-
-      --grad-primary: linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #EC4899 100%);
-      --grad-cyan: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
-      --grad-emerald: linear-gradient(135deg, #10B981 0%, #059669 100%);
-      --grad-amber: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
-      --grad-rose: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
-
-      --transition-slide: cubic-bezier(0.16, 1, 0.3, 1);
+      --border-glow: rgba(0, 242, 254, 0.25);
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
       user-select: none;
-      -webkit-user-select: none;
     }
 
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: var(--bg-base);
+    body {
+      background-color: var(--bg-dark);
       color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-family: var(--font-body);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
       cursor: default;
     }
 
-    /* Ambient Canvas */
-    .ambient-canvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .ambient-orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(140px);
-      opacity: 0.22;
-      transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-      animation: floatOrb 25s infinite alternate ease-in-out;
-    }
-
-    .ambient-orb-1 {
-      width: 580px;
-      height: 580px;
-      background: radial-gradient(circle, #4F46E5 0%, transparent 70%);
-      top: -120px;
-      left: -120px;
-    }
-
-    .ambient-orb-2 {
-      width: 680px;
-      height: 680px;
-      background: radial-gradient(circle, #06B6D4 0%, transparent 70%);
-      bottom: -160px;
-      right: -120px;
-      animation-delay: -9s;
-    }
-
-    .ambient-orb-3 {
-      width: 480px;
-      height: 480px;
-      background: radial-gradient(circle, #8B5CF6 0%, transparent 70%);
-      top: 35%;
-      right: 20%;
-      animation-delay: -16s;
-    }
-
-    @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(60px, -45px) scale(1.08); }
-      100% { transform: translate(-50px, 40px) scale(0.94); }
-    }
-
-    .bg-grid {
-      position: fixed;
-      inset: 0;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 32px 32px;
-      pointer-events: none;
-      z-index: 1;
-      opacity: 0.7;
-    }
-
-    /* HUD Superior e Inferior (Minimalista, sem Header/Footer) */
-    .progress-track {
+    /* Interactive Canvas Background */
+    #tree-canvas {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.04);
-      z-index: 100;
-    }
-
-    .progress-bar {
-      height: 100%;
-      width: 0%;
-      background: var(--grad-primary);
-      box-shadow: 0 0 16px rgba(99, 102, 241, 0.8);
-      transition: width 0.7s var(--transition-slide);
-    }
-
-    .slide-counter {
-      position: fixed;
-      bottom: 24px;
-      right: 28px;
-      z-index: 100;
-      font-size: 0.85rem;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--text-muted);
-      letter-spacing: 0.05em;
-      background: rgba(13, 19, 33, 0.6);
-      border: 1px solid var(--border-subtle);
-      padding: 6px 14px;
-      border-radius: 9999px;
-      backdrop-filter: blur(12px);
-      pointer-events: none;
-    }
-
-    .nav-hints {
-      position: fixed;
-      bottom: 24px;
-      left: 28px;
-      z-index: 100;
-      font-size: 0.75rem;
-      color: var(--text-faint);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      pointer-events: none;
-      transition: opacity 0.5s ease;
-    }
-
-    .nav-hints kbd {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--border-subtle);
-      border-radius: 4px;
-      padding: 2px 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
-
-    /* Container de Slides */
-    .presentation-container {
-      position: relative;
       width: 100vw;
       height: 100vh;
-      overflow: hidden;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Ambient Glow Spots */
+    .glow-radial-1 {
+      position: fixed;
+      top: -15%;
+      left: 8%;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(circle, rgba(0, 242, 254, 0.12) 0%, rgba(79, 172, 254, 0.04) 45%, transparent 70%);
+      filter: blur(80px);
+      z-index: 1;
+      pointer-events: none;
+      animation: pulseGlow 10s ease-in-out infinite alternate;
+    }
+
+    .glow-radial-2 {
+      position: fixed;
+      bottom: -15%;
+      right: 5%;
+      width: 60vw;
+      height: 60vw;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.14) 0%, rgba(16, 185, 129, 0.04) 50%, transparent 70%);
+      filter: blur(90px);
+      z-index: 1;
+      pointer-events: none;
+      animation: pulseGlow 14s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes pulseGlow {
+      0% { transform: scale(0.95) translate(0, 0); opacity: 0.7; }
+      100% { transform: scale(1.1) translate(20px, -20px); opacity: 1; }
+    }
+
+    /* Slides Container */
+    .slide-deck {
+      position: relative;
       z-index: 10;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     .slide {
       position: absolute;
       inset: 0;
-      width: 100%;
-      height: 100%;
+      padding: 60px 80px;
       display: flex;
       flex-direction: column;
-      align-items: center;
       justify-content: center;
-      padding: 4vw 6vw;
       opacity: 0;
       pointer-events: none;
-      transform: scale(0.96) translateY(30px);
-      filter: blur(12px);
-      transition: 
-        opacity 0.75s var(--transition-slide),
-        transform 0.75s var(--transition-slide),
-        filter 0.75s var(--transition-slide);
+      transform: translateY(20px) scale(0.98);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .slide.active {
       opacity: 1;
       pointer-events: auto;
-      transform: scale(1) translateY(0);
-      filter: blur(0);
-      z-index: 20;
+      transform: translateY(0) scale(1);
     }
 
-    .slide.past {
-      transform: scale(1.04) translateY(-35px);
-      opacity: 0;
-      filter: blur(14px);
+    /* Cover Layout */
+    .cover-content {
+      max-width: 1350px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 60px;
+      align-items: center;
     }
 
-    .slide.future {
-      transform: scale(0.94) translateY(40px);
-      opacity: 0;
-      filter: blur(14px);
-    }
-
-    /* Animações Escalonadas nos Elementos */
-    .slide .anim-el {
-      opacity: 0;
-      transform: translateY(22px);
-      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .slide.active .anim-el {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .slide.active .delay-1 { transition-delay: 0.10s; }
-    .slide.active .delay-2 { transition-delay: 0.20s; }
-    .slide.active .delay-3 { transition-delay: 0.30s; }
-    .slide.active .delay-4 { transition-delay: 0.42s; }
-    .slide.active .delay-5 { transition-delay: 0.54s; }
-
-    /* Tipografia e Badges */
-    .tag-badge {
+    .tagline-container {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      padding: 6px 16px;
-      border-radius: 9999px;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      color: #A5B4FC;
-      font-size: 0.8125rem;
+      gap: 10px;
+      background: linear-gradient(90deg, rgba(0, 242, 254, 0.15), rgba(139, 92, 246, 0.15));
+      border: 1px solid var(--border-glow);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
       font-weight: 600;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      margin-bottom: 20px;
-      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
-    }
-
-    .tag-badge::before {
-      content: '';
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #818CF8;
-      box-shadow: 0 0 8px #818CF8;
+      color: var(--cyan-neon);
+      margin-bottom: 24px;
+      backdrop-filter: blur(8px);
     }
 
     h1.hero-title {
-      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 5.2vw, 4.8rem);
+      line-height: 1.05;
       font-weight: 800;
-      line-height: 1.12;
       letter-spacing: -0.03em;
-      text-align: center;
-      max-width: 980px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .gradient-text {
-      background: var(--grad-primary);
+      background: linear-gradient(135deg, #ffffff 15%, var(--cyan-neon) 60%, var(--purple-neon) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       display: inline-block;
     }
 
-    .subtitle {
-      font-size: clamp(1rem, 1.8vw, 1.35rem);
+    p.hero-description {
+      font-size: clamp(1.05rem, 1.25vw, 1.25rem);
+      line-height: 1.65;
       color: var(--text-muted);
-      line-height: 1.6;
-      text-align: center;
-      max-width: 760px;
-      font-weight: 400;
+      max-width: 580px;
+      margin-bottom: 36px;
     }
 
-    /* Grids e Cards Glassmorphism */
-    .bento-grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 22px;
-      width: 100%;
-      max-width: 1050px;
-      margin-top: 32px;
-    }
-
-    .bento-grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-      width: 100%;
-      max-width: 1100px;
-      margin-top: 32px;
-    }
-
-    .bento-grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      width: 100%;
-      max-width: 1150px;
-      margin-top: 30px;
-    }
-
-    .glass-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 18px;
-      padding: 26px 24px;
-      backdrop-filter: blur(16px);
-      box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6);
-      position: relative;
-      overflow: hidden;
-      transition: transform 0.3s ease, border-color 0.3s ease;
-    }
-
-    .glass-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.16);
-    }
-
-    .card-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+    /* Topic Highlights Pills */
+    .topics-grid {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      margin-bottom: 16px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 36px;
     }
 
-    .card-icon.purple { background: rgba(99, 102, 241, 0.15); color: #A5B4FC; }
-    .card-icon.cyan { background: rgba(6, 182, 212, 0.15); color: #67E8F9; }
-    .card-icon.emerald { background: rgba(16, 185, 129, 0.15); color: #6EE7B7; }
-    .card-icon.amber { background: rgba(245, 158, 11, 0.15); color: #FCD34D; }
-    .card-icon.rose { background: rgba(244, 63, 94, 0.15); color: #FDA4AF; }
-
-    .card-title {
-      font-size: 1.2rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      color: var(--text-main);
-      letter-spacing: -0.01em;
-    }
-
-    .card-desc {
-      font-size: 0.92rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-    }
-
-    /* Terminal de Código */
-    .code-terminal {
-      background: #080C15;
-      border: 1px solid var(--border-subtle);
-      border-radius: 16px;
-      width: 100%;
-      max-width: 880px;
-      overflow: hidden;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
-      margin-top: 28px;
-      text-align: left;
-    }
-
-    .terminal-header {
+    .topic-chip {
       background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
       padding: 10px 18px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-main);
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+
+    .topic-chip:hover {
+      border-color: var(--cyan-neon);
+      background: rgba(0, 242, 254, 0.08);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -6px rgba(0, 242, 254, 0.2);
+    }
+
+    .topic-chip svg {
+      width: 18px;
+      height: 18px;
+      color: var(--cyan-neon);
+    }
+
+    /* Interactive Showcase Card */
+    .interactive-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.4s ease;
+    }
+
+    .interactive-card:hover {
+      border-color: rgba(0, 242, 254, 0.35);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
-    .terminal-dot {
+    .badge-generic {
+      background: rgba(0, 242, 254, 0.1);
+      color: var(--cyan-neon);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .tree-stage {
+      height: 330px;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: crosshair;
+    }
+
+    .tree-svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .tree-node-circle {
+      fill: #0c1427;
+      stroke: var(--cyan-neon);
+      stroke-width: 2.5;
+      transition: all 0.4s ease;
+      filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.4));
+      cursor: pointer;
+    }
+
+    .tree-node-circle:hover {
+      fill: var(--cyan-neon);
+      transform-origin: center;
+      stroke: #ffffff;
+    }
+
+    .tree-node-text {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 14px;
+      fill: #ffffff;
+      pointer-events: none;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .tree-node-circle:hover + .tree-node-text {
+      fill: #030712;
+    }
+
+    .tree-edge {
+      stroke: rgba(148, 163, 184, 0.25);
+      stroke-width: 2;
+      stroke-dasharray: 6;
+      animation: dashAnimation 25s linear infinite;
+    }
+
+    @keyframes dashAnimation {
+      from { stroke-dashoffset: 200; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .avl-factor-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      fill: var(--emerald-neon);
+      font-weight: 600;
+    }
+
+    .visualizer-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .btn-ctl {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-ctl:hover, .btn-ctl.active {
+      background: rgba(0, 242, 254, 0.15);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+    }
+
+    .tree-status-box {
+      margin-top: 18px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 12px 16px;
+      border-radius: 10px;
+      border-left: 3px solid var(--cyan-neon);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .code-accent {
+      color: var(--cyan-neon);
+      font-weight: 600;
+    }
+
+    /* Minimal Floating Slide Progress Dots */
+    .slide-progress {
+      position: fixed;
+      bottom: 24px;
+      right: 32px;
+      z-index: 100;
+      display: flex;
+      gap: 8px;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(8px);
+    }
+
+    /* ========================================================
+       ESTILOS DOS SLIDES DE RECURSÃO (Design Clean & Arejado)
+       ======================================================== */
+    .slide-content-clean {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+    }
+
+    .slide-header-minimal {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 20px;
+    }
+
+    .slide-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--cyan-neon);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slide-title-modern {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 3.4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .slide-subtitle-tag {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    /* Grid Limpo de 2 Colunas */
+    .clean-two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: stretch;
+    }
+
+    .clean-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 34px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .clean-card:hover {
+      border-color: rgba(0, 242, 254, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .clean-card-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-main);
+    }
+
+    .clean-card-title svg {
+      width: 22px;
+      height: 22px;
+      color: var(--cyan-neon);
+    }
+
+    .clean-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 14px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .clean-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .clean-item strong {
+      color: var(--cyan-neon);
+    }
+
+    .clean-item-alert {
+      border-left: 3px solid #ef4444;
+      background: rgba(239, 68, 68, 0.04);
+    }
+
+    .clean-item-alert strong {
+      color: #f87171;
+    }
+
+    .clean-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      margin-right: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    .clean-badge.cyan {
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--cyan-neon);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+    }
+
+    .clean-badge.purple {
+      background: rgba(139, 92, 246, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .clean-badge.amber {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .clean-badge.red {
+      background: rgba(239, 68, 68, 0.15);
+      color: #fca5a5;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .clean-badge.emerald {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    /* Blocos Estruturados de Decisão */
+    .decision-block {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .decision-block:last-child {
+      margin-bottom: 0;
+    }
+
+    .decision-block.warning {
+      border-left: 3px solid #f59e0b;
+      background: rgba(245, 158, 11, 0.03);
+    }
+
+    .decision-block.conclusion {
+      border-left: 3px solid var(--purple-neon);
+      background: rgba(139, 92, 246, 0.03);
+    }
+
+    .decision-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .decision-desc {
+      font-size: 0.88rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+
+    /* ========================================================
+       ESTILOS DO SLIDE 4: SIMULADOR FIBONACCI & CALL STACK
+       ======================================================== */
+    .fibo-sim-grid {
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    /* Code Box C */
+    .c-code-box {
+      background: #090d16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      overflow: hidden;
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.6);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .c-code-header {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    .code-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .code-dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
     }
-    .dot-red { background: #EF4444; }
-    .dot-yellow { background: #F59E0B; }
-    .dot-green { background: #10B981; }
 
-    .terminal-title {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.78rem;
-      color: var(--text-faint);
-      margin-left: 10px;
+    .c-code-lines {
+      padding: 14px 0;
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
     }
 
-    .terminal-body {
-      padding: 20px 24px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem;
-      line-height: 1.65;
-      color: #E2E8F0;
-      max-height: 420px;
+    .c-line {
+      display: flex;
+      padding: 5px 18px;
+      line-height: 1.5;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .c-line.active-line {
+      background: rgba(0, 242, 254, 0.12);
+      border-left: 3px solid var(--cyan-neon);
+    }
+
+    .c-line.active-line .c-num {
+      color: var(--cyan-neon);
+      font-weight: 700;
+    }
+
+    .c-num {
+      width: 32px;
+      color: #475569;
+      user-select: none;
+      font-size: 0.78rem;
+    }
+
+    .c-code {
+      color: #cbd5e1;
+      white-space: pre;
+    }
+
+    .kw { color: #f43f5e; font-weight: 600; }
+    .fn { color: #38bdf8; font-weight: 600; }
+    .cm { color: #64748b; font-style: italic; }
+    .num { color: #fbbf24; }
+    .op { color: #a78bfa; }
+
+    /* Stack Display Column */
+    .fibo-stack-box {
+      background: #090d16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fibo-stack-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .fibo-stack-container {
+      flex: 1;
+      min-height: 250px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 8px;
       overflow-y: auto;
     }
 
-    .token-kw { color: #F43F5E; font-weight: 600; }
-    .token-fn { color: #60A5FA; }
-    .token-type { color: #FBBF24; }
-    .token-num { color: #A78BFA; }
-    .token-str { color: #34D399; }
-    .token-cm { color: #64748B; font-style: italic; }
-
-    /* Fórmula do Fator de Balanceamento */
-    .formula-box {
-      background: rgba(99, 102, 241, 0.08);
-      border: 1px dashed rgba(99, 102, 241, 0.35);
-      border-radius: 14px;
-      padding: 18px 28px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.25rem;
-      color: #C7D2FE;
-      margin-top: 20px;
-      text-align: center;
+    .fibo-frame {
+      background: linear-gradient(90deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9));
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      border-left: 4px solid var(--cyan-neon);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: framePush 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* SVG de Árvore Interativo e Ilustrativo */
-    .tree-diagram {
+    @keyframes framePush {
+      from { transform: translateY(-12px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .fibo-frame.top-frame {
+      border-color: var(--cyan-neon);
+      box-shadow: 0 0 14px rgba(0, 242, 254, 0.2);
+    }
+
+    .frame-badge {
+      font-size: 0.7rem;
+      background: rgba(0, 242, 254, 0.15);
+      color: var(--cyan-neon);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Simulation Control Buttons */
+    .fibo-sim-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .btn-sim {
+      flex: 1;
+      padding: 10px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-sim:hover:not(:disabled) {
+      background: rgba(0, 242, 254, 0.15);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+    }
+
+    .btn-sim.primary {
+      background: linear-gradient(135deg, rgba(0, 242, 254, 0.2), rgba(79, 172, 254, 0.2));
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+    }
+
+    .btn-sim.primary:hover {
+      background: linear-gradient(135deg, var(--cyan-neon), var(--blue-electric));
+      color: #040812;
+    }
+
+    .btn-sim:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .fibo-state-banner {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ========================================================
+       ESTILOS DOS SLIDES DE ÁRVORES (ANATOMIA & MÉTRICAS)
+       ======================================================== */
+    .tree-diagram-container {
+      background: #090d16;
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .tree-diagram-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .tree-interactive-stage {
       width: 100%;
-      max-width: 540px;
-      height: auto;
-      margin-top: 18px;
+      height: 280px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* Efeito de Ondulação de Clique */
-    .click-ripple {
-      position: absolute;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+    .svg-node-group {
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .svg-node-circle {
+      fill: #0c1427;
+      stroke: var(--cyan-neon);
+      stroke-width: 2.2;
+      transition: all 0.3s ease;
+      filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.35));
+    }
+
+    .svg-node-group:hover .svg-node-circle,
+    .svg-node-group.active .svg-node-circle {
+      fill: var(--cyan-neon);
+      stroke: #ffffff;
+      transform: scale(1.08);
+      transform-origin: center;
+    }
+
+    .svg-node-text {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      fill: #ffffff;
+      text-anchor: middle;
+      dominant-baseline: central;
       pointer-events: none;
-      transform: scale(0);
-      animation: rippleAnim 0.6s ease-out forwards;
-      z-index: 999;
+      transition: fill 0.3s ease;
     }
 
-    @keyframes rippleAnim {
-      to {
-        transform: scale(4);
-        opacity: 0;
-      }
+    .svg-node-group:hover .svg-node-text,
+    .svg-node-group.active .svg-node-text {
+      fill: #040812;
     }
 
-    @media (max-width: 900px) {
-      .bento-grid-2, .bento-grid-3, .bento-grid-4 {
+    .svg-tree-edge {
+      stroke: rgba(148, 163, 184, 0.25);
+      stroke-width: 2;
+      transition: stroke 0.3s ease;
+    }
+
+    .svg-tree-edge.highlighted {
+      stroke: var(--cyan-neon);
+      stroke-width: 2.5;
+    }
+
+    /* Destaque para Níveis e Graus */
+    .level-guide-line {
+      stroke: rgba(255, 255, 255, 0.1);
+      stroke-dasharray: 4;
+      stroke-width: 1;
+    }
+
+    .level-text-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      fill: var(--text-dim);
+    }
+
+    .node-stat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .progress-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .progress-dot.active {
+      width: 22px;
+      border-radius: 4px;
+      background: var(--cyan-neon);
+      box-shadow: 0 0 10px var(--cyan-neon);
+    }
+
+    @media (max-width: 1024px) {
+      .cover-content {
         grid-template-columns: 1fr;
+        gap: 32px;
       }
       .slide {
-        padding: 8vw 5vw;
-      }
-      .terminal-body {
-        font-size: 0.78rem;
+        padding: 40px 30px;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- Efeito Dinâmico de Fundo -->
-  <div class="ambient-canvas">
-    <div class="ambient-orb ambient-orb-1" id="orb1"></div>
-    <div class="ambient-orb ambient-orb-2" id="orb2"></div>
-    <div class="ambient-orb ambient-orb-3" id="orb3"></div>
+  <!-- Dynamic Canvas Background -->
+  <canvas id="tree-canvas"></canvas>
+
+  <!-- Ambient Glow Effects -->
+  <div class="glow-radial-1"></div>
+  <div class="glow-radial-2"></div>
+
+  <!-- Slide Deck -->
+  <div class="slide-deck" id="slide-deck">
+    
+    <!-- SLIDE 1: CAPA PURA (Sem header/footer) -->
+    <section class="slide active" id="slide-1">
+      <div class="cover-content">
+        
+        <!-- Text & Narrative -->
+        <div class="hero-content">
+          <div class="tagline-container interactive-element">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            Estrutura de Dados
+          </div>
+
+          <h1 class="hero-title">
+            Da <span class="gradient-text">Recursão</span><br>
+            ao Equilíbrio <span class="gradient-text">AVL</span>
+          </h1>
+
+          <p class="hero-description">
+            Uma imersão na lógica de auto-chamadas na pilha de execução, o particionamento em árvores binárias de busca e a garantia do equilíbrio balanceado com fatores de rotação.
+          </p>
+
+          <!-- Interactive Topic Chips (Interação não avança o slide) -->
+          <div class="topics-grid">
+            <div class="topic-chip interactive-element" onclick="highlightPillar('Recursão')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12v-3a3 3 0 0 1 3-3h13m0 0l-4-4m4 4l-4 4M20 12v3a3 3 0 0 1-3 3H4m0 0l4 4m-4-4l4-4"/>
+              </svg>
+              <span>01. Recursão & Stack</span>
+            </div>
+
+            <div class="topic-chip interactive-element" onclick="highlightPillar('Árvore Binária')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="5" r="3"/>
+                <circle cx="6" cy="19" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"/>
+              </svg>
+              <span>02. Árvore Binária (BST)</span>
+            </div>
+
+            <div class="topic-chip interactive-element" onclick="highlightPillar('Árvore AVL')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v18M3 12h18M6 8l6-5 6 5"/>
+              </svg>
+              <span>03. Árvores AVL & Rotações</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Showcase de Árvore Viva e Interativa (Sem opções extras, pura interação e fluidez) -->
+        <div class="interactive-showcase interactive-element">
+          <div class="interactive-card">
+            <div class="card-header">
+              <div>
+                <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 2px;">Árvore Generativa Interativa</div>
+                <div style="font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono);">Mova o mouse ou clique para criar pulsos</div>
+              </div>
+              <span class="badge-generic" id="card-status-badge">REATIVO</span>
+            </div>
+
+            <!-- Canvas interativo de árvore abstrata/orgânica -->
+            <div class="tree-stage">
+              <canvas id="card-tree-canvas" style="width: 100%; height: 100%; border-radius: 14px;"></canvas>
+            </div>
+
+            <!-- Rodapé informativo sutil -->
+            <div class="tree-status-box" id="node-info-text">
+              <span>Topologia: <span class="code-accent" id="topology-hint">Ramificação Recursiva Contínua</span></span>
+              <span style="font-size: 0.75rem; color: var(--cyan-neon);" id="pulse-indicator">● Ativo</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 2: CONCEITO & ANATOMIA DA RECURSÃO -->
+    <section class="slide" id="slide-2">
+      <div class="slide-content-clean">
+        
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 12v-3a3 3 0 0 1 3-3h13m0 0l-4-4m4 4l-4 4M20 12v3a3 3 0 0 1-3 3H4m0 0l4 4m-4-4l4-4"/>
+              </svg>
+              Recursão • Fundamentos
+            </div>
+            <h2 class="slide-title-modern">O que é <span class="gradient-text">Recursão?</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Conceito & Anatomia</div>
+        </div>
+
+        <!-- 2 Cards Lado a Lado: Espaçados, Elegantes e Diretos -->
+        <div class="clean-two-cols">
+          
+          <!-- Card 1: Definição & Tipos -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              Definição & Modos
+            </div>
+            
+            <p style="font-size: 1rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+              Uma função que <strong style="color:var(--text-main);">chama a si mesma</strong>, direta ou indiretamente, dividindo o problema em instâncias menores.
+            </p>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Direta</span>
+              A própria função invoca a si mesma em seu corpo de execução.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge purple">Indireta</span>
+              Uma função chama outra função, que por sua vez chama a primeira novamente.
+            </div>
+          </div>
+
+          <!-- Card 2: A Tríade da Função Recursiva -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                <polyline points="2 17 12 22 22 17"></polyline>
+                <polyline points="2 12 12 17 22 12"></polyline>
+              </svg>
+              Estrutura de uma Função
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">01</span>
+              <strong>Caso Elementar:</strong> A condição de parada obrigatória.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">02</span>
+              <strong>Solução Elementar:</strong> A resposta base trivial que encerra as chamadas.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">03</span>
+              <strong>Chamada Recursiva:</strong> O passo que aproxima o estado do caso elementar.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 3: EFICIÊNCIA, MEMÓRIA E QUANDO NÃO USAR -->
+    <section class="slide" id="slide-3">
+      <div class="slide-content-clean">
+        
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+              </svg>
+              Recursão • Análise Crítica
+            </div>
+            <h2 class="slide-title-modern">Eficiência & <span class="gradient-text">Trade-offs</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Stack & Viabilidade</div>
+        </div>
+
+        <!-- 2 Cards Claros, Objetivos e Sintéticos -->
+        <div class="clean-two-cols">
+          
+          <!-- Card 1: Eficiência & Stack -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+              Eficiência & Memória
+            </div>
+
+            <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 16px;">
+              Menos eficiente que a versão iterativa. A cada chamada, a <strong>Stack</strong> aloca:
+            </p>
+
+            <div class="clean-item" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>• Parâmetros e Variáveis Locais</span>
+              <span class="clean-badge cyan">Dados</span>
+            </div>
+            <div class="clean-item" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>• Endereço de Retorno</span>
+              <span class="clean-badge cyan">Frame</span>
+            </div>
+
+            <div class="clean-item clean-item-alert" style="margin-top: 14px;">
+              <strong>Risco:</strong> A Stack é limitada. Excesso de chamadas gera <strong>Stack Overflow</strong>.
+            </div>
+          </div>
+
+          <!-- Card 2: Quando Usar vs Evitar -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              Quando Usar?
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge amber">Cuidado</span>
+              Nem todo problema recursivo deve ser resolvido com recursão.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge red">Desvantagem</span>
+              Usa mais recursos e é mais lenta que a versão iterativa.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge emerald">Quando Usar</span>
+              Quando a versão iterativa for excessivamente complexa (ex.: árvores).
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 4: SIMULAÇÃO PRÁTICA (Código C & Call Stack de Fibonacci) -->
+    <section class="slide" id="slide-4">
+      <div class="slide-content-clean">
+        
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              Laboratório Prático • Execução Passo a Passo
+            </div>
+            <h2 class="slide-title-modern">Simulação: <span class="gradient-text">Fibonacci na Call Stack</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">C Code & Memória em Tempo Real</div>
+        </div>
+
+        <!-- Grid 2 Colunas: Código em C vs Call Stack -->
+        <div class="fibo-sim-grid">
+          
+          <!-- Coluna 1: Código em C com Linha Ativa -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots">
+                <div class="code-dot" style="background:#ef4444;"></div>
+                <div class="code-dot" style="background:#f59e0b;"></div>
+                <div class="code-dot" style="background:#10b981;"></div>
+              </div>
+              <span>fibonacci.c</span>
+              <span id="c-exec-status" style="color:var(--cyan-neon);">Passo: 0 / 14</span>
+            </div>
+
+            <div class="c-code-lines" id="c-code-lines">
+              <div class="c-line" id="cline-1"><span class="c-num">1</span><span class="c-code"><span class="kw">int</span> <span class="fn">fibonacci</span>(<span class="kw">int</span> n) {</span></div>
+              <div class="c-line" id="cline-2"><span class="c-num">2</span><span class="c-code">    <span class="cm">// Caso Elementar (Base)</span></span></div>
+              <div class="c-line" id="cline-3"><span class="c-num">3</span><span class="c-code">    <span class="kw">if</span> (n <span class="op">&lt;=</span> <span class="num">1</span>) {</span></div>
+              <div class="c-line" id="cline-4"><span class="c-num">4</span><span class="c-code">        <span class="kw">return</span> n; <span class="cm">// Solução base</span></span></div>
+              <div class="c-line" id="cline-5"><span class="c-num">5</span><span class="c-code">    }</span></div>
+              <div class="c-line" id="cline-6"><span class="c-num">6</span><span class="c-code">    <span class="cm">// Chamadas Recursivas Bifurcadas</span></span></div>
+              <div class="c-line" id="cline-7"><span class="c-num">7</span><span class="c-code">    <span class="kw">int</span> a <span class="op">=</span> <span class="fn">fibonacci</span>(n <span class="op">-</span> <span class="num">1</span>);</span></div>
+              <div class="c-line" id="cline-8"><span class="c-num">8</span><span class="c-code">    <span class="kw">int</span> b <span class="op">=</span> <span class="fn">fibonacci</span>(n <span class="op">-</span> <span class="num">2</span>);</span></div>
+              <div class="c-line" id="cline-9"><span class="c-num">9</span><span class="c-code">    <span class="kw">return</span> a <span class="op">+</span> b;</span></div>
+              <div class="c-line" id="cline-10"><span class="c-num">10</span><span class="c-code">}</span></div>
+              <div class="c-line" id="cline-11"><span class="c-num">11</span><span class="c-code"><span class="kw">int</span> <span class="fn">main</span>() {</span></div>
+              <div class="c-line" id="cline-12"><span class="c-num">12</span><span class="c-code">    <span class="kw">int</span> res <span class="op">=</span> <span class="fn">fibonacci</span>(<span class="num">3</span>);</span></div>
+              <div class="c-line" id="cline-13"><span class="c-num">13</span><span class="c-code">    <span class="kw">return</span> <span class="num">0</span>;</span></div>
+              <div class="c-line" id="cline-14"><span class="c-num">14</span><span class="c-code">}</span></div>
+            </div>
+
+            <!-- Banner com Explicação Dinâmica do Passo -->
+            <div class="fibo-state-banner">
+              <span id="step-description">Clique em <strong>"Próximo Passo"</strong> para rastrear a execução de fibonacci(3).</span>
+              <span id="step-value-tag" style="color:var(--emerald-neon); font-weight:700;">Pronto</span>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Call Stack em Tempo Real -->
+          <div class="fibo-stack-box interactive-element">
+            <div class="fibo-stack-header">
+              <div style="font-weight:700; font-size:0.92rem; font-family:var(--font-mono); color:var(--text-main);">
+                Pilha de Execução (Call Stack)
+              </div>
+              <span class="frame-badge" id="fibo-depth-badge">Frames: 1</span>
+            </div>
+
+            <!-- Container da Pilha (Cresce de baixo para cima) -->
+            <div class="fibo-stack-container" id="fibo-stack-display">
+              <div class="fibo-frame top-frame">
+                <div>
+                  <div style="font-weight:700; color:var(--cyan-neon);">main()</div>
+                  <div style="font-size:0.72rem; color:var(--text-muted);">Aguardando retorno de fibonacci(3)</div>
+                </div>
+                <div style="text-align:right;">
+                  <span class="frame-badge">0x7ffe</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Controles Interativos da Simulação -->
+            <div class="fibo-sim-controls">
+              <button class="btn-sim" id="btn-fibo-prev" onclick="prevFiboStep()" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Passo Anterior
+              </button>
+              <button class="btn-sim primary" id="btn-fibo-next" onclick="nextFiboStep()">
+                Próximo Passo
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button class="btn-sim" onclick="resetFiboSim()" style="flex:0.5;">
+                Reiniciar
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 5: ANATOMIA DA ÁRVORE (Raiz, Nós, Pai, Filho e Folha) -->
+    <section class="slide" id="slide-5">
+      <div class="slide-content-clean">
+        
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="6" cy="19" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"></path>
+              </svg>
+              Estruturas Hierárquicas • Anatomia
+            </div>
+            <h2 class="slide-title-modern">Conceitos: <span class="gradient-text">Anatomia da Árvore</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Clique nos nós para inspecionar</div>
+        </div>
+
+        <!-- 2 Colunas: Explicações Conceituais vs Diagrama Interativo -->
+        <div class="clean-two-cols">
+          
+          <!-- Coluna 1: Conceitos com Badges -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+              Elementos da Estrutura
+            </div>
+
+            <div class="clean-item" id="info-tree-root">
+              <span class="clean-badge cyan">Raiz (Root)</span>
+              O nó topo da hierarquia, o único sem nó pai.
+            </div>
+
+            <div class="clean-item" id="info-tree-parent">
+              <span class="clean-badge purple">Pai & Filho</span>
+              Um nó que aponta para um sucessor direto (filho). O filho possui um único pai.
+            </div>
+
+            <div class="clean-item" id="info-tree-leaf">
+              <span class="clean-badge emerald">Folha (Terminal)</span>
+              Nós terminais que <strong>não possuem filhos</strong> (grau zero).
+            </div>
+          </div>
+
+          <!-- Coluna 2: Diagrama SVG Interativo -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Inspetor Interativo de Nós
+              </span>
+              <span class="frame-badge" id="anatomy-selected-badge">Nó A (Raiz)</span>
+            </div>
+
+            <div class="tree-interactive-stage">
+              <svg viewBox="0 0 380 230" style="width:100%; height:100%;">
+                <!-- Edges -->
+                <line x1="190" y1="40" x2="105" y2="110" class="svg-tree-edge" id="edge-A-B" />
+                <line x1="190" y1="40" x2="275" y2="110" class="svg-tree-edge" id="edge-A-C" />
+                <line x1="105" y1="110" x2="60" y2="185" class="svg-tree-edge" id="edge-B-D" />
+                <line x1="105" y1="110" x2="150" y2="185" class="svg-tree-edge" id="edge-B-E" />
+                <line x1="275" y1="110" x2="275" y2="185" class="svg-tree-edge" id="edge-C-F" />
+
+                <!-- Node A (Root) -->
+                <g class="svg-node-group active" id="node-A" onclick="inspectAnatomyNode('A', 'Raiz da Árvore', 'Pai de B e C', 'Nenhum (Topo)', ['B', 'C'])">
+                  <circle cx="190" cy="40" r="19" class="svg-node-circle"></circle>
+                  <text x="190" y="40" class="svg-node-text">A</text>
+                </g>
+
+                <!-- Node B -->
+                <g class="svg-node-group" id="node-B" onclick="inspectAnatomyNode('B', 'Nó Interno', 'Filho de A, Pai de D e E', 'Nó A', ['D', 'E'])">
+                  <circle cx="105" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="105" y="110" class="svg-node-text">B</text>
+                </g>
+
+                <!-- Node C -->
+                <g class="svg-node-group" id="node-C" onclick="inspectAnatomyNode('C', 'Nó Interno', 'Filho de A, Pai de F', 'Nó A', ['F'])">
+                  <circle cx="275" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="275" y="110" class="svg-node-text">C</text>
+                </g>
+
+                <!-- Node D (Leaf) -->
+                <g class="svg-node-group" id="node-D" onclick="inspectAnatomyNode('D', 'Nó Folha (Terminal)', 'Não possui filhos', 'Nó B', [])">
+                  <circle cx="60" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="60" y="185" class="svg-node-text">D</text>
+                </g>
+
+                <!-- Node E (Leaf) -->
+                <g class="svg-node-group" id="node-E" onclick="inspectAnatomyNode('E', 'Nó Folha (Terminal)', 'Não possui filhos', 'Nó B', [])">
+                  <circle cx="150" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="150" y="185" class="svg-node-text">E</text>
+                </g>
+
+                <!-- Node F (Leaf) -->
+                <g class="svg-node-group" id="node-F" onclick="inspectAnatomyNode('F', 'Nó Folha (Terminal)', 'Não possui filhos', 'Nó C', [])">
+                  <circle cx="275" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="275" y="185" class="svg-node-text">F</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Caixa de Feedback de Seleção -->
+            <div class="fibo-state-banner" id="anatomy-details-box">
+              <span>Classificação: <strong style="color:var(--cyan-neon);" id="anatomy-role">Raiz da Árvore</strong></span>
+              <span id="anatomy-relation">Pai: Nenhum | Filhos: [B, C]</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 6: MÉTRICAS DA ÁRVORE (Grau, Nível e Altura) -->
+    <section class="slide" id="slide-6">
+      <div class="slide-content-clean">
+        
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              Estruturas Hierárquicas • Métricas
+            </div>
+            <h2 class="slide-title-modern">Grau & <span class="gradient-text">Níveis da Árvore</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Camadas & Ramificações</div>
+        </div>
+
+        <!-- 2 Colunas: Definições de Métricas vs Visualizador de Níveis -->
+        <div class="clean-two-cols">
+          
+          <!-- Coluna 1: Métricas Explicadas com Badges -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              Métricas Fundamentais
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Grau do Nó</span>
+              Número de <strong>subárvores (filhos)</strong> que partem daquele nó específico.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge purple">Grau da Árvore</span>
+              O <strong>maior grau</strong> encontrado entre todos os seus nós.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge amber">Nível do Nó</span>
+              Distância em arestas da raiz até o nó (Raiz = <strong>Nível 0</strong> ou 1 dependendo da convenção).
+            </div>
+          </div>
+
+          <!-- Coluna 2: Visualizador com Guias de Níveis -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Distribuição por Níveis
+              </span>
+              <span class="frame-badge" id="metrics-selected-badge">Selecione um Nó</span>
+            </div>
+
+            <div class="tree-interactive-stage">
+              <svg viewBox="0 0 380 230" style="width:100%; height:100%;">
+                <!-- Linhas Guia de Nível -->
+                <line x1="20" y1="40" x2="360" y2="40" class="level-guide-line" />
+                <text x="25" y="32" class="level-text-label">Nível 0 (Raiz)</text>
+
+                <line x1="20" y1="110" x2="360" y2="110" class="level-guide-line" />
+                <text x="25" y="102" class="level-text-label">Nível 1</text>
+
+                <line x1="20" y1="185" x2="360" y2="185" class="level-guide-line" />
+                <text x="25" y="177" class="level-text-label">Nível 2</text>
+
+                <!-- Edges -->
+                <line x1="190" y1="40" x2="110" y2="110" class="svg-tree-edge" />
+                <line x1="190" y1="40" x2="270" y2="110" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="70" y2="185" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="150" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="270" y2="185" class="svg-tree-edge" />
+
+                <!-- Nodes com Métricas -->
+                <g class="svg-node-group" onclick="inspectMetricsNode('50', 0, 2, 'Grau 2 (2 filhos: 30 e 70)')">
+                  <circle cx="190" cy="40" r="18" class="svg-node-circle"></circle>
+                  <text x="190" y="40" class="svg-node-text">50</text>
+                </g>
+
+                <g class="svg-node-group" onclick="inspectMetricsNode('30', 1, 2, 'Grau 2 (2 filhos: 20 e 40)')">
+                  <circle cx="110" cy="110" r="16" class="svg-node-circle"></circle>
+                  <text x="110" y="110" class="svg-node-text">30</text>
+                </g>
+
+                <g class="svg-node-group" onclick="inspectMetricsNode('70', 1, 1, 'Grau 1 (1 filho: 85)')">
+                  <circle cx="270" cy="110" r="16" class="svg-node-circle"></circle>
+                  <text x="270" y="110" class="svg-node-text">70</text>
+                </g>
+
+                <g class="svg-node-group" onclick="inspectMetricsNode('20', 2, 0, 'Grau 0 (Nó Folha)')">
+                  <circle cx="70" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="70" y="185" class="svg-node-text">20</text>
+                </g>
+
+                <g class="svg-node-group" onclick="inspectMetricsNode('40', 2, 0, 'Grau 0 (Nó Folha)')">
+                  <circle cx="150" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="150" y="185" class="svg-node-text">40</text>
+                </g>
+
+                <g class="svg-node-group" onclick="inspectMetricsNode('85', 2, 0, 'Grau 0 (Nó Folha)')">
+                  <circle cx="270" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="270" y="185" class="svg-node-text">85</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Dados do Nó em Tempo Real -->
+            <div class="fibo-state-banner" id="metrics-details-box">
+              <span>Nó selecionado: <strong style="color:var(--cyan-neon);" id="metrics-val">-</strong></span>
+              <span id="metrics-desc">Clique em um nó da árvore acima para verificar seu Nível e Grau.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
   </div>
-  <div class="bg-grid"></div>
 
-  <!-- HUD Minimalista -->
-  <div class="progress-track">
-    <div class="progress-bar" id="progressBar"></div>
+  <!-- Discreta barra de progresso (indicador) -->
+  <div class="slide-progress interactive-element" id="slide-progress">
+    <div class="progress-dot active" title="Capa" onclick="goToSlide(0)"></div>
+    <div class="progress-dot" title="O Que é Recursão" onclick="goToSlide(1)"></div>
+    <div class="progress-dot" title="Eficiência & Trade-offs" onclick="goToSlide(2)"></div>
+    <div class="progress-dot" title="Simulação Fibonacci & Stack" onclick="goToSlide(3)"></div>
+    <div class="progress-dot" title="Anatomia da Árvore" onclick="goToSlide(4)"></div>
+    <div class="progress-dot" title="Grau & Níveis da Árvore" onclick="goToSlide(5)"></div>
   </div>
-  <div class="slide-counter" id="slideCounter">01 / 10</div>
-  <div class="nav-hints" id="navHints">
-    <span>Navegar: <kbd>→</kbd> <kbd>←</kbd> ou clique</span>
-  </div>
 
-  <!-- Container Principal dos Slides -->
-  <main class="presentation-container" id="presentation">
-
-    <!-- SLIDE 1: Capa -->
-    <section class="slide active" data-slide="1">
-      <div class="tag-badge anim-el delay-1">Estruturas de Dados Avançadas</div>
-      <h1 class="hero-title anim-el delay-2">
-        Recursão &amp; <br><span class="gradient-text">Árvores Binárias Balanceadas (AVL)</span>
-      </h1>
-      <p class="subtitle anim-el delay-3">
-        Uma visão aprofundada sobre recursão em árvores, balanceamento dinâmico, rotações, travessias e remoção eficiente em tempo O(log n).
-      </p>
-    </section>
-
-    <!-- SLIDE 2: O Poder da Recursão em Árvores -->
-    <section class="slide" data-slide="2">
-      <div class="tag-badge anim-el delay-1">Conceito Base</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: 12px;">
-        A Essência Recursiva de uma Árvore
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Uma árvore é uma estrutura inerentemente recursiva: cada nó é a raiz de duas subárvores.
-      </p>
-
-      <div class="bento-grid-2">
-        <div class="glass-card anim-el delay-3">
-          <div class="card-icon purple">🎯</div>
-          <h2 class="card-title">Caso Base (Condição de Parada)</h2>
-          <p class="card-desc">
-            Se o nó atual é nulo (<code style="color:#A5B4FC;">node == null</code>), a recursão atinge o fundo e inicia o desempilhamento retornando 0 ou um nó sentinela.
-          </p>
-        </div>
-
-        <div class="glass-card anim-el delay-4">
-          <div class="card-icon cyan">🔄</div>
-          <h2 class="card-title">Passo Recursivo (Dividir e Conquistar)</h2>
-          <p class="card-desc">
-            O problema na raiz se reduz a resolver o mesmo problema na subárvore esquerda e na subárvore direita, combinando os resultados no retorno da pilha de execução.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 3: O Problema da BST Comum e a Origem da AVL -->
-    <section class="slide" data-slide="3">
-      <div class="tag-badge anim-el delay-1">Por que Balancear?</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: 10px;">
-        O Problema da Degeneração em BST
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Em uma BST tradicional, inserções ordenadas degradam a busca para <span style="color:#F43F5E; font-weight:700;">O(n)</span>. A AVL garante <span style="color:#10B981; font-weight:700;">O(log n)</span>.
-      </p>
-
-      <div class="bento-grid-3">
-        <div class="glass-card anim-el delay-3">
-          <div class="card-icon rose">📉</div>
-          <h2 class="card-title">Degeneração em Lista</h2>
-          <p class="card-desc">Inserir [1, 2, 3, 4, 5] cria uma linha reta com altura n. Buscar custa tempo linear.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-4">
-          <div class="card-icon emerald">⚖️</div>
-          <h2 class="card-title">A Solução AVL (1962)</h2>
-          <p class="card-desc">Criada por Adelson-Velsky e Landis. Uma BST auto-balanceada pela diferença máxima de 1 entre alturas das subárvores.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-5">
-          <div class="card-icon cyan">⚡</div>
-          <h2 class="card-title">Garantia Rigorosa</h2>
-          <p class="card-desc">Mesmo no pior caso de inserção ou remoção, operações de busca, inclusão e exclusão rodam em estrito <strong>O(log n)</strong>.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 4: Cálculo de Altura e Fator de Balanceamento (FB) -->
-    <section class="slide" data-slide="4">
-      <div class="tag-badge anim-el delay-1">Métricas da Árvore</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: 8px;">
-        Altura &amp; Fator de Balanceamento (FB)
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Toda decisão na AVL deriva do cálculo da altura dos filhos e do fator de balanceamento resultante.
-      </p>
-
-      <div class="formula-box anim-el delay-3">
-        FB(nó) = Altura(Subárvore Esquerda) - Altura(Subárvore Direita)
-      </div>
-
-      <div class="bento-grid-3">
-        <div class="glass-card anim-el delay-3">
-          <div class="card-icon emerald">✓</div>
-          <h2 class="card-title">Nó Balanceado</h2>
-          <p class="card-desc">O nó é balanceado se <strong>FB &isin; {-1, 0, +1}</strong>. Nenhuma rotação é necessária.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-4">
-          <div class="card-icon rose">⚠️</div>
-          <h2 class="card-title">Desbalanceado à Esquerda</h2>
-          <p class="card-desc">Se <strong>FB &gt; +1</strong> (+2), o peso está no ramo esquerdo. Exige rotação à direita (simples ou dupla).</p>
-        </div>
-
-        <div class="glass-card anim-el delay-5">
-          <div class="card-icon amber">⚠️</div>
-          <h2 class="card-title">Desbalanceado à Direita</h2>
-          <p class="card-desc">Se <strong>FB &lt; -1</strong> (-2), o peso está no ramo direito. Exige rotação à esquerda (simples ou dupla).</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 5: O Método de Identificar o Tipo de Rotação -->
-    <section class="slide" data-slide="5">
-      <div class="tag-badge anim-el delay-1">Lógica de Decisão</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 8px;">
-        Retornando o Tipo de Rotação
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        A rotação adequada é determinada pelo sinal do FB do nó atual combinado com o sinal do FB de seu filho.
-      </p>
-
-      <div class="bento-grid-4">
-        <div class="glass-card anim-el delay-2">
-          <div class="card-icon purple">⟳</div>
-          <h2 class="card-title" style="font-size:1.05rem;">Direita Simples (LL)</h2>
-          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#A5B4FC;">FB(nó) &gt; 1 &amp;&amp; FB(esq) &ge; 0</code><br>Inserção no ramo esquerdo do filho esquerdo.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-3">
-          <div class="card-icon cyan">⟲</div>
-          <h2 class="card-title" style="font-size:1.05rem;">Esquerda Simples (RR)</h2>
-          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#67E8F9;">FB(nó) &lt; -1 &amp;&amp; FB(dir) &le; 0</code><br>Inserção no ramo direito do filho direito.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-4">
-          <div class="card-icon amber">⤹⤸</div>
-          <h2 class="card-title" style="font-size:1.05rem;">Dupla Direita (LR)</h2>
-          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#FCD34D;">FB(nó) &gt; 1 &amp;&amp; FB(esq) &lt; 0</code><br>Rotaciona o filho à esquerda, depois o pai à direita.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-5">
-          <div class="card-icon rose">⤸⤹</div>
-          <h2 class="card-title" style="font-size:1.05rem;">Dupla Esquerda (RL)</h2>
-          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#FDA4AF;">FB(nó) &lt; -1 &amp;&amp; FB(dir) &gt; 0</code><br>Rotaciona o filho à direita, depois o pai à esquerda.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 6: Código - Rotações Simples -->
-    <section class="slide" data-slide="6">
-      <div class="tag-badge anim-el delay-1">Implementação</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 6px;">
-        Rotações Básicas em Tempo O(1)
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Reorganização estrita de ponteiros e atualização de alturas locais.
-      </p>
-
-      <div class="code-terminal anim-el delay-4">
-        <div class="terminal-header">
-          <div class="terminal-dot dot-red"></div>
-          <div class="terminal-dot dot-yellow"></div>
-          <div class="terminal-dot dot-green"></div>
-          <span class="terminal-title">avl_rotations.ts</span>
-        </div>
-        <div class="terminal-body">
-<span class="token-cm">// Rotação Simples à Direita (Right Rotation)</span>
-<span class="token-kw">function</span> <span class="token-fn">rotateRight</span>(y: <span class="token-type">Node</span>): <span class="token-type">Node</span> {
-  <span class="token-kw">const</span> x = y.left!;
-  <span class="token-kw">const</span> T2 = x.right;
-
-  x.right = y;   <span class="token-cm">// y desce e vira filho direito de x</span>
-  y.left = T2;   <span class="token-cm">// subárvore T2 é adotada como filha esquerda de y</span>
-
-  y.height = Math.<span class="token-fn">max</span>(height(y.left), height(y.right)) + <span class="token-num">1</span>;
-  x.height = Math.<span class="token-fn">max</span>(height(x.left), height(x.right)) + <span class="token-num">1</span>;
-
-  <span class="token-kw">return</span> x;      <span class="token-cm">// x é a nova raiz da subárvore</span>
-}
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 7: Inserção Recursiva com Auto-Balanceamento -->
-    <section class="slide" data-slide="7">
-      <div class="tag-badge anim-el delay-1">Inserção</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 6px;">
-        Método de Inserção Recursiva
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Desce até as folhas via recursão, insere o nó e rebalanceia na volta do desempilhamento.
-      </p>
-
-      <div class="code-terminal anim-el delay-4">
-        <div class="terminal-header">
-          <div class="terminal-dot dot-red"></div>
-          <div class="terminal-dot dot-yellow"></div>
-          <div class="terminal-dot dot-green"></div>
-          <span class="terminal-title">avl_insert.ts</span>
-        </div>
-        <div class="terminal-body">
-<span class="token-kw">function</span> <span class="token-fn">insert</span>(node: <span class="token-type">Node | null</span>, key: <span class="token-type">number</span>): <span class="token-type">Node</span> {
-  <span class="token-cm">// 1. Passo Recursivo de Inserção BST tradicional</span>
-  <span class="token-kw">if</span> (!node) <span class="token-kw">return</span> <span class="token-kw">new</span> <span class="token-type">Node</span>(key);
-  <span class="token-kw">if</span> (key &lt; node.key) node.left = <span class="token-fn">insert</span>(node.left, key);
-  <span class="token-kw">else if</span> (key &gt; node.key) node.right = <span class="token-fn">insert</span>(node.right, key);
-  <span class="token-kw">else return</span> node; <span class="token-cm">// Chaves duplicadas não permitidas</span>
-
-  <span class="token-cm">// 2. Atualiza a altura do ancestral</span>
-  node.height = <span class="token-num">1</span> + Math.<span class="token-fn">max</span>(height(node.left), height(node.right));
-
-  <span class="token-cm">// 3. Obtém o Fator de Balanceamento e aplica a rotação necessária</span>
-  <span class="token-kw">const</span> balance = <span class="token-fn">getBalance</span>(node);
-
-  <span class="token-kw">if</span> (balance &gt; <span class="token-num">1</span> &amp;&amp; key &lt; node.left!.key) <span class="token-kw">return</span> <span class="token-fn">rotateRight</span>(node);           <span class="token-cm">// LL</span>
-  <span class="token-kw">if</span> (balance &lt; -<span class="token-num">1</span> &amp;&amp; key &gt; node.right!.key) <span class="token-kw">return</span> <span class="token-fn">rotateLeft</span>(node);           <span class="token-cm">// RR</span>
-  <span class="token-kw">if</span> (balance &gt; <span class="token-num">1</span> &amp;&amp; key &gt; node.left!.key) { node.left = <span class="token-fn">rotateLeft</span>(node.left!); <span class="token-kw">return</span> <span class="token-fn">rotateRight</span>(node); } <span class="token-cm">// LR</span>
-  <span class="token-kw">if</span> (balance &lt; -<span class="token-num">1</span> &amp;&amp; key &lt; node.right!.key) { node.right = <span class="token-fn">rotateRight</span>(node.right!); <span class="token-kw">return</span> <span class="token-fn">rotateLeft</span>(node); } <span class="token-cm">// RL</span>
-
-  <span class="token-kw">return</span> node;
-}
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 8: Percursos / Travessias (In, Pré e Pós-Ordem) -->
-    <section class="slide" data-slide="8">
-      <div class="tag-badge anim-el delay-1">Travessias Recursivas</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: 8px;">
-        Impressão: In-Ordem, Pré-Ordem &amp; Pós-Ordem
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Três formas elegantes de percorrer todos os nós através de recursão com O(n).
-      </p>
-
-      <div class="bento-grid-3">
-        <div class="glass-card anim-el delay-3">
-          <div class="card-icon cyan">📊</div>
-          <h2 class="card-title">In-Ordem (Em Ordem)</h2>
-          <p class="card-desc">
-            <strong>Esq &rarr; Raiz &rarr; Dir</strong><br><br>
-            Imprime todos os elementos em <em>ordem crescente estrita</em>. Essencial para validação e ordenação.
-          </p>
-        </div>
-
-        <div class="glass-card anim-el delay-4">
-          <div class="card-icon purple">🌳</div>
-          <h2 class="card-title">Pré-Ordem</h2>
-          <p class="card-desc">
-            <strong>Raiz &rarr; Esq &rarr; Dir</strong><br><br>
-            Visita o pai antes dos filhos. Ideal para serializar/clonar a árvore preservando sua estrutura original.
-          </p>
-        </div>
-
-        <div class="glass-card anim-el delay-5">
-          <div class="card-icon emerald">📦</div>
-          <h2 class="card-title">Pós-Ordem</h2>
-          <p class="card-desc">
-            <strong>Esq &rarr; Dir &rarr; Raiz</strong><br><br>
-            Processa os filhos antes do pai. Padrão obrigatório para <em>liberação de memória (delete)</em> e cálculo bottom-up.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 9: Remoção de Nó na AVL -->
-    <section class="slide" data-slide="9">
-      <div class="tag-badge anim-el delay-1">Remoção</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 8px;">
-        Remoção de Nós em Árvore AVL
-      </h1>
-      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
-        Combina a exclusão padrão de BST com rebalanceamento propagado até a raiz.
-      </p>
-
-      <div class="bento-grid-3">
-        <div class="glass-card anim-el delay-3">
-          <div class="card-icon purple">1</div>
-          <h2 class="card-title">Nó Folha / 1 Filho</h2>
-          <p class="card-desc">Se não tem filhos, simplesmente remove. Se tem 1 único filho, substitui o nó por esse filho direto.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-4">
-          <div class="card-icon amber">2</div>
-          <h2 class="card-title">Nó com 2 Filhos</h2>
-          <p class="card-desc">Localiza o <strong>sucessor in-order</strong> (menor valor da subárvore direita), copia seu valor e remove o sucessor recursivamente.</p>
-        </div>
-
-        <div class="glass-card anim-el delay-5">
-          <div class="card-icon emerald">3</div>
-          <h2 class="card-title">Rebalanceamento</h2>
-          <p class="card-desc">Ao desempilhar as chamadas recursivas, recalcula alturas e aplica rotações em todos os ancestrais afetados.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- SLIDE 10: Resumo e Comparativo Final -->
-    <section class="slide" data-slide="10">
-      <div class="tag-badge anim-el delay-1">Síntese</div>
-      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2.1rem, 3.8vw, 3.5rem);">
-        Resumo Geral da <span class="gradient-text">Árvore AVL</span>
-      </h1>
-      <p class="subtitle anim-el delay-3" style="margin-bottom: 30px;">
-        A harmonia perfeita entre algoritmos recursivos elegantes e garantias matemáticas estritas de desempenho.
-      </p>
-
-      <div class="bento-grid-3" style="margin-top:0;">
-        <div class="glass-card anim-el delay-3" style="text-align:center;">
-          <div class="card-title" style="font-size:2.2rem; color:#60A5FA; margin-bottom:4px;">O(log n)</div>
-          <p class="card-desc">Busca, Inserção e Remoção</p>
-        </div>
-        <div class="glass-card anim-el delay-4" style="text-align:center;">
-          <div class="card-title" style="font-size:2.2rem; color:#34D399; margin-bottom:4px;">{-1, 0, +1}</div>
-          <p class="card-desc">Fator de Balanceamento Estrito</p>
-        </div>
-        <div class="glass-card anim-el delay-5" style="text-align:center;">
-          <div class="card-title" style="font-size:2.2rem; color:#A78BFA; margin-bottom:4px;">O(1)</div>
-          <p class="card-desc">Custo por Rotação Local</p>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- ==========================================================
-       LÓGICA JAVASCRIPT INLINE
-       Navegação por clique e teclado, transições fluidas e progresso
-       ========================================================== -->
+  <!-- Script de Animação e Navegação -->
   <script>
-    (function () {
-      'use strict';
+    /* ========================================================
+       1. CANVAS BACKGROUND: Árvore Recursiva Fractal Animada
+       ======================================================== */
+    const canvas = document.getElementById('tree-canvas');
+    const ctx = canvas.getContext('2d');
 
-      const slides = document.querySelectorAll('.slide');
-      const progressBar = document.getElementById('progressBar');
-      const slideCounter = document.getElementById('slideCounter');
-      const navHints = document.getElementById('navHints');
-      const orb1 = document.getElementById('orb1');
-      const orb2 = document.getElementById('orb2');
+    let width, height;
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
 
-      const totalSlides = slides.length;
-      let currentIndex = 0;
-      let isTransitioning = false;
-      const transitionDuration = 700;
+    let angleOffset = 0;
+    let mouseX = 0;
 
-      function updatePresentation(targetIndex) {
-        if (targetIndex < 0 || targetIndex >= totalSlides) return;
-        if (targetIndex === currentIndex && slides[currentIndex].classList.contains('active')) return;
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 0.15;
+    });
 
-        isTransitioning = true;
+    function drawBranch(x, y, length, angle, depth) {
+      if (depth === 0) return;
 
-        slides.forEach((slide, index) => {
-          slide.classList.remove('active', 'past', 'future');
-          if (index === targetIndex) {
-            slide.classList.add('active');
-          } else if (index < targetIndex) {
-            slide.classList.add('past');
-          } else {
-            slide.classList.add('future');
-          }
+      const endX = x + Math.sin(angle) * length;
+      const endY = y - Math.cos(angle) * length;
+
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(endX, endY);
+
+      const alpha = (depth / 9) * 0.22;
+      ctx.strokeStyle = `rgba(0, 242, 254, ${alpha})`;
+      ctx.lineWidth = depth * 0.9;
+      ctx.stroke();
+
+      const branchAngle = 0.45 + mouseX + Math.sin(angleOffset + depth) * 0.05;
+      const lengthReduction = 0.74;
+
+      drawBranch(endX, endY, length * lengthReduction, angle - branchAngle, depth - 1);
+      drawBranch(endX, endY, length * lengthReduction, angle + branchAngle, depth - 1);
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      angleOffset += 0.012;
+
+      const rootX = width * 0.85;
+      const rootY = height * 0.96;
+      drawBranch(rootX, rootY, height * 0.24, 0, 9);
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    /* ========================================================
+       2. NAVEGAÇÃO DE SLIDES (Click de Fundo, Setas e Espaço)
+       ======================================================== */
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+
+    function goToSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      slides[currentSlide].classList.remove('active');
+      currentSlide = index;
+      slides[currentSlide].classList.add('active');
+      updateProgress();
+    }
+
+    function nextSlide() {
+      if (currentSlide < slides.length - 1) {
+        goToSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 0) {
+        goToSlide(currentSlide - 1);
+      }
+    }
+
+    function updateProgress() {
+      const dots = document.querySelectorAll('.progress-dot');
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+      });
+    }
+
+    // Teclado: Setas e Espaço
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowRight' || e.code === 'Space') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        prevSlide();
+      }
+    });
+
+    // Clique ao fundo: se clicar em elemento interativo (.interactive-element), NÃO avança
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('.interactive-element') || e.target.closest('button') || e.target.closest('g.tree-node')) {
+        return; // Interação com componente preservada!
+      }
+      nextSlide();
+    });
+
+    /* ========================================================
+       3. INTERAÇÕES DA CAPA (Visualizador & Chips)
+       ======================================================== */
+    function pulseNode(el, value, info) {
+      const circle = el.querySelector('circle');
+      circle.style.stroke = '#10b981';
+      circle.style.fill = 'rgba(16, 185, 129, 0.3)';
+      
+      const statusBox = document.getElementById('node-info-text');
+      statusBox.innerHTML = `<span>Nó selecionado <span class="code-accent">[${value}]</span>: ${info}</span>`;
+
+      setTimeout(() => {
+        circle.style.stroke = '';
+        circle.style.fill = '';
+      }, 700);
+    }
+
+    function highlightPillar(pillar) {
+      const statusBox = document.getElementById('node-info-text');
+      statusBox.innerHTML = `<span>Tema explorado: <span class="code-accent">${pillar}</span></span>`;
+    }
+
+    /* ========================================================
+       3. ÁRVORE GENERATIVA VIVA E ULTRA-MODERNA (Interativa)
+       ======================================================== */
+    const cardCanvas = document.getElementById('card-tree-canvas');
+    const cardCtx = cardCanvas.getContext('2d');
+    
+    let cardTreeTicks = 0;
+    let cardMouseX = 0;
+    let cardMouseY = 0;
+    let targetSpread = 0.52;
+    let currentSpread = 0.52;
+    let pulseEnergy = 0;
+    let floatingParticles = [];
+
+    function resizeCardCanvas() {
+      const rect = cardCanvas.parentElement.getBoundingClientRect();
+      cardCanvas.width = rect.width;
+      cardCanvas.height = rect.height;
+      initParticles();
+    }
+    window.addEventListener('resize', resizeCardCanvas);
+    setTimeout(resizeCardCanvas, 60);
+
+    // Partículas flutuantes ao redor da árvore
+    function initParticles() {
+      floatingParticles = [];
+      for (let i = 0; i < 24; i++) {
+        floatingParticles.push({
+          x: Math.random() * (cardCanvas.width || 360),
+          y: Math.random() * (cardCanvas.height || 300),
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: -Math.random() * 0.5 - 0.2,
+          size: Math.random() * 2 + 1,
+          alpha: Math.random() * 0.6 + 0.2
+        });
+      }
+    }
+
+    // Interatividade com Mouse no Card
+    cardCanvas.addEventListener('mousemove', (e) => {
+      const rect = cardCanvas.getBoundingClientRect();
+      cardMouseX = (e.clientX - rect.left) / rect.width - 0.5;
+      cardMouseY = (e.clientY - rect.top) / rect.height - 0.5;
+      targetSpread = 0.44 + (e.clientX - rect.left) / rect.width * 0.24;
+    });
+
+    cardCanvas.addEventListener('mouseleave', () => {
+      cardMouseX = 0;
+      cardMouseY = 0;
+      targetSpread = 0.52;
+    });
+
+    // Clique no Card dispara onda de pulso e energia luminescente
+    cardCanvas.addEventListener('click', (e) => {
+      pulseEnergy = 1.0;
+      const indicator = document.getElementById('pulse-indicator');
+      const hint = document.getElementById('topology-hint');
+      
+      indicator.style.color = '#00f2fe';
+      indicator.textContent = '✦ Pulso Emitido!';
+      hint.textContent = 'Dispersão de Energia Recursiva';
+
+      setTimeout(() => {
+        indicator.textContent = '● Ativo';
+        indicator.style.color = 'var(--cyan-neon)';
+        hint.textContent = 'Ramificação Recursiva Contínua';
+      }, 1200);
+    });
+
+    function drawCardBranch(x, y, len, angle, depth, maxDepth) {
+      if (depth === 0) {
+        // Nós terminais (folhas de luz) com efeito de pulso
+        const glowBoost = pulseEnergy * 8;
+        cardCtx.beginPath();
+        cardCtx.arc(x, y, 3.2 + pulseEnergy * 2.5, 0, Math.PI * 2);
+        cardCtx.fillStyle = pulseEnergy > 0.2 ? '#ffffff' : '#00f2fe';
+        cardCtx.shadowColor = '#00f2fe';
+        cardCtx.shadowBlur = 8 + glowBoost;
+        cardCtx.fill();
+        cardCtx.shadowBlur = 0;
+        return;
+      }
+
+      const x2 = x + Math.sin(angle) * len;
+      const y2 = y - Math.cos(angle) * len;
+
+      cardCtx.beginPath();
+      cardCtx.moveTo(x, y);
+      cardCtx.lineTo(x2, y2);
+
+      const depthProgress = depth / maxDepth;
+      const baseAlpha = 0.25 + depthProgress * 0.65;
+      const cyanMix = Math.floor(180 + depthProgress * 75);
+      
+      if (pulseEnergy > 0.1) {
+        cardCtx.strokeStyle = `rgba(0, 242, 254, ${Math.min(1, baseAlpha + pulseEnergy * 0.5)})`;
+        cardCtx.shadowColor = '#00f2fe';
+        cardCtx.shadowBlur = pulseEnergy * 10;
+      } else {
+        cardCtx.strokeStyle = `rgba(79, 172, 254, ${baseAlpha})`;
+        cardCtx.shadowBlur = 0;
+      }
+      
+      cardCtx.lineWidth = Math.max(1, depth * 1.1 + pulseEnergy * 0.8);
+      cardCtx.stroke();
+      cardCtx.shadowBlur = 0;
+
+      // Micro nós em junções
+      cardCtx.beginPath();
+      cardCtx.arc(x, y, 2, 0, Math.PI * 2);
+      cardCtx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+      cardCtx.fill();
+
+      // Ângulo de ramificação influenciado pelo mouse e respiração
+      const breathe = Math.sin(cardTreeTicks * 1.2 + depth * 0.4) * 0.035;
+      const sway = cardMouseX * 0.25;
+      const branchSpread = currentSpread + breathe;
+      const reduction = 0.72 + (cardMouseY * -0.05);
+
+      drawCardBranch(x2, y2, len * reduction, angle - branchSpread + sway, depth - 1, maxDepth);
+      drawCardBranch(x2, y2, len * reduction, angle + branchSpread + sway, depth - 1, maxDepth);
+    }
+
+    function animateCardTree() {
+      if (cardCanvas.width && cardCanvas.height) {
+        cardCtx.clearRect(0, 0, cardCanvas.width, cardCanvas.height);
+        cardTreeTicks += 0.025;
+
+        // Suavização do spread
+        currentSpread += (targetSpread - currentSpread) * 0.08;
+
+        // Decaimento de energia do pulso
+        if (pulseEnergy > 0) {
+          pulseEnergy *= 0.94;
+          if (pulseEnergy < 0.01) pulseEnergy = 0;
+        }
+
+        // Renderiza partículas sutis de ambiente
+        floatingParticles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          if (p.y < 0) p.y = cardCanvas.height;
+          if (p.x < 0) p.x = cardCanvas.width;
+          if (p.x > cardCanvas.width) p.x = 0;
+
+          cardCtx.beginPath();
+          cardCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          cardCtx.fillStyle = `rgba(0, 242, 254, ${p.alpha * (0.3 + pulseEnergy * 0.7)})`;
+          cardCtx.fill();
         });
 
-        // Atualiza Barra de Progresso
-        const progressPercent = ((targetIndex + 1) / totalSlides) * 100;
-        progressBar.style.width = `${progressPercent}%`;
+        // Desenha a árvore do centro inferior
+        const startX = cardCanvas.width / 2;
+        const startY = cardCanvas.height - 15;
+        const trunkLen = cardCanvas.height * 0.27;
+        const maxDepth = 6;
 
-        // Contador Numérico Formato 01 / 10
-        const currentPad = String(targetIndex + 1).padStart(2, '0');
-        const totalPad = String(totalSlides).padStart(2, '0');
-        slideCounter.textContent = `${currentPad} / ${totalPad}`;
+        drawCardBranch(startX, startY, trunkLen, 0, maxDepth, maxDepth);
+      }
+      requestAnimationFrame(animateCardTree);
+    }
+    requestAnimationFrame(animateCardTree);
 
-        // Mudança sutil das orbes para sensação de profundidade
-        const shiftX = (targetIndex * 35) - 100;
-        const shiftY = (targetIndex * -25) + 30;
-        if (orb1) orb1.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
-        if (orb2) orb2.style.transform = `translate(${-shiftX}px, ${-shiftY}px)`;
+    /* ========================================================
+       4. SIMULADOR PASSO A PASSO FIBONACCI (C CODE & STACK)
+       ======================================================== */
+    const fiboSteps = [
+      {
+        line: 12,
+        desc: "main() invoca fibonacci(3). O frame de fibonacci(3) é empilhado.",
+        tag: "Call fib(3)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3) [esperando]", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "Entrou na função", addr: "0x7fd0" }
+        ]
+      },
+      {
+        line: 3,
+        desc: "Testa Caso Elementar: (3 <= 1) é FALSO. Não entra no if.",
+        tag: "n=3 (false)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "3 <= 1 ? NÃO", addr: "0x7fd0" }
+        ]
+      },
+      {
+        line: 7,
+        desc: "Calcula 'a = fibonacci(3 - 1)'. Invoca fibonacci(2).",
+        tag: "Call fib(2)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "Entrou na função", addr: "0x7fb0" }
+        ]
+      },
+      {
+        line: 3,
+        desc: "fibonacci(2): Testa (2 <= 1) é FALSO. Prossegue.",
+        tag: "n=2 (false)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "2 <= 1 ? NÃO", addr: "0x7fb0" }
+        ]
+      },
+      {
+        line: 7,
+        desc: "fibonacci(2): Calcula 'a = fibonacci(2 - 1)'. Invoca fibonacci(1).",
+        tag: "Call fib(1)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "esperando a = fib(1)", addr: "0x7fb0" },
+          { name: "fibonacci(n=1)", detail: "Entrou na função", addr: "0x7f90" }
+        ]
+      },
+      {
+        line: 3,
+        desc: "fibonacci(1): Testa (1 <= 1) é VERDADEIRO! Atingiu o Caso Elementar.",
+        tag: "BASE n=1",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "esperando a = fib(1)", addr: "0x7fb0" },
+          { name: "fibonacci(n=1)", detail: "1 <= 1 ? SIM (Base)", addr: "0x7f90" }
+        ]
+      },
+      {
+        line: 4,
+        desc: "fibonacci(1) retorna 1 para fibonacci(2) e seu frame é DESEMPILHADO.",
+        tag: "Retorno: 1",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "recebeu a = 1", addr: "0x7fb0" }
+        ]
+      },
+      {
+        line: 8,
+        desc: "fibonacci(2): Agora calcula 'b = fibonacci(2 - 2)'. Invoca fibonacci(0).",
+        tag: "Call fib(0)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "a = 1 | esperando b = fib(0)", addr: "0x7fb0" },
+          { name: "fibonacci(n=0)", detail: "Entrou na função", addr: "0x7f90" }
+        ]
+      },
+      {
+        line: 4,
+        desc: "fibonacci(0): (0 <= 1) é VERDADEIRO. Retorna 0 e é DESEMPILHADO.",
+        tag: "Retorno: 0",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "esperando a = fib(2)", addr: "0x7fd0" },
+          { name: "fibonacci(n=2)", detail: "a = 1, b = 0", addr: "0x7fb0" }
+        ]
+      },
+      {
+        line: 9,
+        desc: "fibonacci(2): Soma a + b (1 + 0 = 1). Retorna 1 e é DESEMPILHADO.",
+        tag: "Retorno: 1",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "recebeu a = 1", addr: "0x7fd0" }
+        ]
+      },
+      {
+        line: 8,
+        desc: "fibonacci(3): Agora calcula o lado direito 'b = fibonacci(3 - 2)' -> fibonacci(1).",
+        tag: "Call fib(1)",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "a = 1 | esperando b = fib(1)", addr: "0x7fd0" },
+          { name: "fibonacci(n=1)", detail: "Caso Base direto (1 <= 1)", addr: "0x7fb0" }
+        ]
+      },
+      {
+        line: 4,
+        desc: "fibonacci(1) retorna 1 para fibonacci(3) e é DESEMPILHADO.",
+        tag: "Retorno: 1",
+        stack: [
+          { name: "main()", detail: "res = fibonacci(3)", addr: "0x7ffe" },
+          { name: "fibonacci(n=3)", detail: "a = 1, b = 1", addr: "0x7fd0" }
+        ]
+      },
+      {
+        line: 9,
+        desc: "fibonacci(3): Calcula a + b (1 + 1 = 2). Retorna 2 para main() e é DESEMPILHADO.",
+        tag: "Retorno: 2",
+        stack: [
+          { name: "main()", detail: "res = 2 (recebido com sucesso)", addr: "0x7ffe" }
+        ]
+      },
+      {
+        line: 13,
+        desc: "main(): res = 2. Execução concluída com sucesso! Pilha limpa.",
+        tag: "Fim: res = 2",
+        stack: [
+          { name: "main()", detail: "res = 2; return 0;", addr: "0x7ffe" }
+        ]
+      }
+    ];
 
-        currentIndex = targetIndex;
+    let currentFiboStep = -1;
 
-        setTimeout(() => {
-          isTransitioning = false;
-        }, transitionDuration);
+    function renderFiboStep(stepIndex) {
+      // Remove destaques de linha anteriores
+      document.querySelectorAll('.c-line').forEach(line => line.classList.remove('active-line'));
+      
+      const prevBtn = document.getElementById('btn-fibo-prev');
+      const nextBtn = document.getElementById('btn-fibo-next');
+      const statusLabel = document.getElementById('c-exec-status');
+      const descLabel = document.getElementById('step-description');
+      const tagLabel = document.getElementById('step-value-tag');
+      const stackContainer = document.getElementById('fibo-stack-display');
+      const depthBadge = document.getElementById('fibo-depth-badge');
+
+      if (stepIndex < 0) {
+        // Estado Inicial
+        statusLabel.textContent = `Passo: 0 / ${fiboSteps.length}`;
+        descLabel.innerHTML = 'Clique em <strong>"Próximo Passo"</strong> para rastrear a execução de fibonacci(3).';
+        tagLabel.textContent = 'Pronto';
+        tagLabel.style.color = 'var(--emerald-neon)';
+        prevBtn.disabled = true;
+        nextBtn.disabled = false;
+        depthBadge.textContent = 'Frames: 1';
+
+        stackContainer.innerHTML = `
+          <div class="fibo-frame top-frame">
+            <div>
+              <div style="font-weight:700; color:var(--cyan-neon);">main()</div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">Aguardando início...</div>
+            </div>
+            <div style="text-align:right;">
+              <span class="frame-badge">0x7ffe</span>
+            </div>
+          </div>
+        `;
+        return;
       }
 
-      function nextSlide() {
-        if (isTransitioning) return;
-        if (currentIndex < totalSlides - 1) {
-          updatePresentation(currentIndex + 1);
-        }
+      const step = fiboSteps[stepIndex];
+
+      // Atualiza botões
+      prevBtn.disabled = (stepIndex <= 0);
+      nextBtn.disabled = (stepIndex >= fiboSteps.length - 1);
+
+      // Destaca a linha do código C
+      const activeLineEl = document.getElementById(`cline-${step.line}`);
+      if (activeLineEl) {
+        activeLineEl.classList.add('active-line');
       }
 
-      function prevSlide() {
-        if (isTransitioning) return;
-        if (currentIndex > 0) {
-          updatePresentation(currentIndex - 1);
-        }
-      }
+      // Atualiza status e descrições
+      statusLabel.textContent = `Passo: ${stepIndex + 1} / ${fiboSteps.length}`;
+      descLabel.innerHTML = step.desc;
+      tagLabel.textContent = step.tag;
 
-      function createClickRipple(x, y) {
-        const ripple = document.createElement('div');
-        ripple.className = 'click-ripple';
-        const size = 120;
-        ripple.style.width = `${size}px`;
-        ripple.style.height = `${size}px`;
-        ripple.style.left = `${x - size / 2}px`;
-        ripple.style.top = `${y - size / 2}px`;
-        document.body.appendChild(ripple);
-
-        setTimeout(() => ripple.remove(), 600);
-      }
-
-      // Eventos de Teclado
-      window.addEventListener('keydown', (e) => {
-        switch (e.key) {
-          case 'ArrowRight':
-          case 'ArrowDown':
-          case ' ':
-          case 'PageDown':
-            e.preventDefault();
-            nextSlide();
-            break;
-          case 'ArrowLeft':
-          case 'ArrowUp':
-          case 'PageUp':
-            e.preventDefault();
-            prevSlide();
-            break;
-          case 'Home':
-            e.preventDefault();
-            updatePresentation(0);
-            break;
-          case 'End':
-            e.preventDefault();
-            updatePresentation(totalSlides - 1);
-            break;
-        }
+      // Atualiza visual da Call Stack
+      depthBadge.textContent = `Frames: ${step.stack.length}`;
+      stackContainer.innerHTML = '';
+      step.stack.forEach((frame, idx) => {
+        const isTop = (idx === step.stack.length - 1);
+        const frameEl = document.createElement('div');
+        frameEl.className = 'fibo-frame' + (isTop ? ' top-frame' : '');
+        frameEl.innerHTML = `
+          <div>
+            <div style="font-weight:700; color:${isTop ? 'var(--cyan-neon)' : 'var(--text-main)'};">${frame.name}</div>
+            <div style="font-size:0.72rem; color:var(--text-muted);">${frame.detail}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="frame-badge">${frame.addr}</span>
+          </div>
+        `;
+        stackContainer.appendChild(frameEl);
       });
+    }
 
-      // Navegação por Clique (Esquerda volta, Direita avança)
-      window.addEventListener('click', (e) => {
-        createClickRipple(e.clientX, e.clientY);
-        const screenWidth = window.innerWidth;
-        if (e.clientX < screenWidth * 0.35) {
-          prevSlide();
-        } else {
-          nextSlide();
-        }
-      });
+    function nextFiboStep() {
+      if (currentFiboStep < fiboSteps.length - 1) {
+        currentFiboStep++;
+        renderFiboStep(currentFiboStep);
+      }
+    }
 
-      // Fade out do hint de navegação
-      setTimeout(() => {
-        if (navHints) navHints.style.opacity = '0.2';
-      }, 5000);
+    function prevFiboStep() {
+      if (currentFiboStep > 0) {
+        currentFiboStep--;
+        renderFiboStep(currentFiboStep);
+      }
+    }
 
-      updatePresentation(0);
-    })();
+    function resetFiboSim() {
+      currentFiboStep = -1;
+      renderFiboStep(currentFiboStep);
+    }
+
+    /* ========================================================
+       5. INTERAÇÕES DO SLIDE 5 (Anatomia da Árvore)
+       ======================================================== */
+    function inspectAnatomyNode(nodeId, role, relation, parentName, childrenArr) {
+      document.querySelectorAll('#slide-5 .svg-node-group').forEach(el => el.classList.remove('active'));
+      const targetNode = document.getElementById(`node-${nodeId}`);
+      if (targetNode) targetNode.classList.add('active');
+
+      const badge = document.getElementById('anatomy-selected-badge');
+      const roleText = document.getElementById('anatomy-role');
+      const relationText = document.getElementById('anatomy-relation');
+
+      badge.textContent = `Nó ${nodeId} (${role.split(' ')[0]})`;
+      roleText.textContent = role;
+      
+      const childrenStr = childrenArr.length > 0 ? `[${childrenArr.join(', ')}]` : 'Nenhum (Folha)';
+      relationText.textContent = `Pai: ${parentName} | Filhos: ${childrenStr}`;
+    }
+
+    /* ========================================================
+       6. INTERAÇÕES DO SLIDE 6 (Grau & Níveis)
+       ======================================================== */
+    function inspectMetricsNode(value, level, degree, info) {
+      const valEl = document.getElementById('metrics-val');
+      const descEl = document.getElementById('metrics-desc');
+      const badge = document.getElementById('metrics-selected-badge');
+
+      valEl.textContent = value;
+      badge.textContent = `Nó ${value} • Nível ${level}`;
+      descEl.innerHTML = `<span class="code-accent">${info}</span> • Distância da raiz: <strong>${level} arestas</strong>.`;
+    }
   </script>
 </body>
 </html>
