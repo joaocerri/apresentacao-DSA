@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Árvores AVL & Recursão - Estruturas de Dados</title>
+  
+  <!-- Fontes de Alta Fidelidade -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================
+       DESIGN SYSTEM - OLED DARK MODE & GLASSMORPHISM
+       ========================================================== */
+    :root {
+      --bg-base: #04060B;
+      --bg-surface: rgba(13, 19, 33, 0.72);
+      --bg-surface-elevated: rgba(22, 33, 56, 0.75);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(99, 102, 241, 0.35);
+
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --text-faint: #475569;
+
+      --accent-primary: #6366F1;
+      --accent-secondary: #06B6D4;
+      --accent-emerald: #10B981;
+      --accent-rose: #F43F5E;
+      --accent-amber: #F59E0B;
+      --accent-violet: #8B5CF6;
+
+      --grad-primary: linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #EC4899 100%);
+      --grad-cyan: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);
+      --grad-emerald: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      --grad-amber: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+      --grad-rose: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+
+      --transition-slide: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      cursor: default;
+    }
+
+    /* Ambient Canvas */
+    .ambient-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .ambient-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(140px);
+      opacity: 0.22;
+      transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+      animation: floatOrb 25s infinite alternate ease-in-out;
+    }
+
+    .ambient-orb-1 {
+      width: 580px;
+      height: 580px;
+      background: radial-gradient(circle, #4F46E5 0%, transparent 70%);
+      top: -120px;
+      left: -120px;
+    }
+
+    .ambient-orb-2 {
+      width: 680px;
+      height: 680px;
+      background: radial-gradient(circle, #06B6D4 0%, transparent 70%);
+      bottom: -160px;
+      right: -120px;
+      animation-delay: -9s;
+    }
+
+    .ambient-orb-3 {
+      width: 480px;
+      height: 480px;
+      background: radial-gradient(circle, #8B5CF6 0%, transparent 70%);
+      top: 35%;
+      right: 20%;
+      animation-delay: -16s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, -45px) scale(1.08); }
+      100% { transform: translate(-50px, 40px) scale(0.94); }
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.7;
+    }
+
+    /* HUD Superior e Inferior (Minimalista, sem Header/Footer) */
+    .progress-track {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.04);
+      z-index: 100;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--grad-primary);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.8);
+      transition: width 0.7s var(--transition-slide);
+    }
+
+    .slide-counter {
+      position: fixed;
+      bottom: 24px;
+      right: 28px;
+      z-index: 100;
+      font-size: 0.85rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      background: rgba(13, 19, 33, 0.6);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+    }
+
+    .nav-hints {
+      position: fixed;
+      bottom: 24px;
+      left: 28px;
+      z-index: 100;
+      font-size: 0.75rem;
+      color: var(--text-faint);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .nav-hints kbd {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Container de Slides */
+    .presentation-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4vw 6vw;
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.96) translateY(30px);
+      filter: blur(12px);
+      transition: 
+        opacity 0.75s var(--transition-slide),
+        transform 0.75s var(--transition-slide),
+        filter 0.75s var(--transition-slide);
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: scale(1) translateY(0);
+      filter: blur(0);
+      z-index: 20;
+    }
+
+    .slide.past {
+      transform: scale(1.04) translateY(-35px);
+      opacity: 0;
+      filter: blur(14px);
+    }
+
+    .slide.future {
+      transform: scale(0.94) translateY(40px);
+      opacity: 0;
+      filter: blur(14px);
+    }
+
+    /* Animações Escalonadas nos Elementos */
+    .slide .anim-el {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slide.active .anim-el {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide.active .delay-1 { transition-delay: 0.10s; }
+    .slide.active .delay-2 { transition-delay: 0.20s; }
+    .slide.active .delay-3 { transition-delay: 0.30s; }
+    .slide.active .delay-4 { transition-delay: 0.42s; }
+    .slide.active .delay-5 { transition-delay: 0.54s; }
+
+    /* Tipografia e Badges */
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #A5B4FC;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+    }
+
+    .tag-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #818CF8;
+      box-shadow: 0 0 8px #818CF8;
+    }
+
+    h1.hero-title {
+      font-size: clamp(2.2rem, 5vw, 4.4rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.03em;
+      text-align: center;
+      max-width: 980px;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: var(--grad-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+    }
+
+    .subtitle {
+      font-size: clamp(1rem, 1.8vw, 1.35rem);
+      color: var(--text-muted);
+      line-height: 1.6;
+      text-align: center;
+      max-width: 760px;
+      font-weight: 400;
+    }
+
+    /* Grids e Cards Glassmorphism */
+    .bento-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      width: 100%;
+      max-width: 1050px;
+      margin-top: 32px;
+    }
+
+    .bento-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 1100px;
+      margin-top: 32px;
+    }
+
+    .bento-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      width: 100%;
+      max-width: 1150px;
+      margin-top: 30px;
+    }
+
+    .glass-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 26px 24px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .glass-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(255, 255, 255, 0.16);
+    }
+
+    .card-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card-icon.purple { background: rgba(99, 102, 241, 0.15); color: #A5B4FC; }
+    .card-icon.cyan { background: rgba(6, 182, 212, 0.15); color: #67E8F9; }
+    .card-icon.emerald { background: rgba(16, 185, 129, 0.15); color: #6EE7B7; }
+    .card-icon.amber { background: rgba(245, 158, 11, 0.15); color: #FCD34D; }
+    .card-icon.rose { background: rgba(244, 63, 94, 0.15); color: #FDA4AF; }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-main);
+      letter-spacing: -0.01em;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Terminal de Código */
+    .code-terminal {
+      background: #080C15;
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 880px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+      margin-top: 28px;
+      text-align: left;
+    }
+
+    .terminal-header {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background: #EF4444; }
+    .dot-yellow { background: #F59E0B; }
+    .dot-green { background: #10B981; }
+
+    .terminal-title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--text-faint);
+      margin-left: 10px;
+    }
+
+    .terminal-body {
+      padding: 20px 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      line-height: 1.65;
+      color: #E2E8F0;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .token-kw { color: #F43F5E; font-weight: 600; }
+    .token-fn { color: #60A5FA; }
+    .token-type { color: #FBBF24; }
+    .token-num { color: #A78BFA; }
+    .token-str { color: #34D399; }
+    .token-cm { color: #64748B; font-style: italic; }
+
+    /* Fórmula do Fator de Balanceamento */
+    .formula-box {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1px dashed rgba(99, 102, 241, 0.35);
+      border-radius: 14px;
+      padding: 18px 28px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.25rem;
+      color: #C7D2FE;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    /* SVG de Árvore Interativo e Ilustrativo */
+    .tree-diagram {
+      width: 100%;
+      max-width: 540px;
+      height: auto;
+      margin-top: 18px;
+    }
+
+    /* Efeito de Ondulação de Clique */
+    .click-ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, transparent 70%);
+      pointer-events: none;
+      transform: scale(0);
+      animation: rippleAnim 0.6s ease-out forwards;
+      z-index: 999;
+    }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .bento-grid-2, .bento-grid-3, .bento-grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .slide {
+        padding: 8vw 5vw;
+      }
+      .terminal-body {
+        font-size: 0.78rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Efeito Dinâmico de Fundo -->
+  <div class="ambient-canvas">
+    <div class="ambient-orb ambient-orb-1" id="orb1"></div>
+    <div class="ambient-orb ambient-orb-2" id="orb2"></div>
+    <div class="ambient-orb ambient-orb-3" id="orb3"></div>
+  </div>
+  <div class="bg-grid"></div>
+
+  <!-- HUD Minimalista -->
+  <div class="progress-track">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="slide-counter" id="slideCounter">01 / 10</div>
+  <div class="nav-hints" id="navHints">
+    <span>Navegar: <kbd>→</kbd> <kbd>←</kbd> ou clique</span>
+  </div>
+
+  <!-- Container Principal dos Slides -->
+  <main class="presentation-container" id="presentation">
+
+    <!-- SLIDE 1: Capa -->
+    <section class="slide active" data-slide="1">
+      <div class="tag-badge anim-el delay-1">Estruturas de Dados Avançadas</div>
+      <h1 class="hero-title anim-el delay-2">
+        Recursão &amp; <br><span class="gradient-text">Árvores Binárias Balanceadas (AVL)</span>
+      </h1>
+      <p class="subtitle anim-el delay-3">
+        Uma visão aprofundada sobre recursão em árvores, balanceamento dinâmico, rotações, travessias e remoção eficiente em tempo O(log n).
+      </p>
+    </section>
+
+    <!-- SLIDE 2: O Poder da Recursão em Árvores -->
+    <section class="slide" data-slide="2">
+      <div class="tag-badge anim-el delay-1">Conceito Base</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: 12px;">
+        A Essência Recursiva de uma Árvore
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Uma árvore é uma estrutura inerentemente recursiva: cada nó é a raiz de duas subárvores.
+      </p>
+
+      <div class="bento-grid-2">
+        <div class="glass-card anim-el delay-3">
+          <div class="card-icon purple">🎯</div>
+          <h2 class="card-title">Caso Base (Condição de Parada)</h2>
+          <p class="card-desc">
+            Se o nó atual é nulo (<code style="color:#A5B4FC;">node == null</code>), a recursão atinge o fundo e inicia o desempilhamento retornando 0 ou um nó sentinela.
+          </p>
+        </div>
+
+        <div class="glass-card anim-el delay-4">
+          <div class="card-icon cyan">🔄</div>
+          <h2 class="card-title">Passo Recursivo (Dividir e Conquistar)</h2>
+          <p class="card-desc">
+            O problema na raiz se reduz a resolver o mesmo problema na subárvore esquerda e na subárvore direita, combinando os resultados no retorno da pilha de execução.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3: O Problema da BST Comum e a Origem da AVL -->
+    <section class="slide" data-slide="3">
+      <div class="tag-badge anim-el delay-1">Por que Balancear?</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: 10px;">
+        O Problema da Degeneração em BST
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Em uma BST tradicional, inserções ordenadas degradam a busca para <span style="color:#F43F5E; font-weight:700;">O(n)</span>. A AVL garante <span style="color:#10B981; font-weight:700;">O(log n)</span>.
+      </p>
+
+      <div class="bento-grid-3">
+        <div class="glass-card anim-el delay-3">
+          <div class="card-icon rose">📉</div>
+          <h2 class="card-title">Degeneração em Lista</h2>
+          <p class="card-desc">Inserir [1, 2, 3, 4, 5] cria uma linha reta com altura n. Buscar custa tempo linear.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-4">
+          <div class="card-icon emerald">⚖️</div>
+          <h2 class="card-title">A Solução AVL (1962)</h2>
+          <p class="card-desc">Criada por Adelson-Velsky e Landis. Uma BST auto-balanceada pela diferença máxima de 1 entre alturas das subárvores.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-5">
+          <div class="card-icon cyan">⚡</div>
+          <h2 class="card-title">Garantia Rigorosa</h2>
+          <p class="card-desc">Mesmo no pior caso de inserção ou remoção, operações de busca, inclusão e exclusão rodam em estrito <strong>O(log n)</strong>.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4: Cálculo de Altura e Fator de Balanceamento (FB) -->
+    <section class="slide" data-slide="4">
+      <div class="tag-badge anim-el delay-1">Métricas da Árvore</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: 8px;">
+        Altura &amp; Fator de Balanceamento (FB)
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Toda decisão na AVL deriva do cálculo da altura dos filhos e do fator de balanceamento resultante.
+      </p>
+
+      <div class="formula-box anim-el delay-3">
+        FB(nó) = Altura(Subárvore Esquerda) - Altura(Subárvore Direita)
+      </div>
+
+      <div class="bento-grid-3">
+        <div class="glass-card anim-el delay-3">
+          <div class="card-icon emerald">✓</div>
+          <h2 class="card-title">Nó Balanceado</h2>
+          <p class="card-desc">O nó é balanceado se <strong>FB &isin; {-1, 0, +1}</strong>. Nenhuma rotação é necessária.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-4">
+          <div class="card-icon rose">⚠️</div>
+          <h2 class="card-title">Desbalanceado à Esquerda</h2>
+          <p class="card-desc">Se <strong>FB &gt; +1</strong> (+2), o peso está no ramo esquerdo. Exige rotação à direita (simples ou dupla).</p>
+        </div>
+
+        <div class="glass-card anim-el delay-5">
+          <div class="card-icon amber">⚠️</div>
+          <h2 class="card-title">Desbalanceado à Direita</h2>
+          <p class="card-desc">Se <strong>FB &lt; -1</strong> (-2), o peso está no ramo direito. Exige rotação à esquerda (simples ou dupla).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5: O Método de Identificar o Tipo de Rotação -->
+    <section class="slide" data-slide="5">
+      <div class="tag-badge anim-el delay-1">Lógica de Decisão</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 8px;">
+        Retornando o Tipo de Rotação
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        A rotação adequada é determinada pelo sinal do FB do nó atual combinado com o sinal do FB de seu filho.
+      </p>
+
+      <div class="bento-grid-4">
+        <div class="glass-card anim-el delay-2">
+          <div class="card-icon purple">⟳</div>
+          <h2 class="card-title" style="font-size:1.05rem;">Direita Simples (LL)</h2>
+          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#A5B4FC;">FB(nó) &gt; 1 &amp;&amp; FB(esq) &ge; 0</code><br>Inserção no ramo esquerdo do filho esquerdo.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-3">
+          <div class="card-icon cyan">⟲</div>
+          <h2 class="card-title" style="font-size:1.05rem;">Esquerda Simples (RR)</h2>
+          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#67E8F9;">FB(nó) &lt; -1 &amp;&amp; FB(dir) &le; 0</code><br>Inserção no ramo direito do filho direito.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-4">
+          <div class="card-icon amber">⤹⤸</div>
+          <h2 class="card-title" style="font-size:1.05rem;">Dupla Direita (LR)</h2>
+          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#FCD34D;">FB(nó) &gt; 1 &amp;&amp; FB(esq) &lt; 0</code><br>Rotaciona o filho à esquerda, depois o pai à direita.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-5">
+          <div class="card-icon rose">⤸⤹</div>
+          <h2 class="card-title" style="font-size:1.05rem;">Dupla Esquerda (RL)</h2>
+          <p class="card-desc" style="font-size:0.85rem;"><code style="color:#FDA4AF;">FB(nó) &lt; -1 &amp;&amp; FB(dir) &gt; 0</code><br>Rotaciona o filho à direita, depois o pai à esquerda.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6: Código - Rotações Simples -->
+    <section class="slide" data-slide="6">
+      <div class="tag-badge anim-el delay-1">Implementação</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 6px;">
+        Rotações Básicas em Tempo O(1)
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Reorganização estrita de ponteiros e atualização de alturas locais.
+      </p>
+
+      <div class="code-terminal anim-el delay-4">
+        <div class="terminal-header">
+          <div class="terminal-dot dot-red"></div>
+          <div class="terminal-dot dot-yellow"></div>
+          <div class="terminal-dot dot-green"></div>
+          <span class="terminal-title">avl_rotations.ts</span>
+        </div>
+        <div class="terminal-body">
+<span class="token-cm">// Rotação Simples à Direita (Right Rotation)</span>
+<span class="token-kw">function</span> <span class="token-fn">rotateRight</span>(y: <span class="token-type">Node</span>): <span class="token-type">Node</span> {
+  <span class="token-kw">const</span> x = y.left!;
+  <span class="token-kw">const</span> T2 = x.right;
+
+  x.right = y;   <span class="token-cm">// y desce e vira filho direito de x</span>
+  y.left = T2;   <span class="token-cm">// subárvore T2 é adotada como filha esquerda de y</span>
+
+  y.height = Math.<span class="token-fn">max</span>(height(y.left), height(y.right)) + <span class="token-num">1</span>;
+  x.height = Math.<span class="token-fn">max</span>(height(x.left), height(x.right)) + <span class="token-num">1</span>;
+
+  <span class="token-kw">return</span> x;      <span class="token-cm">// x é a nova raiz da subárvore</span>
+}
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7: Inserção Recursiva com Auto-Balanceamento -->
+    <section class="slide" data-slide="7">
+      <div class="tag-badge anim-el delay-1">Inserção</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 6px;">
+        Método de Inserção Recursiva
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Desce até as folhas via recursão, insere o nó e rebalanceia na volta do desempilhamento.
+      </p>
+
+      <div class="code-terminal anim-el delay-4">
+        <div class="terminal-header">
+          <div class="terminal-dot dot-red"></div>
+          <div class="terminal-dot dot-yellow"></div>
+          <div class="terminal-dot dot-green"></div>
+          <span class="terminal-title">avl_insert.ts</span>
+        </div>
+        <div class="terminal-body">
+<span class="token-kw">function</span> <span class="token-fn">insert</span>(node: <span class="token-type">Node | null</span>, key: <span class="token-type">number</span>): <span class="token-type">Node</span> {
+  <span class="token-cm">// 1. Passo Recursivo de Inserção BST tradicional</span>
+  <span class="token-kw">if</span> (!node) <span class="token-kw">return</span> <span class="token-kw">new</span> <span class="token-type">Node</span>(key);
+  <span class="token-kw">if</span> (key &lt; node.key) node.left = <span class="token-fn">insert</span>(node.left, key);
+  <span class="token-kw">else if</span> (key &gt; node.key) node.right = <span class="token-fn">insert</span>(node.right, key);
+  <span class="token-kw">else return</span> node; <span class="token-cm">// Chaves duplicadas não permitidas</span>
+
+  <span class="token-cm">// 2. Atualiza a altura do ancestral</span>
+  node.height = <span class="token-num">1</span> + Math.<span class="token-fn">max</span>(height(node.left), height(node.right));
+
+  <span class="token-cm">// 3. Obtém o Fator de Balanceamento e aplica a rotação necessária</span>
+  <span class="token-kw">const</span> balance = <span class="token-fn">getBalance</span>(node);
+
+  <span class="token-kw">if</span> (balance &gt; <span class="token-num">1</span> &amp;&amp; key &lt; node.left!.key) <span class="token-kw">return</span> <span class="token-fn">rotateRight</span>(node);           <span class="token-cm">// LL</span>
+  <span class="token-kw">if</span> (balance &lt; -<span class="token-num">1</span> &amp;&amp; key &gt; node.right!.key) <span class="token-kw">return</span> <span class="token-fn">rotateLeft</span>(node);           <span class="token-cm">// RR</span>
+  <span class="token-kw">if</span> (balance &gt; <span class="token-num">1</span> &amp;&amp; key &gt; node.left!.key) { node.left = <span class="token-fn">rotateLeft</span>(node.left!); <span class="token-kw">return</span> <span class="token-fn">rotateRight</span>(node); } <span class="token-cm">// LR</span>
+  <span class="token-kw">if</span> (balance &lt; -<span class="token-num">1</span> &amp;&amp; key &lt; node.right!.key) { node.right = <span class="token-fn">rotateRight</span>(node.right!); <span class="token-kw">return</span> <span class="token-fn">rotateLeft</span>(node); } <span class="token-cm">// RL</span>
+
+  <span class="token-kw">return</span> node;
+}
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8: Percursos / Travessias (In, Pré e Pós-Ordem) -->
+    <section class="slide" data-slide="8">
+      <div class="tag-badge anim-el delay-1">Travessias Recursivas</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2rem, 3.6vw, 3.2rem); margin-bottom: 8px;">
+        Impressão: In-Ordem, Pré-Ordem &amp; Pós-Ordem
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Três formas elegantes de percorrer todos os nós através de recursão com O(n).
+      </p>
+
+      <div class="bento-grid-3">
+        <div class="glass-card anim-el delay-3">
+          <div class="card-icon cyan">📊</div>
+          <h2 class="card-title">In-Ordem (Em Ordem)</h2>
+          <p class="card-desc">
+            <strong>Esq &rarr; Raiz &rarr; Dir</strong><br><br>
+            Imprime todos os elementos em <em>ordem crescente estrita</em>. Essencial para validação e ordenação.
+          </p>
+        </div>
+
+        <div class="glass-card anim-el delay-4">
+          <div class="card-icon purple">🌳</div>
+          <h2 class="card-title">Pré-Ordem</h2>
+          <p class="card-desc">
+            <strong>Raiz &rarr; Esq &rarr; Dir</strong><br><br>
+            Visita o pai antes dos filhos. Ideal para serializar/clonar a árvore preservando sua estrutura original.
+          </p>
+        </div>
+
+        <div class="glass-card anim-el delay-5">
+          <div class="card-icon emerald">📦</div>
+          <h2 class="card-title">Pós-Ordem</h2>
+          <p class="card-desc">
+            <strong>Esq &rarr; Dir &rarr; Raiz</strong><br><br>
+            Processa os filhos antes do pai. Padrão obrigatório para <em>liberação de memória (delete)</em> e cálculo bottom-up.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 9: Remoção de Nó na AVL -->
+    <section class="slide" data-slide="9">
+      <div class="tag-badge anim-el delay-1">Remoção</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(1.9rem, 3.4vw, 3rem); margin-bottom: 8px;">
+        Remoção de Nós em Árvore AVL
+      </h1>
+      <p class="subtitle anim-el delay-3" style="font-size: 1.05rem;">
+        Combina a exclusão padrão de BST com rebalanceamento propagado até a raiz.
+      </p>
+
+      <div class="bento-grid-3">
+        <div class="glass-card anim-el delay-3">
+          <div class="card-icon purple">1</div>
+          <h2 class="card-title">Nó Folha / 1 Filho</h2>
+          <p class="card-desc">Se não tem filhos, simplesmente remove. Se tem 1 único filho, substitui o nó por esse filho direto.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-4">
+          <div class="card-icon amber">2</div>
+          <h2 class="card-title">Nó com 2 Filhos</h2>
+          <p class="card-desc">Localiza o <strong>sucessor in-order</strong> (menor valor da subárvore direita), copia seu valor e remove o sucessor recursivamente.</p>
+        </div>
+
+        <div class="glass-card anim-el delay-5">
+          <div class="card-icon emerald">3</div>
+          <h2 class="card-title">Rebalanceamento</h2>
+          <p class="card-desc">Ao desempilhar as chamadas recursivas, recalcula alturas e aplica rotações em todos os ancestrais afetados.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 10: Resumo e Comparativo Final -->
+    <section class="slide" data-slide="10">
+      <div class="tag-badge anim-el delay-1">Síntese</div>
+      <h1 class="hero-title anim-el delay-2" style="font-size: clamp(2.1rem, 3.8vw, 3.5rem);">
+        Resumo Geral da <span class="gradient-text">Árvore AVL</span>
+      </h1>
+      <p class="subtitle anim-el delay-3" style="margin-bottom: 30px;">
+        A harmonia perfeita entre algoritmos recursivos elegantes e garantias matemáticas estritas de desempenho.
+      </p>
+
+      <div class="bento-grid-3" style="margin-top:0;">
+        <div class="glass-card anim-el delay-3" style="text-align:center;">
+          <div class="card-title" style="font-size:2.2rem; color:#60A5FA; margin-bottom:4px;">O(log n)</div>
+          <p class="card-desc">Busca, Inserção e Remoção</p>
+        </div>
+        <div class="glass-card anim-el delay-4" style="text-align:center;">
+          <div class="card-title" style="font-size:2.2rem; color:#34D399; margin-bottom:4px;">{-1, 0, +1}</div>
+          <p class="card-desc">Fator de Balanceamento Estrito</p>
+        </div>
+        <div class="glass-card anim-el delay-5" style="text-align:center;">
+          <div class="card-title" style="font-size:2.2rem; color:#A78BFA; margin-bottom:4px;">O(1)</div>
+          <p class="card-desc">Custo por Rotação Local</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================
+       LÓGICA JAVASCRIPT INLINE
+       Navegação por clique e teclado, transições fluidas e progresso
+       ========================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      const slides = document.querySelectorAll('.slide');
+      const progressBar = document.getElementById('progressBar');
+      const slideCounter = document.getElementById('slideCounter');
+      const navHints = document.getElementById('navHints');
+      const orb1 = document.getElementById('orb1');
+      const orb2 = document.getElementById('orb2');
+
+      const totalSlides = slides.length;
+      let currentIndex = 0;
+      let isTransitioning = false;
+      const transitionDuration = 700;
+
+      function updatePresentation(targetIndex) {
+        if (targetIndex < 0 || targetIndex >= totalSlides) return;
+        if (targetIndex === currentIndex && slides[currentIndex].classList.contains('active')) return;
+
+        isTransitioning = true;
+
+        slides.forEach((slide, index) => {
+          slide.classList.remove('active', 'past', 'future');
+          if (index === targetIndex) {
+            slide.classList.add('active');
+          } else if (index < targetIndex) {
+            slide.classList.add('past');
+          } else {
+            slide.classList.add('future');
+          }
+        });
+
+        // Atualiza Barra de Progresso
+        const progressPercent = ((targetIndex + 1) / totalSlides) * 100;
+        progressBar.style.width = `${progressPercent}%`;
+
+        // Contador Numérico Formato 01 / 10
+        const currentPad = String(targetIndex + 1).padStart(2, '0');
+        const totalPad = String(totalSlides).padStart(2, '0');
+        slideCounter.textContent = `${currentPad} / ${totalPad}`;
+
+        // Mudança sutil das orbes para sensação de profundidade
+        const shiftX = (targetIndex * 35) - 100;
+        const shiftY = (targetIndex * -25) + 30;
+        if (orb1) orb1.style.transform = `translate(${shiftX}px, ${shiftY}px)`;
+        if (orb2) orb2.style.transform = `translate(${-shiftX}px, ${-shiftY}px)`;
+
+        currentIndex = targetIndex;
+
+        setTimeout(() => {
+          isTransitioning = false;
+        }, transitionDuration);
+      }
+
+      function nextSlide() {
+        if (isTransitioning) return;
+        if (currentIndex < totalSlides - 1) {
+          updatePresentation(currentIndex + 1);
+        }
+      }
+
+      function prevSlide() {
+        if (isTransitioning) return;
+        if (currentIndex > 0) {
+          updatePresentation(currentIndex - 1);
+        }
+      }
+
+      function createClickRipple(x, y) {
+        const ripple = document.createElement('div');
+        ripple.className = 'click-ripple';
+        const size = 120;
+        ripple.style.width = `${size}px`;
+        ripple.style.height = `${size}px`;
+        ripple.style.left = `${x - size / 2}px`;
+        ripple.style.top = `${y - size / 2}px`;
+        document.body.appendChild(ripple);
+
+        setTimeout(() => ripple.remove(), 600);
+      }
+
+      // Eventos de Teclado
+      window.addEventListener('keydown', (e) => {
+        switch (e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+          case ' ':
+          case 'PageDown':
+            e.preventDefault();
+            nextSlide();
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+          case 'PageUp':
+            e.preventDefault();
+            prevSlide();
+            break;
+          case 'Home':
+            e.preventDefault();
+            updatePresentation(0);
+            break;
+          case 'End':
+            e.preventDefault();
+            updatePresentation(totalSlides - 1);
+            break;
+        }
+      });
+
+      // Navegação por Clique (Esquerda volta, Direita avança)
+      window.addEventListener('click', (e) => {
+        createClickRipple(e.clientX, e.clientY);
+        const screenWidth = window.innerWidth;
+        if (e.clientX < screenWidth * 0.35) {
+          prevSlide();
+        } else {
+          nextSlide();
+        }
+      });
+
+      // Fade out do hint de navegação
+      setTimeout(() => {
+        if (navHints) navHints.style.opacity = '0.2';
+      }, 5000);
+
+      updatePresentation(0);
+    })();
+  </script>
+</body>
+</html>
