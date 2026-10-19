@@ -271,6 +271,9 @@
       transition: all 0.4s ease;
       filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.4));
       cursor: pointer;
+      /* Garante que qualquer scale cresça a partir do próprio centro do círculo */
+      transform-box: fill-box;
+      transform-origin: center;
     }
 
     .tree-node-circle:hover {
@@ -826,6 +829,9 @@
       stroke-width: 2.2;
       transition: all 0.3s ease;
       filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.35));
+      /* Garante que qualquer scale cresça a partir do próprio centro do círculo */
+      transform-box: fill-box;
+      transform-origin: center;
     }
 
     .svg-node-group:hover .svg-node-circle,
@@ -833,6 +839,7 @@
       fill: var(--cyan-neon);
       stroke: #ffffff;
       transform: scale(1.08);
+      transform-box: fill-box;
       transform-origin: center;
     }
 
@@ -852,11 +859,12 @@
       fill: #040812;
     }
 
-    /* Nó sendo visitado durante o percurso (Slide 8) */
+    /* Nó sendo visitado durante o percurso (Slide 9) */
     .svg-node-group.visiting .svg-node-circle {
       fill: var(--cyan-neon);
       stroke: #ffffff;
       transform: scale(1.12);
+      transform-box: fill-box;
       transform-origin: center;
       filter: drop-shadow(0 0 14px rgba(0, 242, 254, 0.7));
     }
@@ -868,6 +876,67 @@
     /* Nó já visitado (permanece aceso em tom suave) */
     .svg-node-group.visited .svg-node-circle {
       fill: rgba(0, 242, 254, 0.18);
+    }
+
+    /* Call Stack compacta do Slide 9 (percursos) */
+    .trav-callstack-wrap {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+
+    .trav-callstack-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .trav-callstack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 30px;
+      align-items: center;
+    }
+
+    .trav-stack-empty {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .trav-frame {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 6px;
+      background: rgba(79, 172, 254, 0.1);
+      border: 1px solid rgba(79, 172, 254, 0.25);
+      color: var(--blue-electric);
+      white-space: nowrap;
+      animation: framePush 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .trav-frame.top {
+      background: rgba(0, 242, 254, 0.18);
+      border-color: var(--cyan-neon);
+      color: var(--cyan-neon);
+      box-shadow: 0 0 10px rgba(0, 242, 254, 0.25);
+    }
+
+    .trav-frame.null-frame {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.35);
+      color: #f87171;
     }
 
     .svg-tree-edge {
@@ -1196,7 +1265,7 @@
             </div>
             <h2 class="slide-title-modern">Simulação: <span class="gradient-text">Fibonacci na Call Stack</span></h2>
           </div>
-          <div class="slide-subtitle-tag">C Code & Memória em Tempo Real</div>
+          <div class="slide-subtitle-tag">Código & Memória em Tempo Real</div>
         </div>
 
         <!-- Grid 2 Colunas: Código em C vs Call Stack -->
@@ -1478,32 +1547,32 @@
                 <line x1="270" y1="110" x2="270" y2="185" class="svg-tree-edge" />
 
                 <!-- Nodes com Métricas -->
-                <g class="svg-node-group" onclick="inspectMetricsNode('50', 0, 2, 'Grau 2 (2 filhos: 30 e 70)')">
+                <g class="svg-node-group" onclick="inspectMetricsNode(event, '50', 0, 2, 'Grau 2 (2 filhos: 30 e 70)')">
                   <circle cx="190" cy="40" r="18" class="svg-node-circle"></circle>
                   <text x="190" y="40" class="svg-node-text">50</text>
                 </g>
 
-                <g class="svg-node-group" onclick="inspectMetricsNode('30', 1, 2, 'Grau 2 (2 filhos: 20 e 40)')">
+                <g class="svg-node-group" onclick="inspectMetricsNode(event, '30', 1, 2, 'Grau 2 (2 filhos: 20 e 40)')">
                   <circle cx="110" cy="110" r="16" class="svg-node-circle"></circle>
                   <text x="110" y="110" class="svg-node-text">30</text>
                 </g>
 
-                <g class="svg-node-group" onclick="inspectMetricsNode('70', 1, 1, 'Grau 1 (1 filho: 85)')">
+                <g class="svg-node-group" onclick="inspectMetricsNode(event, '70', 1, 1, 'Grau 1 (1 filho: 85)')">
                   <circle cx="270" cy="110" r="16" class="svg-node-circle"></circle>
                   <text x="270" y="110" class="svg-node-text">70</text>
                 </g>
 
-                <g class="svg-node-group" onclick="inspectMetricsNode('20', 2, 0, 'Grau 0 (Nó Folha)')">
+                <g class="svg-node-group" onclick="inspectMetricsNode(event, '20', 2, 0, 'Grau 0 (Nó Folha)')">
                   <circle cx="70" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
                   <text x="70" y="185" class="svg-node-text">20</text>
                 </g>
 
-                <g class="svg-node-group" onclick="inspectMetricsNode('40', 2, 0, 'Grau 0 (Nó Folha)')">
+                <g class="svg-node-group" onclick="inspectMetricsNode(event, '40', 2, 0, 'Grau 0 (Nó Folha)')">
                   <circle cx="150" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
                   <text x="150" y="185" class="svg-node-text">40</text>
                 </g>
 
-                <g class="svg-node-group" onclick="inspectMetricsNode('85', 2, 0, 'Grau 0 (Nó Folha)')">
+                <g class="svg-node-group" onclick="inspectMetricsNode(event, '85', 2, 0, 'Grau 0 (Nó Folha)')">
                   <circle cx="270" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
                   <text x="270" y="185" class="svg-node-text">85</text>
                 </g>
@@ -1522,8 +1591,162 @@
       </div>
     </section>
 
-    <!-- SLIDE 7: ÁRVORE BINÁRIA DE BUSCA (BST) — PROPRIEDADE DE ORDENAÇÃO -->
+    <!-- SLIDE 7: ÁRVORE BINÁRIA (Definição & Estrutura em C) -->
     <section class="slide" id="slide-7">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="6" cy="19" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"></path>
+              </svg>
+              Estruturas Hierárquicas • Árvore Binária
+            </div>
+            <h2 class="slide-title-modern">A <span class="gradient-text">Árvore Binária</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Definição & Estrutura em C</div>
+        </div>
+
+        <!-- 2 Colunas: Conceito vs Struct em C -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Definição com Badges -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="5" cy="19" r="3"></circle>
+                <circle cx="19" cy="19" r="3"></circle>
+                <path d="M12 8v3m-1.5 2.5L7 17m10 0l-3.5-3.5"></path>
+              </svg>
+              Definição
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Máx. 2 Filhos</span>
+              Cada nó possui <strong>no máximo dois filhos</strong>: um à esquerda e um à direita.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge purple">Filho Esquerdo &amp; Direito</span>
+              Os filhos são ordenados: a posição <strong>esquerda</strong> é distinta da <strong>direita</strong>.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge emerald">Subárvores Independentes</span>
+              Cada filho é a raiz de uma <strong>subárvore binária</strong> própria.
+            </div>
+          </div>
+
+          <!-- Coluna 2: Estrutura em C -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots">
+                <div class="code-dot" style="background:#ef4444;"></div>
+                <div class="code-dot" style="background:#f59e0b;"></div>
+                <div class="code-dot" style="background:#10b981;"></div>
+              </div>
+              <span>node.c</span>
+              <span style="color:var(--text-dim);">struct</span>
+            </div>
+
+            <div class="c-code-lines" style="padding:22px 0;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="kw">typedef</span> <span class="kw">struct</span> <span class="fn">node</span> {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">int</span> val;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="kw">struct</span> <span class="fn">node</span> <span class="op">*</span>left;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="kw">struct</span> <span class="fn">node</span> <span class="op">*</span>right;</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">} <span class="fn">node</span>;</span></div>
+            </div>
+
+            <!-- Legenda dos campos -->
+            <div class="fibo-state-banner" style="margin:0 14px 16px;">
+              <span><span class="code-accent">val</span>: valor do nó</span>
+              <span><span class="code-accent">left</span> / <span class="code-accent">right</span>: ponteiros p/ os filhos</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 8: LÓGICA DA ÁRVORE BINÁRIA DE BUSCA -->
+    <section class="slide" id="slide-8">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="6" cy="19" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"></path>
+              </svg>
+              Árvore Binária de Busca • Lógica
+            </div>
+            <h2 class="slide-title-modern">A Lógica da <span class="gradient-text">Árvore Binária</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Propriedade & Recursividade</div>
+        </div>
+
+        <!-- 2 Cards: Regras da Estrutura vs Propriedade Recursiva -->
+        <div class="clean-two-cols">
+
+          <!-- Card 1: Regras Fundamentais -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              Regras da Estrutura
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge red">Sem Repetição</span>
+              <strong>Não permite chaves repetidas</strong> — cada valor é único na árvore.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge amber">Ordem de Inserção</span>
+              A estrutura depende da <strong>ordem em que os nós são inseridos</strong>.
+            </div>
+          </div>
+
+          <!-- Card 2: Propriedade Recursiva -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12v-3a3 3 0 0 1 3-3h13m0 0l-4-4m4 4l-4 4M20 12v3a3 3 0 0 1-3 3H4m0 0l4 4m-4-4l4-4"></path>
+              </svg>
+              Propriedade Recursiva
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Propriedade por Nó</span>
+              A regra de ordenação vale para <strong>todo nó</strong> da árvore, sem exceção.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge purple">Recursividade</span>
+              Toda sub-árvore <strong>também é</strong> uma árvore binária de busca.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 9: ÁRVORE BINÁRIA DE BUSCA (BST) — PROPRIEDADE DE ORDENAÇÃO -->
+    <section class="slide" id="slide-9">
       <div class="slide-content-clean">
 
         <!-- Header Minimalista -->
@@ -1650,8 +1873,8 @@
       </div>
     </section>
 
-    <!-- SLIDE 8: PERCURSOS EM ÁRVORE BINÁRIA (Pré / Em / Pós-ordem) -->
-    <section class="slide" id="slide-8">
+    <!-- SLIDE 10: PERCURSOS EM ÁRVORE BINÁRIA (Pré / Em / Pós-ordem) -->
+    <section class="slide" id="slide-10">
       <div class="slide-content-clean">
 
         <!-- Header Minimalista -->
@@ -1668,19 +1891,60 @@
           <div class="slide-subtitle-tag">Simulação passo a passo</div>
         </div>
 
-        <!-- 2 Colunas: Diagrama animado vs Painel de Simulação -->
-        <div class="clean-two-cols">
+        <!-- Grid: Código C (esq) + Árvore & Controles (dir) -->
+        <div class="fibo-sim-grid">
 
-          <!-- Coluna 1: Diagrama SVG com nó visitado destacado -->
-          <div class="tree-diagram-container interactive-element">
-            <div class="tree-diagram-header">
-              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
-                Visitação dos Nós
-              </span>
+          <!-- Coluna 1: Código em C com linha ativa -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots">
+                <div class="code-dot" style="background:#ef4444;"></div>
+                <div class="code-dot" style="background:#f59e0b;"></div>
+                <div class="code-dot" style="background:#10b981;"></div>
+              </div>
+              <span>print_tree.c</span>
+              <span id="trav-exec-status" style="color:var(--cyan-neon);">Passo: 0 / 7</span>
+            </div>
+
+            <!-- Linhas de código renderizadas dinamicamente pelo JS (sempre a partir da linha 1) -->
+            <div class="c-code-lines" id="trav-code-lines"></div>
+
+            <!-- Banner com descrição do passo -->
+            <div class="fibo-state-banner" style="margin: 14px 14px 5px;">
+              <span id="traverse-step-desc">Selecione um percurso e clique em <strong>"Próximo Passo"</strong>.</span>
+              <span id="traverse-step-tag" style="color:var(--emerald-neon); font-weight:700;">Pronto</span>
+            </div>
+
+            <!-- Call Stack compacta (frames de chamadas recursivas) -->
+            <div class="trav-callstack-wrap" style="margin:30px 14px 16px;">
+              <div class="trav-callstack-label">
+                <span>Call Stack</span>
+                <span class="frame-badge" id="trav-depth-badge">Frames: 0</span>
+              </div>
+              <div class="trav-callstack" id="trav-callstack">
+                <span class="trav-stack-empty">pilha vazia</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Árvore visual + seletor + controles -->
+          <div class="fibo-stack-box interactive-element">
+            <div class="fibo-stack-header">
+              <div style="font-weight:700; font-size:0.92rem; font-family:var(--font-mono); color:var(--text-main);">
+                Visitação na Árvore
+              </div>
               <span class="frame-badge" id="traverse-mode-badge">Pré-ordem</span>
             </div>
 
-            <div class="tree-interactive-stage">
+            <!-- Seletor de percurso -->
+            <div class="visualizer-controls" style="margin-top:0;">
+              <button class="btn-ctl active" id="btn-trav-pre" onclick="setTraversal('pre')">Pré-ordem</button>
+              <button class="btn-ctl" id="btn-trav-in" onclick="setTraversal('in')">Em-ordem</button>
+              <button class="btn-ctl" id="btn-trav-pos" onclick="setTraversal('pos')">Pós-ordem</button>
+            </div>
+
+            <!-- Árvore SVG com nó visitado destacado -->
+            <div class="tree-interactive-stage" style="height:210px;">
               <svg viewBox="0 0 380 230" style="width:100%; height:100%;">
                 <!-- Edges -->
                 <line x1="190" y1="40" x2="110" y2="110" class="svg-tree-edge" />
@@ -1726,38 +1990,10 @@
               </svg>
             </div>
 
-            <!-- Sequência de saída sendo montada -->
+
+            <!-- Sequência de saída (printf) -->
             <div class="fibo-state-banner" id="traverse-output-box">
-              <span>Saída: <strong style="color:var(--cyan-neon); font-family:var(--font-mono);" id="traverse-output">—</strong></span>
-              <span id="traverse-step-tag" style="color:var(--emerald-neon); font-weight:700;">Pronto</span>
-            </div>
-          </div>
-
-          <!-- Coluna 2: Painel de controle do percurso -->
-          <div class="fibo-stack-box interactive-element">
-            <div class="fibo-stack-header">
-              <div style="font-weight:700; font-size:0.92rem; font-family:var(--font-mono); color:var(--text-main);">
-                Tipo de Percurso
-              </div>
-              <span class="frame-badge" id="traverse-order-badge">Raiz • Esq • Dir</span>
-            </div>
-
-            <!-- Seletor de percurso -->
-            <div class="visualizer-controls" style="margin-top:0;">
-              <button class="btn-ctl active" id="btn-trav-pre" onclick="setTraversal('pre')">Pré-ordem</button>
-              <button class="btn-ctl" id="btn-trav-in" onclick="setTraversal('in')">Em-ordem</button>
-              <button class="btn-ctl" id="btn-trav-pos" onclick="setTraversal('pos')">Pós-ordem</button>
-            </div>
-
-            <!-- Explicação dinâmica do passo atual -->
-            <div class="fibo-stack-container" id="traverse-desc-display" style="min-height:150px; flex-direction:column; justify-content:center; gap:14px;">
-              <div class="clean-item" style="margin:0;">
-                <span class="clean-badge cyan">Pré-ordem</span>
-                Visita a <strong>Raiz</strong>, depois a subárvore <strong>Esquerda</strong> e por fim a <strong>Direita</strong>.
-              </div>
-              <div class="clean-item" style="margin:0; font-family:var(--font-mono); font-size:0.82rem;" id="traverse-step-desc">
-                Clique em <strong>"Próximo Passo"</strong> para iniciar o caminhamento.
-              </div>
+              <span>Saída <span class="cm" style="color:#64748b;">// printf</span>: <strong style="color:var(--cyan-neon); font-family:var(--font-mono);" id="traverse-output">—</strong></span>
             </div>
 
             <!-- Controles da simulação -->
@@ -1791,8 +2027,10 @@
     <div class="progress-dot" title="Simulação Fibonacci & Stack" onclick="goToSlide(3)"></div>
     <div class="progress-dot" title="Anatomia da Árvore" onclick="goToSlide(4)"></div>
     <div class="progress-dot" title="Grau & Níveis da Árvore" onclick="goToSlide(5)"></div>
-    <div class="progress-dot" title="BST: Propriedade de Ordenação" onclick="goToSlide(6)"></div>
-    <div class="progress-dot" title="Percursos: Pré, Em & Pós-ordem" onclick="goToSlide(7)"></div>
+    <div class="progress-dot" title="Árvore Binária: Definição & Struct" onclick="goToSlide(6)"></div>
+    <div class="progress-dot" title="Lógica da Árvore Binária" onclick="goToSlide(7)"></div>
+    <div class="progress-dot" title="BST: Propriedade de Ordenação" onclick="goToSlide(8)"></div>
+    <div class="progress-dot" title="Percursos: Pré, Em & Pós-ordem" onclick="goToSlide(9)"></div>
   </div>
 
   <!-- Script de Animação e Navegação -->
@@ -2346,7 +2584,11 @@
     /* ========================================================
        6. INTERAÇÕES DO SLIDE 6 (Grau & Níveis)
        ======================================================== */
-    function inspectMetricsNode(value, level, degree, info) {
+    function inspectMetricsNode(event, value, level, degree, info) {
+      // Realça visualmente o nó selecionado (igual ao slide 5)
+      document.querySelectorAll('#slide-6 .svg-node-group').forEach(el => el.classList.remove('active'));
+      if (event && event.currentTarget) event.currentTarget.classList.add('active');
+
       const valEl = document.getElementById('metrics-val');
       const descEl = document.getElementById('metrics-desc');
       const badge = document.getElementById('metrics-selected-badge');
@@ -2357,14 +2599,14 @@
     }
 
     /* ========================================================
-       7. INTERAÇÕES DO SLIDE 7 (BST — Propriedade de Ordenação)
+       9. INTERAÇÕES DO SLIDE 9 (BST — Propriedade de Ordenação)
        ======================================================== */
     const bstLeafIds = ['20', '40', '60', '80']; // folhas têm stroke esmeralda por padrão
 
     function inspectBstNode(value, role, leftSubtree, rightSubtree, rule) {
       // Reseta seleção e devolve cada nó ao stroke padrão (folha = esmeralda, demais = ciano)
-      document.querySelectorAll('#slide-7 .svg-node-group').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('#slide-7 .svg-node-group').forEach(g => {
+      document.querySelectorAll('#slide-9 .svg-node-group').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('#slide-9 .svg-node-group').forEach(g => {
         const circle = g.querySelector('.svg-node-circle');
         const id = g.id.replace('bst-node-', '');
         circle.style.stroke = bstLeafIds.includes(id) ? '#10b981' : '';
@@ -2398,138 +2640,256 @@
     }
 
     /* ========================================================
-       8. SIMULADOR DE PERCURSOS (Slide 8 — Pré / Em / Pós-ordem)
+       10. SIMULADOR DE PERCURSOS (Slide 10 — Pré / Em / Pós-ordem)
        ======================================================== */
-    // Ordens de visita sobre a mesma árvore dos slides anteriores
+    // Árvore da simulação (mesma dos diagramas): valor + filhos
+    const travTree = {
+      value: 50,
+      left:  { value: 30, left: { value: 20, left: null, right: null }, right: { value: 40, left: null, right: null } },
+      right: { value: 70, left: { value: 60, left: null, right: null }, right: { value: 80, left: null, right: null } }
+    };
+
+    // Config de cada percurso. 'code' é o código C renderizado dinamicamente
+    // (sempre numerado a partir da linha 1). As linhas de referência (header/if/
+    // return e as ações) são 1-based DENTRO do próprio 'code'.
+    const CODE_PRE = [
+      '<span class="kw">void</span> <span class="fn">print_tree_preorder</span>(node <span class="op">*</span>n) {',
+      '    <span class="kw">if</span> (n <span class="op">!=</span> <span class="kw">NULL</span>) {',
+      '        <span class="fn">printf</span>(<span class="cm">" %d "</span>, n<span class="op">-&gt;</span>number);',
+      '        <span class="fn">print_tree_preorder</span>(n<span class="op">-&gt;</span>left);',
+      '        <span class="fn">print_tree_preorder</span>(n<span class="op">-&gt;</span>right);',
+      '    }',
+      '}'
+    ];
+    const CODE_IN = [
+      '<span class="kw">void</span> <span class="fn">print_tree_inorder</span>(node <span class="op">*</span>n) {',
+      '    <span class="kw">if</span> (n <span class="op">!=</span> <span class="kw">NULL</span>) {',
+      '        <span class="fn">print_tree_inorder</span>(n<span class="op">-&gt;</span>left);',
+      '        <span class="fn">printf</span>(<span class="cm">" %d "</span>, n<span class="op">-&gt;</span>number);',
+      '        <span class="fn">print_tree_inorder</span>(n<span class="op">-&gt;</span>right);',
+      '    }',
+      '}'
+    ];
+    const CODE_POS = [
+      '<span class="kw">void</span> <span class="fn">print_tree_postorder</span>(node <span class="op">*</span>n) {',
+      '    <span class="kw">if</span> (n <span class="op">!=</span> <span class="kw">NULL</span>) {',
+      '        <span class="fn">print_tree_postorder</span>(n<span class="op">-&gt;</span>left);',
+      '        <span class="fn">print_tree_postorder</span>(n<span class="op">-&gt;</span>right);',
+      '        <span class="fn">printf</span>(<span class="cm">" %d "</span>, n<span class="op">-&gt;</span>number);',
+      '    }',
+      '}'
+    ];
+
     const traversalData = {
       pre: {
-        label: 'Pré-ordem',
-        order: 'Raiz • Esq • Dir',
-        badge: 'cyan',
-        explain: 'Visita a <strong>Raiz</strong>, depois a subárvore <strong>Esquerda</strong> e por fim a <strong>Direita</strong>.',
-        seq: ['50', '30', '20', '40', '70', '60', '80'],
-        why: {
-          '50': 'Visita a raiz 50 primeiro (ordem: Raiz).',
-          '30': 'Desce à esquerda e visita a raiz do ramo: 30.',
-          '20': 'Filho esquerdo de 30: visita 20.',
-          '40': 'Filho direito de 30: visita 40.',
-          '70': 'Ramo esquerdo concluído. Visita a raiz direita: 70.',
-          '60': 'Filho esquerdo de 70: visita 60.',
-          '80': 'Filho direito de 70: visita 80. Fim.'
-        }
+        label: 'Pré-ordem', fn: 'print_tree_preorder', code: CODE_PRE,
+        lineHeader: 1, lineIf: 2, lineReturn: 7,
+        actions: [
+          { kind: 'print', line: 3 },
+          { kind: 'left',  line: 4 },
+          { kind: 'right', line: 5 }
+        ]
       },
       in: {
-        label: 'Em-ordem',
-        order: 'Esq • Raiz • Dir',
-        badge: 'purple',
-        explain: 'Visita a subárvore <strong>Esquerda</strong>, depois a <strong>Raiz</strong> e por fim a <strong>Direita</strong>. Em uma BST, gera a ordem crescente.',
-        seq: ['20', '30', '40', '50', '60', '70', '80'],
-        why: {
-          '20': 'Desce ao extremo esquerdo: visita 20.',
-          '30': 'Sobe e visita a raiz do ramo: 30.',
-          '40': 'Visita o filho direito de 30: 40.',
-          '50': 'Ramo esquerdo concluído. Visita a raiz 50.',
-          '60': 'Desce à direita, extremo esquerdo: 60.',
-          '70': 'Sobe e visita a raiz direita: 70.',
-          '80': 'Visita o filho direito de 70: 80. Fim (ordem crescente!).'
-        }
+        label: 'Em-ordem', fn: 'print_tree_inorder', code: CODE_IN,
+        lineHeader: 1, lineIf: 2, lineReturn: 7,
+        actions: [
+          { kind: 'left',  line: 3 },
+          { kind: 'print', line: 4 },
+          { kind: 'right', line: 5 }
+        ]
       },
       pos: {
-        label: 'Pós-ordem',
-        order: 'Esq • Dir • Raiz',
-        badge: 'emerald',
-        explain: 'Visita a subárvore <strong>Esquerda</strong>, depois a <strong>Direita</strong> e por último a <strong>Raiz</strong>.',
-        seq: ['20', '40', '30', '60', '80', '70', '50'],
-        why: {
-          '20': 'Extremo esquerdo primeiro: visita 20.',
-          '40': 'Filho direito de 30: visita 40.',
-          '30': 'Filhos prontos, visita a raiz do ramo: 30.',
-          '60': 'Ramo direito, filho esquerdo: visita 60.',
-          '80': 'Filho direito de 70: visita 80.',
-          '70': 'Filhos prontos, visita a raiz direita: 70.',
-          '50': 'Por último, a raiz da árvore: 50. Fim.'
-        }
+        label: 'Pós-ordem', fn: 'print_tree_postorder', code: CODE_POS,
+        lineHeader: 1, lineIf: 2, lineReturn: 7,
+        actions: [
+          { kind: 'left',  line: 3 },
+          { kind: 'right', line: 4 },
+          { kind: 'print', line: 5 }
+        ]
       }
     };
 
+    // Renderiza o código C do percurso ativo, sempre numerado a partir de 1.
+    function renderTravCode(type) {
+      const lines = traversalData[type].code;
+      const container = document.getElementById('trav-code-lines');
+      container.innerHTML = lines.map((html, i) =>
+        `<div class="c-line" id="tline-${i + 1}"><span class="c-num">${i + 1}</span><span class="c-code">${html}</span></div>`
+      ).join('');
+    }
+
     let currentTraversal = 'pre';
     let currentTravStep = -1;
+    let travSteps = [];
+
+    // Gera a lista de passos simulando a recursão (como a Call Stack do Fibonacci).
+    // Cada passo registra: linha C ativa, estado da pilha, nó em foco, se imprimiu, descrição.
+    function buildTravSteps(type) {
+      const cfg = traversalData[type];
+      const steps = [];
+      const stack = []; // frames: { label, isNull }
+      const output = [];
+
+      function snapshot(line, focus, printedVal, desc, topNull) {
+        steps.push({
+          line,
+          stack: stack.map((f, i) => ({
+            label: f.label,
+            isNull: f.isNull,
+            top: i === stack.length - 1
+          })),
+          focus: focus,            // valor do nó em foco (ou null)
+          output: output.slice(),  // cópia do que já foi impresso
+          printedVal,              // valor impresso NESTE passo (para acender o nó)
+          desc,
+          topNull: !!topNull
+        });
+      }
+
+      function visit(node, parentDesc) {
+        if (node === null) {
+          // chamada que recebe NULL: entra, testa o if e retorna
+          stack.push({ label: 'NULL', isNull: true });
+          snapshot(cfg.lineIf, null, null,
+            `Chamada recebeu <strong>NULL</strong> (sub-árvore vazia): o <code>if</code> é falso, retorna.`, true);
+          stack.pop();
+          return;
+        }
+
+        // enter: empilha frame e destaca o cabeçalho da função
+        stack.push({ label: `${cfg.fn.replace('print_tree_', '')}(${node.value})`, isNull: false });
+        snapshot(cfg.lineHeader, node.value, null,
+          `Chamada <strong>${cfg.fn}(${node.value})</strong>: frame empilhado.`);
+
+        // if (n != NULL) -> verdadeiro
+        snapshot(cfg.lineIf, node.value, null,
+          `<code>${node.value} != NULL</code> é verdadeiro: executa o corpo.`);
+
+        // executa as ações na ordem do percurso
+        cfg.actions.forEach(act => {
+          if (act.kind === 'print') {
+            output.push(String(node.value));
+            snapshot(act.line, node.value, node.value,
+              `<code>printf</code> imprime <strong>${node.value}</strong>.`);
+          } else if (act.kind === 'left') {
+            snapshot(act.line, node.value, null,
+              `Desce à <strong>esquerda</strong> de ${node.value}.`);
+            visit(node.left);
+          } else if (act.kind === 'right') {
+            snapshot(act.line, node.value, null,
+              `Desce à <strong>direita</strong> de ${node.value}.`);
+            visit(node.right);
+          }
+        });
+
+        // return: desempilha
+        stack.pop();
+        snapshot(cfg.lineReturn, node.value, null,
+          `<strong>${cfg.fn}(${node.value})</strong> concluída: frame desempilhado.`);
+      }
+
+      visit(travTree);
+      return steps;
+    }
 
     function clearTravNodes() {
-      document.querySelectorAll('#slide-8 .svg-node-group').forEach(g => {
+      document.querySelectorAll('#slide-10 .svg-node-group').forEach(g => {
         g.classList.remove('visiting', 'visited');
+      });
+    }
+
+    function clearTravCodeLines() {
+      document.querySelectorAll('#trav-code-lines .c-line').forEach(l => {
+        l.classList.remove('active-line');
       });
     }
 
     function setTraversal(type) {
       currentTraversal = type;
       currentTravStep = -1;
+      travSteps = buildTravSteps(type);
 
-      // Botões do seletor
       ['pre', 'in', 'pos'].forEach(t => {
         document.getElementById(`btn-trav-${t}`).classList.toggle('active', t === type);
       });
 
-      const data = traversalData[type];
-      document.getElementById('traverse-mode-badge').textContent = data.label;
-      document.getElementById('traverse-order-badge').textContent = data.order;
-
-      // Reconstrói a explicação fixa do percurso + linha de passo
-      const descDisplay = document.getElementById('traverse-desc-display');
-      descDisplay.innerHTML = `
-        <div class="clean-item" style="margin:0;">
-          <span class="clean-badge ${data.badge}">${data.label}</span>
-          ${data.explain}
-        </div>
-        <div class="clean-item" style="margin:0; font-family:var(--font-mono); font-size:0.82rem;" id="traverse-step-desc">
-          Clique em <strong>"Próximo Passo"</strong> para iniciar o caminhamento.
-        </div>
-      `;
-
+      renderTravCode(type); // injeta o código C do percurso (numerado a partir de 1)
+      document.getElementById('traverse-mode-badge').textContent = traversalData[type].label;
       renderTravStep();
     }
 
     function renderTravStep() {
       const data = traversalData[currentTraversal];
-      const seq = data.seq;
       clearTravNodes();
+      clearTravCodeLines();
 
       const outputEl = document.getElementById('traverse-output');
+      const statusEl = document.getElementById('trav-exec-status');
       const tagEl = document.getElementById('traverse-step-tag');
       const descEl = document.getElementById('traverse-step-desc');
+      const stackEl = document.getElementById('trav-callstack');
+      const depthBadge = document.getElementById('trav-depth-badge');
       const prevBtn = document.getElementById('btn-trav-prev');
       const nextBtn = document.getElementById('btn-trav-next');
 
-      // Marca nós já visitados e o nó atual
-      const visitedSoFar = seq.slice(0, currentTravStep + 1);
-      visitedSoFar.forEach((val, idx) => {
-        const node = document.getElementById(`trav-node-${val}`);
-        if (!node) return;
-        node.classList.add(idx === currentTravStep ? 'visiting' : 'visited');
-      });
-
-      // Saída montada
-      outputEl.textContent = visitedSoFar.length ? visitedSoFar.join(', ') : '—';
-
-      // Estado dos botões
+      statusEl.textContent = `Passo: ${currentTravStep + 1} / ${travSteps.length}`;
       prevBtn.disabled = (currentTravStep <= -1);
-      nextBtn.disabled = (currentTravStep >= seq.length - 1);
+      nextBtn.disabled = (currentTravStep >= travSteps.length - 1);
 
       if (currentTravStep < 0) {
+        // Estado inicial
+        outputEl.textContent = '—';
         tagEl.textContent = 'Pronto';
         tagEl.style.color = 'var(--emerald-neon)';
-        if (descEl) descEl.innerHTML = 'Clique em <strong>"Próximo Passo"</strong> para iniciar o caminhamento.';
-      } else {
-        const currentVal = seq[currentTravStep];
-        tagEl.textContent = `Passo ${currentTravStep + 1}/${seq.length}`;
-        tagEl.style.color = 'var(--cyan-neon)';
-        if (descEl) descEl.innerHTML = `<span class="code-accent">[${currentVal}]</span> ${data.why[currentVal]}`;
+        descEl.innerHTML = `Percurso <strong>${data.label}</strong> — clique em <strong>"Próximo Passo"</strong>.`;
+        stackEl.innerHTML = '<span class="trav-stack-empty">pilha vazia</span>';
+        depthBadge.textContent = 'Frames: 0';
+        return;
       }
+
+      const step = travSteps[currentTravStep];
+
+      // Destaca a linha C ativa
+      const activeLine = document.getElementById(`tline-${step.line}`);
+      if (activeLine) activeLine.classList.add('active-line');
+
+      // Acende nós já impressos (visited) e o impresso agora (visiting)
+      step.output.forEach(val => {
+        const node = document.getElementById(`trav-node-${val}`);
+        if (node) node.classList.add('visited');
+      });
+      if (step.printedVal !== null && step.printedVal !== undefined) {
+        const node = document.getElementById(`trav-node-${step.printedVal}`);
+        if (node) { node.classList.remove('visited'); node.classList.add('visiting'); }
+      } else if (step.focus !== null && step.focus !== undefined) {
+        // nó em foco (sem imprimir) recebe realce leve de "visiting"
+        const node = document.getElementById(`trav-node-${step.focus}`);
+        if (node && !step.output.includes(String(step.focus))) node.classList.add('visiting');
+      }
+
+      // Saída (printf acumulado)
+      outputEl.textContent = step.output.length ? step.output.join(' ') : '—';
+
+      // Call stack
+      depthBadge.textContent = `Frames: ${step.stack.length}`;
+      if (step.stack.length === 0) {
+        stackEl.innerHTML = '<span class="trav-stack-empty">pilha vazia</span>';
+      } else {
+        stackEl.innerHTML = step.stack.map(f => {
+          const cls = 'trav-frame' + (f.isNull ? ' null-frame' : (f.top ? ' top' : ''));
+          return `<span class="${cls}">${f.label}</span>`;
+        }).join('');
+      }
+
+      // Tag e descrição
+      tagEl.textContent = step.printedVal != null ? `printf(${step.printedVal})` : `linha ${step.line}`;
+      tagEl.style.color = step.printedVal != null ? 'var(--cyan-neon)' : 'var(--text-muted)';
+      descEl.innerHTML = step.desc;
     }
 
     function nextTravStep() {
-      const seq = traversalData[currentTraversal].seq;
-      if (currentTravStep < seq.length - 1) {
+      if (currentTravStep < travSteps.length - 1) {
         currentTravStep++;
         renderTravStep();
       }
@@ -2546,6 +2906,10 @@
       currentTravStep = -1;
       renderTravStep();
     }
+
+    // Estado inicial: percurso Pré-ordem (mostra só a função correspondente)
+    setTraversal('pre');
+
   </script>
 </body>
 </html>
