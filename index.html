@@ -852,6 +852,24 @@
       fill: #040812;
     }
 
+    /* Nó sendo visitado durante o percurso (Slide 8) */
+    .svg-node-group.visiting .svg-node-circle {
+      fill: var(--cyan-neon);
+      stroke: #ffffff;
+      transform: scale(1.12);
+      transform-origin: center;
+      filter: drop-shadow(0 0 14px rgba(0, 242, 254, 0.7));
+    }
+
+    .svg-node-group.visiting .svg-node-text {
+      fill: #040812;
+    }
+
+    /* Nó já visitado (permanece aceso em tom suave) */
+    .svg-node-group.visited .svg-node-circle {
+      fill: rgba(0, 242, 254, 0.18);
+    }
+
     .svg-tree-edge {
       stroke: rgba(148, 163, 184, 0.25);
       stroke-width: 2;
@@ -1504,6 +1522,265 @@
       </div>
     </section>
 
+    <!-- SLIDE 7: ÁRVORE BINÁRIA DE BUSCA (BST) — PROPRIEDADE DE ORDENAÇÃO -->
+    <section class="slide" id="slide-7">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="6" cy="19" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"></path>
+              </svg>
+              Árvore Binária de Busca • Ordenação
+            </div>
+            <h2 class="slide-title-modern">BST: <span class="gradient-text">Propriedade de Ordenação</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Clique nos nós para inspecionar</div>
+        </div>
+
+        <!-- 2 Colunas: Conceitos vs Diagrama Interativo da BST -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: A Regra de Ordem com Badges -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 5h10M11 9h7M11 15h10M11 19h7"></path>
+                <path d="M3 5l2 2 3-3M3 15l2 2 3-3"></path>
+              </svg>
+              A Regra de Ordem
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge purple">Subárvore Esquerda</span>
+              Contém <strong>apenas valores menores</strong> que o nó atual.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Nó de Comparação</span>
+              Separa os menores (esquerda) dos maiores (direita).
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge emerald">Subárvore Direita</span>
+              Contém <strong>apenas valores maiores</strong> que o nó atual.
+            </div>
+          </div>
+
+          <!-- Coluna 2: BST Interativa com Verificação da Invariante -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Inspetor da Invariante BST
+              </span>
+              <span class="frame-badge" id="bst-selected-badge">Nó 50 (Raiz)</span>
+            </div>
+
+            <div class="tree-interactive-stage">
+              <svg viewBox="0 0 380 230" style="width:100%; height:100%;">
+                <!-- Edges -->
+                <line x1="190" y1="40" x2="110" y2="110" class="svg-tree-edge" />
+                <line x1="190" y1="40" x2="270" y2="110" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="65" y2="185" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="150" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="225" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="315" y2="185" class="svg-tree-edge" />
+
+                <!-- Raiz: 50 -->
+                <g class="svg-node-group active" id="bst-node-50"
+                   onclick="inspectBstNode('50', 'Raiz', ['20','30','40'], ['60','70','80'], 'esq &lt; 50 &lt; dir')">
+                  <circle cx="190" cy="40" r="19" class="svg-node-circle"></circle>
+                  <text x="190" y="40" class="svg-node-text">50</text>
+                </g>
+
+                <!-- Nível 1: 30 e 70 -->
+                <g class="svg-node-group" id="bst-node-30"
+                   onclick="inspectBstNode('30', 'Nó Interno', ['20'], ['40'], '20 &lt; 30 &lt; 40')">
+                  <circle cx="110" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="110" y="110" class="svg-node-text">30</text>
+                </g>
+
+                <g class="svg-node-group" id="bst-node-70"
+                   onclick="inspectBstNode('70', 'Nó Interno', ['60'], ['80'], '60 &lt; 70 &lt; 80')">
+                  <circle cx="270" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="270" y="110" class="svg-node-text">70</text>
+                </g>
+
+                <!-- Nível 2: folhas -->
+                <g class="svg-node-group" id="bst-node-20"
+                   onclick="inspectBstNode('20', 'Folha', [], [], 'Menor do ramo esquerdo')">
+                  <circle cx="65" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="65" y="185" class="svg-node-text">20</text>
+                </g>
+
+                <g class="svg-node-group" id="bst-node-40"
+                   onclick="inspectBstNode('40', 'Folha', [], [], 'Maior que 30, menor que 50')">
+                  <circle cx="150" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="150" y="185" class="svg-node-text">40</text>
+                </g>
+
+                <g class="svg-node-group" id="bst-node-60"
+                   onclick="inspectBstNode('60', 'Folha', [], [], 'Menor que 70, maior que 50')">
+                  <circle cx="225" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="225" y="185" class="svg-node-text">60</text>
+                </g>
+
+                <g class="svg-node-group" id="bst-node-80"
+                   onclick="inspectBstNode('80', 'Folha', [], [], 'Maior do ramo direito')">
+                  <circle cx="315" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="315" y="185" class="svg-node-text">80</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Feedback da Invariante -->
+            <div class="fibo-state-banner" id="bst-details-box">
+              <span>Invariante: <strong style="color:var(--cyan-neon);" id="bst-rule">esq &lt; 50 &lt; dir</strong></span>
+              <span id="bst-relation">Clique em um nó para destacar seus ramos.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 8: PERCURSOS EM ÁRVORE BINÁRIA (Pré / Em / Pós-ordem) -->
+    <section class="slide" id="slide-8">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M3 12h4l3 8 4-16 3 8h4"></path>
+              </svg>
+              Árvore Binária • Caminhamentos
+            </div>
+            <h2 class="slide-title-modern">Percursos: <span class="gradient-text">Pré, Em & Pós-ordem</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Simulação passo a passo</div>
+        </div>
+
+        <!-- 2 Colunas: Diagrama animado vs Painel de Simulação -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Diagrama SVG com nó visitado destacado -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Visitação dos Nós
+              </span>
+              <span class="frame-badge" id="traverse-mode-badge">Pré-ordem</span>
+            </div>
+
+            <div class="tree-interactive-stage">
+              <svg viewBox="0 0 380 230" style="width:100%; height:100%;">
+                <!-- Edges -->
+                <line x1="190" y1="40" x2="110" y2="110" class="svg-tree-edge" />
+                <line x1="190" y1="40" x2="270" y2="110" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="65" y2="185" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="150" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="225" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="315" y2="185" class="svg-tree-edge" />
+
+                <!-- Raiz: 50 -->
+                <g class="svg-node-group" id="trav-node-50">
+                  <circle cx="190" cy="40" r="19" class="svg-node-circle"></circle>
+                  <text x="190" y="40" class="svg-node-text">50</text>
+                </g>
+
+                <!-- Nível 1 -->
+                <g class="svg-node-group" id="trav-node-30">
+                  <circle cx="110" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="110" y="110" class="svg-node-text">30</text>
+                </g>
+                <g class="svg-node-group" id="trav-node-70">
+                  <circle cx="270" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="270" y="110" class="svg-node-text">70</text>
+                </g>
+
+                <!-- Nível 2: folhas -->
+                <g class="svg-node-group" id="trav-node-20">
+                  <circle cx="65" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="65" y="185" class="svg-node-text">20</text>
+                </g>
+                <g class="svg-node-group" id="trav-node-40">
+                  <circle cx="150" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="150" y="185" class="svg-node-text">40</text>
+                </g>
+                <g class="svg-node-group" id="trav-node-60">
+                  <circle cx="225" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="225" y="185" class="svg-node-text">60</text>
+                </g>
+                <g class="svg-node-group" id="trav-node-80">
+                  <circle cx="315" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="315" y="185" class="svg-node-text">80</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Sequência de saída sendo montada -->
+            <div class="fibo-state-banner" id="traverse-output-box">
+              <span>Saída: <strong style="color:var(--cyan-neon); font-family:var(--font-mono);" id="traverse-output">—</strong></span>
+              <span id="traverse-step-tag" style="color:var(--emerald-neon); font-weight:700;">Pronto</span>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Painel de controle do percurso -->
+          <div class="fibo-stack-box interactive-element">
+            <div class="fibo-stack-header">
+              <div style="font-weight:700; font-size:0.92rem; font-family:var(--font-mono); color:var(--text-main);">
+                Tipo de Percurso
+              </div>
+              <span class="frame-badge" id="traverse-order-badge">Raiz • Esq • Dir</span>
+            </div>
+
+            <!-- Seletor de percurso -->
+            <div class="visualizer-controls" style="margin-top:0;">
+              <button class="btn-ctl active" id="btn-trav-pre" onclick="setTraversal('pre')">Pré-ordem</button>
+              <button class="btn-ctl" id="btn-trav-in" onclick="setTraversal('in')">Em-ordem</button>
+              <button class="btn-ctl" id="btn-trav-pos" onclick="setTraversal('pos')">Pós-ordem</button>
+            </div>
+
+            <!-- Explicação dinâmica do passo atual -->
+            <div class="fibo-stack-container" id="traverse-desc-display" style="min-height:150px; flex-direction:column; justify-content:center; gap:14px;">
+              <div class="clean-item" style="margin:0;">
+                <span class="clean-badge cyan">Pré-ordem</span>
+                Visita a <strong>Raiz</strong>, depois a subárvore <strong>Esquerda</strong> e por fim a <strong>Direita</strong>.
+              </div>
+              <div class="clean-item" style="margin:0; font-family:var(--font-mono); font-size:0.82rem;" id="traverse-step-desc">
+                Clique em <strong>"Próximo Passo"</strong> para iniciar o caminhamento.
+              </div>
+            </div>
+
+            <!-- Controles da simulação -->
+            <div class="fibo-sim-controls">
+              <button class="btn-sim" id="btn-trav-prev" onclick="prevTravStep()" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Anterior
+              </button>
+              <button class="btn-sim primary" id="btn-trav-next" onclick="nextTravStep()">
+                Próximo Passo
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button class="btn-sim" onclick="resetTravSim()" style="flex:0.5;">
+                Reiniciar
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
   </div>
 
   <!-- Discreta barra de progresso (indicador) -->
@@ -1514,6 +1791,8 @@
     <div class="progress-dot" title="Simulação Fibonacci & Stack" onclick="goToSlide(3)"></div>
     <div class="progress-dot" title="Anatomia da Árvore" onclick="goToSlide(4)"></div>
     <div class="progress-dot" title="Grau & Níveis da Árvore" onclick="goToSlide(5)"></div>
+    <div class="progress-dot" title="BST: Propriedade de Ordenação" onclick="goToSlide(6)"></div>
+    <div class="progress-dot" title="Percursos: Pré, Em & Pós-ordem" onclick="goToSlide(7)"></div>
   </div>
 
   <!-- Script de Animação e Navegação -->
@@ -2075,6 +2354,197 @@
       valEl.textContent = value;
       badge.textContent = `Nó ${value} • Nível ${level}`;
       descEl.innerHTML = `<span class="code-accent">${info}</span> • Distância da raiz: <strong>${level} arestas</strong>.`;
+    }
+
+    /* ========================================================
+       7. INTERAÇÕES DO SLIDE 7 (BST — Propriedade de Ordenação)
+       ======================================================== */
+    const bstLeafIds = ['20', '40', '60', '80']; // folhas têm stroke esmeralda por padrão
+
+    function inspectBstNode(value, role, leftSubtree, rightSubtree, rule) {
+      // Reseta seleção e devolve cada nó ao stroke padrão (folha = esmeralda, demais = ciano)
+      document.querySelectorAll('#slide-7 .svg-node-group').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('#slide-7 .svg-node-group').forEach(g => {
+        const circle = g.querySelector('.svg-node-circle');
+        const id = g.id.replace('bst-node-', '');
+        circle.style.stroke = bstLeafIds.includes(id) ? '#10b981' : '';
+      });
+
+      // Realça o nó clicado
+      const targetNode = document.getElementById(`bst-node-${value}`);
+      if (targetNode) targetNode.classList.add('active');
+
+      // Pinta os ramos: esquerda (roxo = menores), direita (esmeralda = maiores)
+      leftSubtree.forEach(v => {
+        const c = document.querySelector(`#bst-node-${v} .svg-node-circle`);
+        if (c) c.style.stroke = '#8b5cf6';
+      });
+      rightSubtree.forEach(v => {
+        const c = document.querySelector(`#bst-node-${v} .svg-node-circle`);
+        if (c) c.style.stroke = '#10b981';
+      });
+
+      // Atualiza feedback (mesmo padrão dos slides 5 e 6)
+      const badge = document.getElementById('bst-selected-badge');
+      const ruleEl = document.getElementById('bst-rule');
+      const relEl = document.getElementById('bst-relation');
+
+      badge.textContent = `Nó ${value} (${role})`;
+      ruleEl.innerHTML = rule;
+
+      const leftStr = leftSubtree.length ? `menores { ${leftSubtree.join(', ')} }` : 'sem ramo esquerdo';
+      const rightStr = rightSubtree.length ? `maiores { ${rightSubtree.join(', ')} }` : 'sem ramo direito';
+      relEl.innerHTML = `<span style="color:#c084fc;">&larr; ${leftStr}</span> &nbsp;|&nbsp; <span style="color:#34d399;">${rightStr} &rarr;</span>`;
+    }
+
+    /* ========================================================
+       8. SIMULADOR DE PERCURSOS (Slide 8 — Pré / Em / Pós-ordem)
+       ======================================================== */
+    // Ordens de visita sobre a mesma árvore dos slides anteriores
+    const traversalData = {
+      pre: {
+        label: 'Pré-ordem',
+        order: 'Raiz • Esq • Dir',
+        badge: 'cyan',
+        explain: 'Visita a <strong>Raiz</strong>, depois a subárvore <strong>Esquerda</strong> e por fim a <strong>Direita</strong>.',
+        seq: ['50', '30', '20', '40', '70', '60', '80'],
+        why: {
+          '50': 'Visita a raiz 50 primeiro (ordem: Raiz).',
+          '30': 'Desce à esquerda e visita a raiz do ramo: 30.',
+          '20': 'Filho esquerdo de 30: visita 20.',
+          '40': 'Filho direito de 30: visita 40.',
+          '70': 'Ramo esquerdo concluído. Visita a raiz direita: 70.',
+          '60': 'Filho esquerdo de 70: visita 60.',
+          '80': 'Filho direito de 70: visita 80. Fim.'
+        }
+      },
+      in: {
+        label: 'Em-ordem',
+        order: 'Esq • Raiz • Dir',
+        badge: 'purple',
+        explain: 'Visita a subárvore <strong>Esquerda</strong>, depois a <strong>Raiz</strong> e por fim a <strong>Direita</strong>. Em uma BST, gera a ordem crescente.',
+        seq: ['20', '30', '40', '50', '60', '70', '80'],
+        why: {
+          '20': 'Desce ao extremo esquerdo: visita 20.',
+          '30': 'Sobe e visita a raiz do ramo: 30.',
+          '40': 'Visita o filho direito de 30: 40.',
+          '50': 'Ramo esquerdo concluído. Visita a raiz 50.',
+          '60': 'Desce à direita, extremo esquerdo: 60.',
+          '70': 'Sobe e visita a raiz direita: 70.',
+          '80': 'Visita o filho direito de 70: 80. Fim (ordem crescente!).'
+        }
+      },
+      pos: {
+        label: 'Pós-ordem',
+        order: 'Esq • Dir • Raiz',
+        badge: 'emerald',
+        explain: 'Visita a subárvore <strong>Esquerda</strong>, depois a <strong>Direita</strong> e por último a <strong>Raiz</strong>.',
+        seq: ['20', '40', '30', '60', '80', '70', '50'],
+        why: {
+          '20': 'Extremo esquerdo primeiro: visita 20.',
+          '40': 'Filho direito de 30: visita 40.',
+          '30': 'Filhos prontos, visita a raiz do ramo: 30.',
+          '60': 'Ramo direito, filho esquerdo: visita 60.',
+          '80': 'Filho direito de 70: visita 80.',
+          '70': 'Filhos prontos, visita a raiz direita: 70.',
+          '50': 'Por último, a raiz da árvore: 50. Fim.'
+        }
+      }
+    };
+
+    let currentTraversal = 'pre';
+    let currentTravStep = -1;
+
+    function clearTravNodes() {
+      document.querySelectorAll('#slide-8 .svg-node-group').forEach(g => {
+        g.classList.remove('visiting', 'visited');
+      });
+    }
+
+    function setTraversal(type) {
+      currentTraversal = type;
+      currentTravStep = -1;
+
+      // Botões do seletor
+      ['pre', 'in', 'pos'].forEach(t => {
+        document.getElementById(`btn-trav-${t}`).classList.toggle('active', t === type);
+      });
+
+      const data = traversalData[type];
+      document.getElementById('traverse-mode-badge').textContent = data.label;
+      document.getElementById('traverse-order-badge').textContent = data.order;
+
+      // Reconstrói a explicação fixa do percurso + linha de passo
+      const descDisplay = document.getElementById('traverse-desc-display');
+      descDisplay.innerHTML = `
+        <div class="clean-item" style="margin:0;">
+          <span class="clean-badge ${data.badge}">${data.label}</span>
+          ${data.explain}
+        </div>
+        <div class="clean-item" style="margin:0; font-family:var(--font-mono); font-size:0.82rem;" id="traverse-step-desc">
+          Clique em <strong>"Próximo Passo"</strong> para iniciar o caminhamento.
+        </div>
+      `;
+
+      renderTravStep();
+    }
+
+    function renderTravStep() {
+      const data = traversalData[currentTraversal];
+      const seq = data.seq;
+      clearTravNodes();
+
+      const outputEl = document.getElementById('traverse-output');
+      const tagEl = document.getElementById('traverse-step-tag');
+      const descEl = document.getElementById('traverse-step-desc');
+      const prevBtn = document.getElementById('btn-trav-prev');
+      const nextBtn = document.getElementById('btn-trav-next');
+
+      // Marca nós já visitados e o nó atual
+      const visitedSoFar = seq.slice(0, currentTravStep + 1);
+      visitedSoFar.forEach((val, idx) => {
+        const node = document.getElementById(`trav-node-${val}`);
+        if (!node) return;
+        node.classList.add(idx === currentTravStep ? 'visiting' : 'visited');
+      });
+
+      // Saída montada
+      outputEl.textContent = visitedSoFar.length ? visitedSoFar.join(', ') : '—';
+
+      // Estado dos botões
+      prevBtn.disabled = (currentTravStep <= -1);
+      nextBtn.disabled = (currentTravStep >= seq.length - 1);
+
+      if (currentTravStep < 0) {
+        tagEl.textContent = 'Pronto';
+        tagEl.style.color = 'var(--emerald-neon)';
+        if (descEl) descEl.innerHTML = 'Clique em <strong>"Próximo Passo"</strong> para iniciar o caminhamento.';
+      } else {
+        const currentVal = seq[currentTravStep];
+        tagEl.textContent = `Passo ${currentTravStep + 1}/${seq.length}`;
+        tagEl.style.color = 'var(--cyan-neon)';
+        if (descEl) descEl.innerHTML = `<span class="code-accent">[${currentVal}]</span> ${data.why[currentVal]}`;
+      }
+    }
+
+    function nextTravStep() {
+      const seq = traversalData[currentTraversal].seq;
+      if (currentTravStep < seq.length - 1) {
+        currentTravStep++;
+        renderTravStep();
+      }
+    }
+
+    function prevTravStep() {
+      if (currentTravStep > -1) {
+        currentTravStep--;
+        renderTravStep();
+      }
+    }
+
+    function resetTravSim() {
+      currentTravStep = -1;
+      renderTravStep();
     }
   </script>
 </body>
