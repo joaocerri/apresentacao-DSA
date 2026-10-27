@@ -878,6 +878,82 @@
       fill: rgba(0, 242, 254, 0.18);
     }
 
+    /* Rotação animada (Slide 16) — nós deslizam entre posições */
+    .rot-node {
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rot-node .svg-node-circle {
+      stroke: #f87171;
+      transition: stroke 0.7s ease;
+    }
+
+    .rot-node .svg-node-text {
+      text-anchor: middle;
+      dominant-baseline: central;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 13px;
+      fill: #ffffff;
+    }
+
+    /* Tag de fator de balanceamento acoplada ao nó (move junto na animação) */
+    .rot-fb {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      fill: #f87171;
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .rot-node.balanced .rot-fb {
+      fill: var(--emerald-neon);
+    }
+
+    .rot-node.balanced .svg-node-circle {
+      stroke: var(--emerald-neon);
+    }
+
+    .rot-edge {
+      stroke: rgba(239, 68, 68, 0.4);
+      stroke-width: 2;
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .rot-edge.balanced {
+      stroke: rgba(16, 185, 129, 0.55);
+    }
+
+    /* Quadro-resumo das rotações AVL (Slide 15) */
+    .rotation-case {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+    }
+
+    .rotation-case:last-child {
+      margin-bottom: 0;
+    }
+
+    .rotation-desc {
+      flex: 1;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .rotation-dir {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
     /* Call Stack compacta do Slide 9 (percursos) */
     .trav-callstack-wrap {
       background: rgba(0, 0, 0, 0.3);
@@ -999,6 +1075,79 @@
       }
       .slide {
         padding: 40px 30px;
+      }
+    }
+
+    /* ========================================================
+       IMPRESSÃO / EXPORTAÇÃO PARA PDF
+       Empilha todos os slides (1 por página) e desliga animações.
+       Use: Imprimir (Ctrl+P) → Salvar como PDF → Paisagem, margens
+       mínimas, "Gráficos de fundo" ativado.
+       ======================================================== */
+    @media print {
+      @page {
+        size: 1280px 720px;      /* proporção 16:9 por página */
+        margin: 0;
+      }
+
+      html, body {
+        height: auto !important;
+        width: auto !important;
+        overflow: visible !important;
+        background: var(--bg-dark) !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Fundo animado, brilhos e barra de progresso saem da impressão */
+      #tree-canvas,
+      .glow-radial-1,
+      .glow-radial-2,
+      .slide-progress {
+        display: none !important;
+      }
+
+      /* O deck deixa de ser viewport fixo e passa a fluir */
+      .slide-deck {
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        display: block !important;
+      }
+
+      /* Cada slide vira uma página inteira, todos visíveis */
+      .slide {
+        position: relative !important;
+        inset: auto !important;
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: auto !important;
+        display: flex !important;
+        width: 1280px !important;
+        height: 720px !important;
+        padding: 48px 64px !important;
+        page-break-after: always;
+        break-after: page;
+        overflow: hidden !important;
+      }
+
+      .slide:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+
+      /* Desliga toda transição/animação durante a impressão */
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      /* Botões interativos não fazem sentido no PDF */
+      .btn-sim,
+      .btn-ctl,
+      .fibo-sim-controls,
+      .visualizer-controls {
+        display: none !important;
       }
     }
   </style>
@@ -1539,42 +1688,42 @@
                 <line x1="20" y1="185" x2="360" y2="185" class="level-guide-line" />
                 <text x="25" y="177" class="level-text-label">Nível 2</text>
 
-                <!-- Edges -->
-                <line x1="190" y1="40" x2="110" y2="110" class="svg-tree-edge" />
-                <line x1="190" y1="40" x2="270" y2="110" class="svg-tree-edge" />
-                <line x1="110" y1="110" x2="70" y2="185" class="svg-tree-edge" />
-                <line x1="110" y1="110" x2="150" y2="185" class="svg-tree-edge" />
-                <line x1="270" y1="110" x2="270" y2="185" class="svg-tree-edge" />
+                <!-- Edges (árvore deslocada à direita p/ não cobrir os rótulos de nível) -->
+                <line x1="235" y1="40" x2="165" y2="110" class="svg-tree-edge" />
+                <line x1="235" y1="40" x2="305" y2="110" class="svg-tree-edge" />
+                <line x1="165" y1="110" x2="130" y2="185" class="svg-tree-edge" />
+                <line x1="165" y1="110" x2="200" y2="185" class="svg-tree-edge" />
+                <line x1="305" y1="110" x2="305" y2="185" class="svg-tree-edge" />
 
                 <!-- Nodes com Métricas -->
                 <g class="svg-node-group" onclick="inspectMetricsNode(event, '50', 0, 2, 'Grau 2 (2 filhos: 30 e 70)')">
-                  <circle cx="190" cy="40" r="18" class="svg-node-circle"></circle>
-                  <text x="190" y="40" class="svg-node-text">50</text>
+                  <circle cx="235" cy="40" r="18" class="svg-node-circle"></circle>
+                  <text x="235" y="40" class="svg-node-text">50</text>
                 </g>
 
                 <g class="svg-node-group" onclick="inspectMetricsNode(event, '30', 1, 2, 'Grau 2 (2 filhos: 20 e 40)')">
-                  <circle cx="110" cy="110" r="16" class="svg-node-circle"></circle>
-                  <text x="110" y="110" class="svg-node-text">30</text>
+                  <circle cx="165" cy="110" r="16" class="svg-node-circle"></circle>
+                  <text x="165" y="110" class="svg-node-text">30</text>
                 </g>
 
                 <g class="svg-node-group" onclick="inspectMetricsNode(event, '70', 1, 1, 'Grau 1 (1 filho: 85)')">
-                  <circle cx="270" cy="110" r="16" class="svg-node-circle"></circle>
-                  <text x="270" y="110" class="svg-node-text">70</text>
+                  <circle cx="305" cy="110" r="16" class="svg-node-circle"></circle>
+                  <text x="305" y="110" class="svg-node-text">70</text>
                 </g>
 
                 <g class="svg-node-group" onclick="inspectMetricsNode(event, '20', 2, 0, 'Grau 0 (Nó Folha)')">
-                  <circle cx="70" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
-                  <text x="70" y="185" class="svg-node-text">20</text>
+                  <circle cx="130" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="130" y="185" class="svg-node-text">20</text>
                 </g>
 
                 <g class="svg-node-group" onclick="inspectMetricsNode(event, '40', 2, 0, 'Grau 0 (Nó Folha)')">
-                  <circle cx="150" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
-                  <text x="150" y="185" class="svg-node-text">40</text>
+                  <circle cx="200" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="200" y="185" class="svg-node-text">40</text>
                 </g>
 
                 <g class="svg-node-group" onclick="inspectMetricsNode(event, '85', 2, 0, 'Grau 0 (Nó Folha)')">
-                  <circle cx="270" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
-                  <text x="270" y="185" class="svg-node-text">85</text>
+                  <circle cx="305" cy="185" r="14" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="305" y="185" class="svg-node-text">85</text>
                 </g>
               </svg>
             </div>
@@ -1873,8 +2022,152 @@
       </div>
     </section>
 
-    <!-- SLIDE 10: PERCURSOS EM ÁRVORE BINÁRIA (Pré / Em / Pós-ordem) -->
+    <!-- SLIDE 10: BUSCA NA ÁRVORE BINÁRIA DE BUSCA (search recursivo) -->
     <section class="slide" id="slide-10">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="M21 21l-4.35-4.35"></path>
+              </svg>
+              Árvore Binária de Busca • Busca
+            </div>
+            <h2 class="slide-title-modern">Busca <span class="gradient-text">Recursiva</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Simulação passo a passo</div>
+        </div>
+
+        <!-- Grid: Código C + Call Stack (esq) / Árvore + Controles (dir) -->
+        <div class="fibo-sim-grid">
+
+          <!-- Coluna 1: Código C dinâmico + Call Stack -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots">
+                <div class="code-dot" style="background:#ef4444;"></div>
+                <div class="code-dot" style="background:#f59e0b;"></div>
+                <div class="code-dot" style="background:#10b981;"></div>
+              </div>
+              <span>search.c</span>
+              <span id="search-exec-status" style="color:var(--cyan-neon);">Passo: 0 / 0</span>
+            </div>
+
+            <!-- Linhas de código renderizadas dinamicamente pelo JS (a partir da linha 1) -->
+            <div class="c-code-lines" id="search-code-lines"></div>
+
+            <!-- Banner com descrição do passo -->
+            <div class="fibo-state-banner" style="margin: 0 14px 16px;">
+              <span id="search-step-desc">Escolha um alvo e clique em <strong>"Próximo Passo"</strong>.</span>
+              <span id="search-step-tag" style="color:var(--emerald-neon); font-weight:700;">Pronto</span>
+            </div>
+
+            <!-- Call Stack compacta -->
+            <div class="trav-callstack-wrap" style="margin:0 14px 16px;">
+              <div class="trav-callstack-label">
+                <span>Call Stack</span>
+                <span class="frame-badge" id="search-depth-badge">Frames: 0</span>
+              </div>
+              <div class="trav-callstack" id="search-callstack">
+                <span class="trav-stack-empty">pilha vazia</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Árvore visual + alvos + controles -->
+          <div class="fibo-stack-box interactive-element">
+            <div class="fibo-stack-header">
+              <div style="font-weight:700; font-size:0.92rem; font-family:var(--font-mono); color:var(--text-main);">
+                Caminho da Busca
+              </div>
+              <span class="frame-badge" id="search-target-badge">Alvo: 40</span>
+            </div>
+
+            <!-- Seletor de alvo de busca -->
+            <div class="visualizer-controls" style="margin-top:0;">
+              <button class="btn-ctl active" id="btn-search-40" onclick="setSearchTarget(40)">Buscar 40</button>
+              <button class="btn-ctl" id="btn-search-60" onclick="setSearchTarget(60)">Buscar 60</button>
+              <button class="btn-ctl" id="btn-search-55" onclick="setSearchTarget(55)">Buscar 55</button>
+            </div>
+
+            <!-- Árvore SVG com caminho de busca destacado -->
+            <div class="tree-interactive-stage" style="height:210px;">
+              <svg viewBox="0 0 380 230" style="width:100%; height:100%;">
+                <!-- Edges -->
+                <line x1="190" y1="40" x2="110" y2="110" class="svg-tree-edge" />
+                <line x1="190" y1="40" x2="270" y2="110" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="65" y2="185" class="svg-tree-edge" />
+                <line x1="110" y1="110" x2="150" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="225" y2="185" class="svg-tree-edge" />
+                <line x1="270" y1="110" x2="315" y2="185" class="svg-tree-edge" />
+
+                <!-- Raiz: 50 -->
+                <g class="svg-node-group" id="search-node-50">
+                  <circle cx="190" cy="40" r="19" class="svg-node-circle"></circle>
+                  <text x="190" y="40" class="svg-node-text">50</text>
+                </g>
+
+                <!-- Nível 1 -->
+                <g class="svg-node-group" id="search-node-30">
+                  <circle cx="110" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="110" y="110" class="svg-node-text">30</text>
+                </g>
+                <g class="svg-node-group" id="search-node-70">
+                  <circle cx="270" cy="110" r="17" class="svg-node-circle"></circle>
+                  <text x="270" y="110" class="svg-node-text">70</text>
+                </g>
+
+                <!-- Nível 2: folhas -->
+                <g class="svg-node-group" id="search-node-20">
+                  <circle cx="65" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="65" y="185" class="svg-node-text">20</text>
+                </g>
+                <g class="svg-node-group" id="search-node-40">
+                  <circle cx="150" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="150" y="185" class="svg-node-text">40</text>
+                </g>
+                <g class="svg-node-group" id="search-node-60">
+                  <circle cx="225" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="225" y="185" class="svg-node-text">60</text>
+                </g>
+                <g class="svg-node-group" id="search-node-80">
+                  <circle cx="315" cy="185" r="15" class="svg-node-circle" style="stroke:#10b981;"></circle>
+                  <text x="315" y="185" class="svg-node-text">80</text>
+                </g>
+              </svg>
+            </div>
+
+            <!-- Resultado da busca -->
+            <div class="fibo-state-banner" id="search-result-box">
+              <span>Comparação: <strong style="color:var(--cyan-neon); font-family:var(--font-mono);" id="search-compare">—</strong></span>
+            </div>
+
+            <!-- Controles da simulação (debug passo a passo) -->
+            <div class="fibo-sim-controls">
+              <button class="btn-sim" id="btn-search-prev" onclick="prevSearchStep()" disabled>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                Anterior
+              </button>
+              <button class="btn-sim primary" id="btn-search-next" onclick="nextSearchStep()">
+                Próximo Passo
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              </button>
+              <button class="btn-sim" onclick="resetSearchSim()" style="flex:0.5;">
+                Reiniciar
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 11: PERCURSOS EM ÁRVORE BINÁRIA (Pré / Em / Pós-ordem) -->
+    <section class="slide" id="slide-11">
       <div class="slide-content-clean">
 
         <!-- Header Minimalista -->
@@ -1910,7 +2203,7 @@
             <div class="c-code-lines" id="trav-code-lines"></div>
 
             <!-- Banner com descrição do passo -->
-            <div class="fibo-state-banner" style="margin: 14px 14px 5px;">
+            <div class="fibo-state-banner" style="margin: 14px 14px 1px;">
               <span id="traverse-step-desc">Selecione um percurso e clique em <strong>"Próximo Passo"</strong>.</span>
               <span id="traverse-step-tag" style="color:var(--emerald-neon); font-weight:700;">Pronto</span>
             </div>
@@ -2017,6 +2310,1913 @@
       </div>
     </section>
 
+    <!-- SLIDE 12: INTRODUÇÃO ÀS ÁRVORES AVL -->
+    <section class="slide" id="slide-12">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 3v18M3 12h18M6 8l6-5 6 5"></path>
+              </svg>
+              Árvores Balanceadas • Introdução
+            </div>
+            <h2 class="slide-title-modern">Árvores <span class="gradient-text">AVL</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Balanceada vs Degenerada</div>
+        </div>
+
+        <!-- 2 Colunas: Objetivo (conceito) vs Comparação Visual -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Objetivo com Badges -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+              Objetivo
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Auto-balanceamento</span>
+              BSTs que mantêm o <strong>balanceamento automaticamente</strong> a cada operação.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge amber">Evita Degeneração</span>
+              Impedem que a árvore vire uma <strong>lista</strong> (altura linear).
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge emerald">Operações Eficientes</span>
+              Busca, inserção e remoção mantidas em <strong>O(log n)</strong>.
+            </div>
+          </div>
+
+          <!-- Coluna 2: Comparação Visual (balanceada x degenerada) -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Balanceada × Degenerada
+              </span>
+              <span class="frame-badge">altura: log n × n</span>
+            </div>
+
+            <div class="tree-interactive-stage" style="height:250px;">
+              <svg viewBox="0 0 380 250" style="width:100%; height:100%;">
+                <!-- ===== Árvore Balanceada (esquerda) ===== -->
+                <text x="90" y="20" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">Balanceada • O(log n)</text>
+                <!-- edges -->
+                <line x1="90" y1="45" x2="55" y2="105" class="svg-tree-edge" />
+                <line x1="90" y1="45" x2="125" y2="105" class="svg-tree-edge" />
+                <line x1="55" y1="105" x2="35" y2="165" class="svg-tree-edge" />
+                <line x1="55" y1="105" x2="80" y2="165" class="svg-tree-edge" />
+                <line x1="125" y1="105" x2="150" y2="165" class="svg-tree-edge" />
+                <!-- nós -->
+                <g class="svg-node-group"><circle cx="90" cy="45" r="15" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="90" y="45" class="svg-node-text">50</text></g>
+                <g class="svg-node-group"><circle cx="55" cy="105" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="55" y="105" class="svg-node-text">30</text></g>
+                <g class="svg-node-group"><circle cx="125" cy="105" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="125" y="105" class="svg-node-text">70</text></g>
+                <g class="svg-node-group"><circle cx="35" cy="165" r="11" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="35" y="165" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="80" cy="165" r="11" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="80" y="165" class="svg-node-text">40</text></g>
+                <g class="svg-node-group"><circle cx="150" cy="165" r="11" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="150" y="165" class="svg-node-text">80</text></g>
+
+                <!-- divisória -->
+                <line x1="200" y1="35" x2="200" y2="235" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4" />
+
+                <!-- ===== Árvore Degenerada (direita) ===== -->
+                <text x="300" y="20" class="level-text-label" style="fill:#f87171; text-anchor:middle;">Degenerada • O(n)</text>
+                <!-- edges em cascata (lista) -->
+                <line x1="255" y1="45" x2="285" y2="95" class="svg-tree-edge" style="stroke:rgba(239,68,68,0.4);" />
+                <line x1="285" y1="95" x2="315" y2="145" class="svg-tree-edge" style="stroke:rgba(239,68,68,0.4);" />
+                <line x1="315" y1="145" x2="345" y2="195" class="svg-tree-edge" style="stroke:rgba(239,68,68,0.4);" />
+                <!-- nós em cascata -->
+                <g class="svg-node-group"><circle cx="255" cy="45" r="13" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="255" y="45" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="285" cy="95" r="13" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="285" y="95" class="svg-node-text">30</text></g>
+                <g class="svg-node-group"><circle cx="315" cy="145" r="13" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="315" y="145" class="svg-node-text">40</text></g>
+                <g class="svg-node-group"><circle cx="345" cy="195" r="13" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="345" y="195" class="svg-node-text">50</text></g>
+              </svg>
+            </div>
+
+            <!-- Legenda comparativa -->
+            <div class="fibo-state-banner">
+              <span style="color:var(--emerald-neon);">◀ Altura baixa, busca rápida</span>
+              <span style="color:#f87171;">Vira uma lista encadeada ▶</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 13: FATOR DE BALANCEAMENTO (FB) DA AVL -->
+    <section class="slide" id="slide-13">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 3v18M5 8l7-5 7 5M4 21h16"></path>
+              </svg>
+              Árvores AVL • Balanceamento
+            </div>
+            <h2 class="slide-title-modern">Fator de <span class="gradient-text">Balanceamento</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">−1 ≤ FB(n) ≤ 1</div>
+        </div>
+
+        <!-- 2 Colunas: Condição (conceito) vs Comparação Visual -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: A Condição de Balanceamento -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 3v18M3 7h18M7 7l-3 6a3 3 0 0 0 6 0zM17 7l-3 6a3 3 0 0 0 6 0z"></path>
+              </svg>
+              A Condição
+            </div>
+
+            <div class="clean-item" style="text-align:center;">
+              <span style="font-family:var(--font-mono); font-size:1.15rem; color:var(--cyan-neon); font-weight:700;">
+                FB(n) = h(dir) − h(esq)
+              </span>
+              <div style="margin-top:8px; font-family:var(--font-mono); font-size:0.9rem; color:var(--text-muted);">
+                Balanceado &rArr; <strong style="color:var(--emerald-neon);">−1 ≤ FB ≤ 1</strong>
+              </div>
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge emerald">Tolerância</span>
+              A diferença de altura entre as subárvores é <strong>no máximo 1</strong>.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge amber">Níveis Incompletos</span>
+              <strong>Não</strong> é preciso que os últimos níveis estejam completos.
+            </div>
+
+            <div class="clean-item clean-item-alert">
+              <strong>Desbalanceado:</strong> qualquer nó com FB &gt; +1 ou FB &lt; −1.
+            </div>
+          </div>
+
+          <!-- Coluna 2: Balanceada x Desbalanceada -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Balanceada × Desbalanceada
+              </span>
+              <span class="frame-badge">FB por nó</span>
+            </div>
+
+            <div class="tree-interactive-stage" style="height:250px;">
+              <svg viewBox="0 0 380 250" style="width:100%; height:100%;">
+                <!-- ===== Balanceada (esquerda) ===== -->
+                <text x="90" y="20" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">Balanceada</text>
+                <line x1="90" y1="45" x2="55" y2="105" class="svg-tree-edge" />
+                <line x1="90" y1="45" x2="125" y2="105" class="svg-tree-edge" />
+                <line x1="55" y1="105" x2="35" y2="165" class="svg-tree-edge" />
+                <!-- nós com tag de FB -->
+                <g class="svg-node-group"><circle cx="90" cy="45" r="15" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="90" y="45" class="svg-node-text">50</text></g>
+                <text x="112" y="40" class="avl-factor-tag">FB=0</text>
+                <g class="svg-node-group"><circle cx="55" cy="105" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="55" y="105" class="svg-node-text">30</text></g>
+                <text x="74" y="100" class="avl-factor-tag">−1</text>
+                <g class="svg-node-group"><circle cx="125" cy="105" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="125" y="105" class="svg-node-text">70</text></g>
+                <text x="144" y="100" class="avl-factor-tag">0</text>
+                <g class="svg-node-group"><circle cx="35" cy="165" r="11" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="35" y="165" class="svg-node-text">20</text></g>
+                <text x="52" y="162" class="avl-factor-tag">0</text>
+
+                <!-- divisória -->
+                <line x1="200" y1="35" x2="200" y2="235" stroke="rgba(255,255,255,0.08)" stroke-width="1" stroke-dasharray="4" />
+
+                <!-- ===== Desbalanceada (direita) ===== -->
+                <text x="300" y="20" class="level-text-label" style="fill:#f87171; text-anchor:middle;">Desbalanceada</text>
+                <line x1="300" y1="45" x2="270" y2="105" class="svg-tree-edge" style="stroke:rgba(239,68,68,0.4);" />
+                <line x1="270" y1="105" x2="245" y2="165" class="svg-tree-edge" style="stroke:rgba(239,68,68,0.4);" />
+                <line x1="245" y1="165" x2="225" y2="215" class="svg-tree-edge" style="stroke:rgba(239,68,68,0.4);" />
+                <!-- nó raiz que viola a condição (destacado) -->
+                <g class="svg-node-group"><circle cx="300" cy="45" r="15" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="300" y="45" class="svg-node-text">50</text></g>
+                <text x="322" y="40" class="avl-factor-tag" style="fill:#f87171; font-weight:700;">FB=−3</text>
+                <g class="svg-node-group"><circle cx="270" cy="105" r="13" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="270" y="105" class="svg-node-text">40</text></g>
+                <text x="288" y="100" class="avl-factor-tag" style="fill:#f87171;">−2</text>
+                <g class="svg-node-group"><circle cx="245" cy="165" r="12" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="245" y="165" class="svg-node-text">30</text></g>
+                <text x="262" y="162" class="avl-factor-tag" style="fill:#f87171;">−1</text>
+                <g class="svg-node-group"><circle cx="225" cy="215" r="11" class="svg-node-circle" style="stroke:#f87171;"></circle><text x="225" y="215" class="svg-node-text">20</text></g>
+                <text x="241" y="212" class="avl-factor-tag" style="fill:#f87171;">0</text>
+              </svg>
+            </div>
+
+            <!-- Legenda -->
+            <div class="fibo-state-banner">
+              <span style="color:var(--emerald-neon);">◀ Todos os nós com −1 ≤ FB ≤ 1</span>
+              <span style="color:#f87171;">Raiz viola a condição ▶</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 14: FB — CÁLCULO E INTERPRETAÇÃO -->
+    <section class="slide" id="slide-14">
+      <div class="slide-content-clean" style="gap:20px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 20V10M10 20V4M16 20v-7M22 20H2"></path>
+              </svg>
+              Árvores AVL • Cálculo do FB
+            </div>
+            <h2 class="slide-title-modern">FB: <span class="gradient-text">Cálculo & Interpretação</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">FB(n) = altura(esq) − altura(dir)</div>
+        </div>
+
+        <!-- Linha 1: Fórmula + Interpretação em 2 colunas -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Fórmula -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="3" width="16" height="18" rx="2"></rect>
+                <path d="M8 7h8M8 11h8M8 15h5"></path>
+              </svg>
+              A Fórmula
+            </div>
+            <div class="clean-item" style="text-align:center;">
+              <span style="font-family:var(--font-mono); font-size:1.1rem; color:var(--cyan-neon); font-weight:700;">
+                FB(n) = altura(esq) − altura(dir)
+              </span>
+            </div>
+            <div class="clean-item">
+              Mede a <strong>diferença entre as alturas</strong> das subárvores esquerda e direita de um nó.
+            </div>
+          </div>
+
+          <!-- Coluna 2: Interpretação -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4M12 8h.01"></path>
+              </svg>
+              Interpretação
+            </div>
+            <div class="clean-item" style="display:flex; justify-content:space-between; align-items:center;">
+              <span><span class="clean-badge emerald">FB = 0</span> alturas iguais</span>
+              <span><span class="clean-badge cyan">+1</span> esq. mais alta</span>
+              <span><span class="clean-badge purple">−1</span> dir. mais alta</span>
+            </div>
+            <div class="clean-item clean-item-alert">
+              <strong>FB &gt; +1:</strong> desbalanceio à esquerda &nbsp;·&nbsp; <strong>FB &lt; −1:</strong> à direita.
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Linha 2: Três mini-árvores exemplificando FB = +1, 0, −1 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+
+          <!-- FB = +1 (esquerda mais alta) -->
+          <div class="tree-diagram-container interactive-element" style="padding:16px;">
+            <div class="tree-diagram-header" style="padding-bottom:8px;">
+              <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:var(--cyan-neon);">FB = +1</span>
+              <span class="frame-badge">esq. mais alta</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:150px;">
+              <svg viewBox="0 0 160 150" style="width:100%; height:100%;">
+                <line x1="80" y1="30" x2="45" y2="85" class="svg-tree-edge" />
+                <line x1="80" y1="30" x2="115" y2="85" class="svg-tree-edge" />
+                <line x1="45" y1="85" x2="25" y2="135" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="80" cy="30" r="15" class="svg-node-circle"></circle><text x="80" y="30" class="svg-node-text">A</text></g>
+                <text x="100" y="24" class="avl-factor-tag" style="fill:var(--cyan-neon); font-weight:700;">+1</text>
+                <g class="svg-node-group"><circle cx="45" cy="85" r="13" class="svg-node-circle" style="stroke:var(--cyan-neon);"></circle><text x="45" y="85" class="svg-node-text">B</text></g>
+                <text x="63" y="80" class="avl-factor-tag" style="fill:var(--cyan-neon);">+1</text>
+                <g class="svg-node-group"><circle cx="115" cy="85" r="13" class="svg-node-circle"></circle><text x="115" y="85" class="svg-node-text">C</text></g>
+                <text x="132" y="80" class="avl-factor-tag">0</text>
+                <g class="svg-node-group"><circle cx="25" cy="135" r="11" class="svg-node-circle" style="stroke:var(--cyan-neon);"></circle><text x="25" y="135" class="svg-node-text">D</text></g>
+                <text x="40" y="132" class="avl-factor-tag">0</text>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.74rem;">
+              <span>h(esq)=2 · h(dir)=1</span>
+            </div>
+          </div>
+
+          <!-- FB = 0 (equilibrada) -->
+          <div class="tree-diagram-container interactive-element" style="padding:16px;">
+            <div class="tree-diagram-header" style="padding-bottom:8px;">
+              <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:var(--emerald-neon);">FB = 0</span>
+              <span class="frame-badge">equilibrada</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:150px;">
+              <svg viewBox="0 0 160 150" style="width:100%; height:100%;">
+                <line x1="80" y1="30" x2="45" y2="95" class="svg-tree-edge" />
+                <line x1="80" y1="30" x2="115" y2="95" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="80" cy="30" r="15" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="80" y="30" class="svg-node-text">A</text></g>
+                <text x="100" y="24" class="avl-factor-tag" style="fill:var(--emerald-neon); font-weight:700;">0</text>
+                <g class="svg-node-group"><circle cx="45" cy="95" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="45" y="95" class="svg-node-text">B</text></g>
+                <text x="62" y="92" class="avl-factor-tag">0</text>
+                <g class="svg-node-group"><circle cx="115" cy="95" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="115" y="95" class="svg-node-text">C</text></g>
+                <text x="132" y="92" class="avl-factor-tag">0</text>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.74rem;">
+              <span>h(esq)=1 · h(dir)=1</span>
+            </div>
+          </div>
+
+          <!-- FB = −1 (direita mais alta) -->
+          <div class="tree-diagram-container interactive-element" style="padding:16px;">
+            <div class="tree-diagram-header" style="padding-bottom:8px;">
+              <span style="font-family:var(--font-mono); font-size:0.8rem; font-weight:700; color:var(--purple-neon);">FB = −1</span>
+              <span class="frame-badge">dir. mais alta</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:150px;">
+              <svg viewBox="0 0 160 150" style="width:100%; height:100%;">
+                <line x1="80" y1="30" x2="45" y2="85" class="svg-tree-edge" />
+                <line x1="80" y1="30" x2="115" y2="85" class="svg-tree-edge" />
+                <line x1="115" y1="85" x2="135" y2="135" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="80" cy="30" r="15" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="80" y="30" class="svg-node-text">A</text></g>
+                <text x="56" y="24" class="avl-factor-tag" style="fill:var(--purple-neon); font-weight:700;">−1</text>
+                <g class="svg-node-group"><circle cx="45" cy="85" r="13" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="45" y="85" class="svg-node-text">B</text></g>
+                <text x="22" y="80" class="avl-factor-tag">0</text>
+                <g class="svg-node-group"><circle cx="115" cy="85" r="13" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="115" y="85" class="svg-node-text">C</text></g>
+                <text x="92" y="80" class="avl-factor-tag" style="fill:var(--purple-neon);">−1</text>
+                <g class="svg-node-group"><circle cx="135" cy="135" r="11" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="135" y="135" class="svg-node-text">E</text></g>
+                <text x="151" y="132" class="avl-factor-tag">0</text>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.74rem;">
+              <span>h(esq)=1 · h(dir)=2</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 15: COMO IDENTIFICAR A ROTAÇÃO AVL (Quadro-resumo) -->
+    <section class="slide" id="slide-15">
+      <div class="slide-content-clean" style="gap:24px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7m0 5h5"></path>
+              </svg>
+              Árvores AVL • Rotações
+            </div>
+            <h2 class="slide-title-modern">Como identificar a <span class="gradient-text">Rotação?</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Quadro-resumo dos 4 casos</div>
+        </div>
+
+        <!-- 2 Colunas: Passo a passo vs Quadro dos 4 casos -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Passo a passo -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              Passo a Passo
+            </div>
+            <div class="clean-item"><span class="clean-badge cyan">1</span> Calcular o <strong>fator de balanceamento</strong> do nó.</div>
+            <div class="clean-item"><span class="clean-badge cyan">2</span> Identificar o <strong>lado</strong> do desbalanceamento.</div>
+            <div class="clean-item"><span class="clean-badge cyan">3</span> Verificar o <strong>FB do filho</strong> desse lado.</div>
+            <div class="clean-item"><span class="clean-badge cyan">4</span> Escolher rotação <strong>simples ou dupla</strong>.</div>
+            <div class="clean-item"><span class="clean-badge cyan">5</span> Atualizar ligações e <strong>recalcular</strong> alturas e fatores.</div>
+          </div>
+
+          <!-- Coluna 2: Quadro-resumo dos 4 casos -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M3 9h18M3 15h18M9 3v18"></path>
+              </svg>
+              Os 4 Casos
+            </div>
+
+            <div class="rotation-case">
+              <span class="clean-badge emerald">LL</span>
+              <span class="rotation-desc">Rotação <strong>simples</strong></span>
+              <span class="rotation-dir" style="color:var(--emerald-neon);">→ direita</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge emerald">RR</span>
+              <span class="rotation-desc">Rotação <strong>simples</strong></span>
+              <span class="rotation-dir" style="color:var(--emerald-neon);">← esquerda</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge purple">LR</span>
+              <span class="rotation-desc">Rotação <strong>dupla</strong></span>
+              <span class="rotation-dir" style="color:#c084fc;">← esq, → dir</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge purple">RL</span>
+              <span class="rotation-desc">Rotação <strong>dupla</strong></span>
+              <span class="rotation-dir" style="color:#c084fc;">→ dir, ← esq</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Mensagem final -->
+        <div class="fibo-state-banner" style="border-left:3px solid var(--cyan-neon); justify-content:center; gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-neon)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"></path></svg>
+          <span style="color:var(--text-main);">As rotações AVL restauram o balanceamento <strong>sem perder a propriedade de árvore binária de busca</strong>.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 16: ROTAÇÕES SIMPLES (LL e RR) -->
+    <section class="slide" id="slide-16">
+      <div class="slide-content-clean" style="gap:22px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7m0 5h5"></path>
+              </svg>
+              Árvores AVL • Rotações Simples
+            </div>
+            <h2 class="slide-title-modern">Rotações Simples: <span class="gradient-text">LL &amp; RR</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Antes → Depois</div>
+        </div>
+
+        <!-- 2 Colunas: caso LL vs caso RR -->
+        <div class="clean-two-cols">
+
+          <!-- ===== LL ===== -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--emerald-neon);">
+                LL • rotação à direita
+              </span>
+              <span class="frame-badge" id="ll-state-badge">desbalanceada</span>
+            </div>
+
+            <!-- Condição -->
+            <div class="clean-item" style="margin:0; font-size:0.82rem;">
+              <span class="clean-badge amber">Condição</span>
+              FB(nó) &gt; +1 &nbsp;e&nbsp; FB(filho esq.) ≥ 0
+            </div>
+
+            <!-- Diagrama animável (nós deslizam antes → depois) -->
+            <div class="tree-interactive-stage" style="height:190px;">
+              <svg viewBox="0 0 220 190" style="width:100%; height:100%;">
+                <line class="rot-edge" id="ll-edge-cb" x1="140" y1="35" x2="95" y2="95" />
+                <line class="rot-edge" id="ll-edge-ba" x1="95" y1="95" x2="55" y2="155" />
+                <!-- nós: começam na cascata, animam p/ árvore balanceada -->
+                <g class="rot-node" id="ll-node-a" data-from-x="55"  data-from-y="155" data-to-x="70"  data-to-y="130" data-fb-from="0" data-fb-to="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">A</text><text class="rot-fb" x="20" y="-2">0</text>
+                </g>
+                <g class="rot-node" id="ll-node-b" data-from-x="95"  data-from-y="95"  data-to-x="110" data-to-y="60" data-fb-from="+1" data-fb-to="0">
+                  <circle r="14" class="svg-node-circle"></circle><text class="svg-node-text">B</text><text class="rot-fb" x="21" y="-3">+1</text>
+                </g>
+                <g class="rot-node" id="ll-node-c" data-from-x="140" data-from-y="35"  data-to-x="150" data-to-y="130" data-fb-from="+2" data-fb-to="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">C</text><text class="rot-fb" x="20" y="-2">+2</text>
+                </g>
+              </svg>
+            </div>
+
+            <button class="btn-sim primary interactive-element" style="width:100%;" onclick="animateRotation('ll')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7m0 5h5"></path></svg>
+              Animar rotação à direita
+            </button>
+
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span id="ll-caption"><strong style="color:#f87171;">C</strong> com FB=+2. Clique para rotacionar.</span>
+            </div>
+          </div>
+
+          <!-- ===== RR ===== -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--emerald-neon);">
+                RR • rotação à esquerda
+              </span>
+              <span class="frame-badge" id="rr-state-badge">desbalanceada</span>
+            </div>
+
+            <!-- Condição -->
+            <div class="clean-item" style="margin:0; font-size:0.82rem;">
+              <span class="clean-badge amber">Condição</span>
+              FB(nó) &lt; −1 &nbsp;e&nbsp; FB(filho dir.) ≤ 0
+            </div>
+
+            <!-- Diagrama animável -->
+            <div class="tree-interactive-stage" style="height:190px;">
+              <svg viewBox="0 0 220 190" style="width:100%; height:100%;">
+                <line class="rot-edge" id="rr-edge-ab" x1="80" y1="35" x2="125" y2="95" />
+                <line class="rot-edge" id="rr-edge-bc" x1="125" y1="95" x2="165" y2="155" />
+                <g class="rot-node" id="rr-node-a" data-from-x="80"  data-from-y="35"  data-to-x="70"  data-to-y="130" data-fb-from="−2" data-fb-to="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">A</text><text class="rot-fb" x="-20" y="-2">−2</text>
+                </g>
+                <g class="rot-node" id="rr-node-b" data-from-x="125" data-from-y="95"  data-to-x="110" data-to-y="60" data-fb-from="−1" data-fb-to="0">
+                  <circle r="14" class="svg-node-circle"></circle><text class="svg-node-text">B</text><text class="rot-fb" x="21" y="-3">−1</text>
+                </g>
+                <g class="rot-node" id="rr-node-c" data-from-x="165" data-from-y="155" data-to-x="150" data-to-y="130" data-fb-from="0" data-fb-to="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">C</text><text class="rot-fb" x="20" y="-2">0</text>
+                </g>
+              </svg>
+            </div>
+
+            <button class="btn-sim primary interactive-element" style="width:100%;" onclick="animateRotation('rr')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 12a8 8 0 1 0-2.3 5.6M20 12V7m0 5h-5"></path></svg>
+              Animar rotação à esquerda
+            </button>
+
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span id="rr-caption"><strong style="color:#f87171;">A</strong> com FB=−2. Clique para rotacionar.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Conceito principal -->
+        <div class="fibo-state-banner" style="border-left:3px solid var(--purple-neon); justify-content:center; gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple-neon)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+          <span style="color:var(--text-main);">O filho está pesado <strong>no mesmo sentido</strong> do desbalanceamento — uma <strong>única rotação</strong> corrige.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 17: ROTAÇÕES DUPLAS (LR e RL) -->
+    <section class="slide" id="slide-17">
+      <div class="slide-content-clean" style="gap:22px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"></path>
+              </svg>
+              Árvores AVL • Rotações Duplas
+            </div>
+            <h2 class="slide-title-modern">Rotações Duplas: <span class="gradient-text">LR &amp; RL</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Duas rotações encadeadas</div>
+        </div>
+
+        <!-- 2 Colunas: caso LR vs caso RL -->
+        <div class="clean-two-cols">
+
+          <!-- ===== LR ===== -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--purple-neon);">
+                LR • esquerda → direita
+              </span>
+              <span class="frame-badge" id="lr-state-badge">etapa 0 / 2</span>
+            </div>
+
+            <div class="clean-item" style="margin:0; font-size:0.82rem;">
+              <span class="clean-badge amber">Condição</span>
+              FB(nó) &gt; +1 &nbsp;e&nbsp; FB(filho esq.) &lt; 0
+            </div>
+
+            <!-- Diagrama animável (3 estados) -->
+            <div class="tree-interactive-stage" style="height:180px;">
+              <svg viewBox="0 0 220 180" style="width:100%; height:100%;">
+                <line class="rot-edge" id="lr-edge-1" x1="150" y1="35" x2="70" y2="90" />
+                <line class="rot-edge" id="lr-edge-2" x1="70" y1="90" x2="110" y2="145" />
+                <!-- A = filho esquerdo, B = neto (sobe), C = nó desbalanceado -->
+                <g class="rot-node" id="lr-node-a"
+                   data-s0-x="70"  data-s0-y="90"  data-s1-x="70"  data-s1-y="145" data-s2-x="70"  data-s2-y="130"
+                   data-fb0="−1" data-fb1="+1" data-fb2="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">A</text><text class="rot-fb" x="-20" y="-2">−1</text>
+                </g>
+                <g class="rot-node" id="lr-node-b"
+                   data-s0-x="110" data-s0-y="145" data-s1-x="110" data-s1-y="90"  data-s2-x="110" data-s2-y="60"
+                   data-fb0="0" data-fb1="0" data-fb2="0">
+                  <circle r="14" class="svg-node-circle"></circle><text class="svg-node-text">B</text><text class="rot-fb" x="21" y="-3">0</text>
+                </g>
+                <g class="rot-node" id="lr-node-c"
+                   data-s0-x="150" data-s0-y="35"  data-s1-x="150" data-s1-y="35"  data-s2-x="150" data-s2-y="130"
+                   data-fb0="+2" data-fb1="+2" data-fb2="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">C</text><text class="rot-fb" x="20" y="-2">+2</text>
+                </g>
+              </svg>
+            </div>
+
+            <button class="btn-sim primary interactive-element" style="width:100%;" onclick="stepDouble('lr')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
+              <span id="lr-btn-label">Rotacionar filho (esquerda)</span>
+            </button>
+
+            <div class="fibo-state-banner" style="font-size:0.76rem;">
+              <span id="lr-caption"><strong style="color:#f87171;">C</strong> com FB=+2 e filho A com FB&lt;0. Precisa de 2 rotações.</span>
+            </div>
+          </div>
+
+          <!-- ===== RL ===== -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--purple-neon);">
+                RL • direita → esquerda
+              </span>
+              <span class="frame-badge" id="rl-state-badge">etapa 0 / 2</span>
+            </div>
+
+            <div class="clean-item" style="margin:0; font-size:0.82rem;">
+              <span class="clean-badge amber">Condição</span>
+              FB(nó) &lt; −1 &nbsp;e&nbsp; FB(filho dir.) &gt; 0
+            </div>
+
+            <!-- Diagrama animável (3 estados) -->
+            <div class="tree-interactive-stage" style="height:180px;">
+              <svg viewBox="0 0 220 180" style="width:100%; height:100%;">
+                <line class="rot-edge" id="rl-edge-1" x1="70" y1="35" x2="150" y2="90" />
+                <line class="rot-edge" id="rl-edge-2" x1="150" y1="90" x2="110" y2="145" />
+                <!-- A = nó desbalanceado, C = filho direito, B = neto (sobe) -->
+                <g class="rot-node" id="rl-node-a"
+                   data-s0-x="70"  data-s0-y="35"  data-s1-x="70"  data-s1-y="35"  data-s2-x="70"  data-s2-y="130"
+                   data-fb0="−2" data-fb1="−2" data-fb2="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">A</text><text class="rot-fb" x="-20" y="-2">−2</text>
+                </g>
+                <g class="rot-node" id="rl-node-b"
+                   data-s0-x="110" data-s0-y="145" data-s1-x="110" data-s1-y="90"  data-s2-x="110" data-s2-y="60"
+                   data-fb0="0" data-fb1="0" data-fb2="0">
+                  <circle r="14" class="svg-node-circle"></circle><text class="svg-node-text">B</text><text class="rot-fb" x="21" y="-3">0</text>
+                </g>
+                <g class="rot-node" id="rl-node-c"
+                   data-s0-x="150" data-s0-y="90"  data-s1-x="150" data-s1-y="145" data-s2-x="150" data-s2-y="130"
+                   data-fb0="+1" data-fb1="−1" data-fb2="0">
+                  <circle r="13" class="svg-node-circle"></circle><text class="svg-node-text">C</text><text class="rot-fb" x="20" y="-2">+1</text>
+                </g>
+              </svg>
+            </div>
+
+            <button class="btn-sim primary interactive-element" style="width:100%;" onclick="stepDouble('rl')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+              <span id="rl-btn-label">Rotacionar filho (direita)</span>
+            </button>
+
+            <div class="fibo-state-banner" style="font-size:0.76rem;">
+              <span id="rl-caption"><strong style="color:#f87171;">A</strong> com FB=−2 e filho C com FB&gt;0. Precisa de 2 rotações.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Conceito principal -->
+        <div class="fibo-state-banner" style="border-left:3px solid var(--purple-neon); justify-content:center; gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple-neon)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+          <span style="color:var(--text-main);">O filho está pesado <strong>no sentido oposto</strong> ao desbalanceamento — exige <strong>duas rotações</strong>.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 18: REMOÇÃO EM BST (Conteúdo) -->
+    <section class="slide" id="slide-18">
+      <div class="slide-content-clean" style="gap:22px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="6" cy="19" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="M9 7l-2 9M15 7l2 9"></path>
+              </svg>
+              Árvore Binária de Busca • Remoção
+            </div>
+            <h2 class="slide-title-modern">Remoção em <span class="gradient-text">BST</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Três casos</div>
+        </div>
+
+        <!-- 2 Colunas: Casos de remoção vs Diagrama antes→depois -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Os 3 casos -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+              </svg>
+              Casos de Remoção
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge emerald">Nó Folha</span>
+              Remover <strong>diretamente</strong> (não tem filhos).
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Um Filho</span>
+              Substituir o nó pelo seu <strong>único filho</strong>.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge purple">Dois Filhos</span>
+              Substituir pelo <strong>maior valor da subárvore esquerda</strong> (antecessor) e remover o nó original desse valor.
+            </div>
+
+            <div class="clean-item" style="border-left:3px solid var(--purple-neon); background:rgba(139,92,246,0.05);">
+              <strong>Regra de substituição:</strong> o antecessor em ordem é o maior valor à esquerda.
+            </div>
+          </div>
+
+          <!-- Coluna 2: Diagrama antes → depois (remoção de nó com 2 filhos) -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Remover 50 (dois filhos)
+              </span>
+              <span class="frame-badge" id="rem-state-badge">antes</span>
+            </div>
+
+            <div class="tree-interactive-stage" style="height:230px;">
+              <svg viewBox="0 0 380 240" style="width:100%; height:100%;">
+                <!-- ANTES (esquerda) -->
+                <text x="95" y="18" class="level-text-label" style="fill:#f87171; text-anchor:middle;">antes</text>
+                <line x1="95" y1="40" x2="55" y2="95" class="svg-tree-edge" />
+                <line x1="95" y1="40" x2="135" y2="95" class="svg-tree-edge" />
+                <line x1="55" y1="95" x2="30" y2="150" class="svg-tree-edge" />
+                <line x1="55" y1="95" x2="80" y2="150" class="svg-tree-edge" />
+                <!-- raiz 50 (a remover) -->
+                <g class="svg-node-group"><circle cx="95" cy="40" r="15" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="95" y="40" class="svg-node-text">50</text></g>
+                <text x="95" y="62" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">remover</text>
+                <!-- subárvore esquerda (destacada) -->
+                <g class="svg-node-group"><circle cx="55" cy="95" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="55" y="95" class="svg-node-text">30</text></g>
+                <g class="svg-node-group"><circle cx="30" cy="150" r="11" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="30" y="150" class="svg-node-text">20</text></g>
+                <!-- maior da subárvore esquerda = 40 (antecessor) -->
+                <g class="svg-node-group"><circle cx="80" cy="150" r="12" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.2);"></circle><text x="80" y="150" class="svg-node-text">40</text></g>
+                <text x="80" y="174" class="avl-factor-tag" style="fill:var(--cyan-neon); text-anchor:middle;">maior esq.</text>
+                <!-- filho direito -->
+                <g class="svg-node-group"><circle cx="135" cy="95" r="13" class="svg-node-circle"></circle><text x="135" y="95" class="svg-node-text">70</text></g>
+
+                <!-- seta -->
+                <path d="M190 120 h30" stroke="var(--cyan-neon)" stroke-width="2" marker-end="url(#arrow-rem)"></path>
+                <defs>
+                  <marker id="arrow-rem" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                    <path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path>
+                  </marker>
+                </defs>
+
+                <!-- DEPOIS (direita): 40 assume a raiz -->
+                <text x="300" y="18" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">depois</text>
+                <line x1="300" y1="40" x2="265" y2="95" class="svg-tree-edge" />
+                <line x1="300" y1="40" x2="340" y2="95" class="svg-tree-edge" />
+                <line x1="265" y1="95" x2="245" y2="150" class="svg-tree-edge" />
+                <!-- 40 virou raiz -->
+                <g class="svg-node-group"><circle cx="300" cy="40" r="15" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.2);"></circle><text x="300" y="40" class="svg-node-text">40</text></g>
+                <g class="svg-node-group"><circle cx="265" cy="95" r="13" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="265" y="95" class="svg-node-text">30</text></g>
+                <g class="svg-node-group"><circle cx="245" cy="150" r="11" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="245" y="150" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="340" cy="95" r="13" class="svg-node-circle"></circle><text x="340" y="95" class="svg-node-text">70</text></g>
+              </svg>
+            </div>
+
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span><strong style="color:var(--cyan-neon);">40</strong> (maior da subárvore esquerda) substitui o <strong style="color:#f87171;">50</strong>.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 19: REMOÇÃO DE NÓ FOLHA -->
+    <section class="slide" id="slide-19">
+      <div class="slide-content-clean" style="gap:22px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="6" r="3"></circle>
+                <circle cx="7" cy="18" r="3"></circle>
+                <path d="M10.5 8.5L8.5 15.5"></path>
+              </svg>
+              Remoção em BST • Caso 1
+            </div>
+            <h2 class="slide-title-modern">Remover um <span class="gradient-text">Nó Folha</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">left == NULL &amp;&amp; right == NULL</div>
+        </div>
+
+        <!-- 2 Colunas: Procedimento + Código vs Diagrama antes→depois -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Condição, procedimento e código -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              Condição &amp; Procedimento
+            </div>
+
+            <div class="clean-item" style="text-align:center;">
+              <span style="font-family:var(--font-mono); font-size:0.95rem; color:var(--cyan-neon); font-weight:700;">
+                left == NULL &amp;&amp; right == NULL
+              </span>
+            </div>
+
+            <div class="clean-item"><span class="clean-badge cyan">1</span> Liberar a memória com <strong>free()</strong>.</div>
+            <div class="clean-item"><span class="clean-badge cyan">2</span> Retornar <strong>NULL</strong>.</div>
+            <div class="clean-item"><span class="clean-badge cyan">3</span> O ponteiro do pai passa a apontar para <strong>NULL</strong>.</div>
+          </div>
+
+          <!-- Coluna 2: Diagrama antes → depois -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Remover o nó 10 (folha)
+              </span>
+              <span class="frame-badge">free(10)</span>
+            </div>
+
+            <div class="tree-interactive-stage" style="height:210px;">
+              <svg viewBox="0 0 380 210" style="width:100%; height:100%;">
+                <!-- ANTES -->
+                <text x="110" y="24" class="level-text-label" style="fill:#f87171; text-anchor:middle;">antes</text>
+                <line x1="130" y1="55" x2="90" y2="120" class="svg-tree-edge" id="leaf-edge" />
+                <g class="svg-node-group"><circle cx="130" cy="55" r="17" class="svg-node-circle"></circle><text x="130" y="55" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="90" cy="120" r="15" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="90" y="120" class="svg-node-text">10</text></g>
+                <text x="90" y="148" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">remover (folha)</text>
+
+                <!-- seta -->
+                <path d="M190 110 h30" stroke="var(--cyan-neon)" stroke-width="2" marker-end="url(#arrow-leaf)"></path>
+                <defs>
+                  <marker id="arrow-leaf" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                    <path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path>
+                  </marker>
+                </defs>
+
+                <!-- DEPOIS -->
+                <text x="300" y="24" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">depois</text>
+                <!-- ligação que vira NULL (tracejada) -->
+                <line x1="300" y1="55" x2="265" y2="120" stroke="rgba(239,68,68,0.35)" stroke-width="2" stroke-dasharray="5"></line>
+                <g class="svg-node-group"><circle cx="300" cy="55" r="17" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="300" y="55" class="svg-node-text">20</text></g>
+                <text x="265" y="124" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">NULL</text>
+              </svg>
+            </div>
+
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span>Nó <strong style="color:#f87171;">10</strong> liberado; <strong>20</strong>&rarr;esquerda vira <strong>NULL</strong>.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 20: REMOÇÃO DE NÓ COM UM FILHO -->
+    <section class="slide" id="slide-20">
+      <div class="slide-content-clean" style="gap:22px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="6" r="3"></circle>
+                <circle cx="12" cy="18" r="3"></circle>
+                <path d="M12 9v6"></path>
+              </svg>
+              Remoção em BST • Caso 2
+            </div>
+            <h2 class="slide-title-modern">Remover um Nó com <span class="gradient-text">Um Filho</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">O filho assume a posição</div>
+        </div>
+
+        <!-- 2 Colunas: Procedimento vs Diagrama antes→depois -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Condição e procedimento -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 11l3 3L22 4"></path>
+                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+              </svg>
+              Condição &amp; Procedimento
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Condição</span>
+              O nó possui <strong>apenas um filho</strong> (esquerdo ou direito).
+            </div>
+
+            <div class="clean-item"><span class="clean-badge cyan">1</span> Guardar o ponteiro do filho em uma <strong>variável temporária</strong>.</div>
+            <div class="clean-item"><span class="clean-badge cyan">2</span> Liberar a memória do nó removido.</div>
+            <div class="clean-item"><span class="clean-badge cyan">3</span> Retornar o ponteiro do filho — o pai passa a apontar <strong>direto para ele</strong>.</div>
+          </div>
+
+          <!-- Coluna 2: Diagrama antes → depois -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Remover o nó 10 (um filho)
+              </span>
+              <span class="frame-badge">15 sobe</span>
+            </div>
+
+            <div class="tree-interactive-stage" style="height:230px;">
+              <svg viewBox="0 0 380 240" style="width:100%; height:100%;">
+                <!-- ANTES: 20 -> 10 (esq) -> 15 (dir do 10) -->
+                <text x="110" y="22" class="level-text-label" style="fill:#f87171; text-anchor:middle;">antes</text>
+                <line x1="130" y1="45" x2="85" y2="110" class="svg-tree-edge" />
+                <line x1="85" y1="110" x2="120" y2="175" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="130" cy="45" r="16" class="svg-node-circle"></circle><text x="130" y="45" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="85" cy="110" r="14" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="85" y="110" class="svg-node-text">10</text></g>
+                <text x="85" y="134" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">remover</text>
+                <g class="svg-node-group"><circle cx="120" cy="175" r="12" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.2);"></circle><text x="120" y="175" class="svg-node-text">15</text></g>
+                <text x="120" y="197" class="avl-factor-tag" style="fill:var(--cyan-neon); text-anchor:middle;">único filho</text>
+
+                <!-- seta -->
+                <path d="M195 120 h30" stroke="var(--cyan-neon)" stroke-width="2" marker-end="url(#arrow-one)"></path>
+                <defs>
+                  <marker id="arrow-one" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                    <path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path>
+                  </marker>
+                </defs>
+
+                <!-- DEPOIS: 20 -> 15 (esq) -->
+                <text x="300" y="22" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">depois</text>
+                <line x1="315" y1="55" x2="275" y2="120" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="315" cy="55" r="16" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="315" y="55" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="275" cy="120" r="14" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.2);"></circle><text x="275" y="120" class="svg-node-text">15</text></g>
+                <text x="275" y="146" class="avl-factor-tag" style="fill:var(--cyan-neon); text-anchor:middle;">assumiu a posição</text>
+              </svg>
+            </div>
+
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span><strong style="color:var(--cyan-neon);">15</strong> assume a posição do <strong style="color:#f87171;">10</strong>, preservando a ordenação.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 21: REMOÇÃO DE NÓ COM DOIS FILHOS -->
+    <section class="slide" id="slide-21">
+      <div class="slide-content-clean" style="gap:22px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle>
+                <circle cx="6" cy="19" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"></path>
+              </svg>
+              Remoção em BST • Caso 3
+            </div>
+            <h2 class="slide-title-modern">Remover um Nó com <span class="gradient-text">Dois Filhos</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Predecessor em ordem</div>
+        </div>
+
+        <!-- 2 Colunas: Procedimento vs Diagrama -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: Regra do predecessor em ordem -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 5h10M11 9h7M11 15h10M11 19h7"></path>
+                <path d="M3 5l2 2 3-3M3 15l2 2 3-3"></path>
+              </svg>
+              Maior Valor da Subárvore Esquerda
+            </div>
+
+            <div class="clean-item"><span class="clean-badge purple">1</span> Entrar na <strong>subárvore esquerda</strong> do nó.</div>
+            <div class="clean-item"><span class="clean-badge purple">2</span> Avançar <strong>sempre à direita</strong> até o maior valor.</div>
+            <div class="clean-item"><span class="clean-badge purple">3</span> <strong>Copiar</strong> esse valor para o nó a ser removido.</div>
+            <div class="clean-item"><span class="clean-badge purple">4</span> Remover <strong>recursivamente</strong> o nó original do valor copiado.</div>
+
+            <div class="clean-item" style="border-left:3px solid var(--cyan-neon); background:rgba(0,242,254,0.05);">
+              Esse valor é o <strong>predecessor em ordem</strong>. <span style="color:var(--text-dim);">Alternativa: menor da subárvore direita (sucessor).</span>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Diagrama com caminho destacado -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">
+                Remover 50 → predecessor
+              </span>
+              <span class="frame-badge">esq, depois → →</span>
+            </div>
+
+            <div class="tree-interactive-stage" style="height:240px;">
+              <svg viewBox="0 0 380 250" style="width:100%; height:100%;">
+                <!-- Arestas (o caminho do predecessor fica roxo: esq e depois sempre à direita) -->
+                <line x1="150" y1="40" x2="90" y2="100" class="svg-tree-edge" style="stroke:var(--purple-neon); stroke-width:2.5;" />
+                <line x1="150" y1="40" x2="300" y2="100" class="svg-tree-edge" />
+                <line x1="90" y1="100" x2="55" y2="165" class="svg-tree-edge" />
+                <line x1="90" y1="100" x2="135" y2="165" class="svg-tree-edge" style="stroke:var(--purple-neon); stroke-width:2.5;" />
+                <line x1="135" y1="165" x2="165" y2="220" class="svg-tree-edge" style="stroke:var(--purple-neon); stroke-width:2.5;" />
+
+                <!-- raiz 50 (remover) -->
+                <g class="svg-node-group"><circle cx="150" cy="40" r="16" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="150" y="40" class="svg-node-text">50</text></g>
+                <text x="150" y="20" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">remover</text>
+
+                <!-- filho direito -->
+                <g class="svg-node-group"><circle cx="300" cy="100" r="14" class="svg-node-circle"></circle><text x="300" y="100" class="svg-node-text">70</text></g>
+
+                <!-- subárvore esquerda: 30 (entra aqui) -->
+                <g class="svg-node-group"><circle cx="90" cy="100" r="14" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="90" y="100" class="svg-node-text">30</text></g>
+                <g class="svg-node-group"><circle cx="55" cy="165" r="12" class="svg-node-circle"></circle><text x="55" y="165" class="svg-node-text">20</text></g>
+                <!-- 45: vai à direita -->
+                <g class="svg-node-group"><circle cx="135" cy="165" r="12" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="135" y="165" class="svg-node-text">45</text></g>
+                <!-- 48: maior da subárvore esquerda (predecessor) -->
+                <g class="svg-node-group"><circle cx="165" cy="220" r="12" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.25);"></circle><text x="165" y="220" class="svg-node-text">48</text></g>
+                <text x="200" y="224" class="avl-factor-tag" style="fill:var(--cyan-neon);">maior esq.</text>
+
+                <!-- seta de cópia 48 -> 50 -->
+                <path d="M165 205 C 150 140, 150 90, 150 58" fill="none" stroke="var(--cyan-neon)" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrow-pred)"></path>
+                <defs>
+                  <marker id="arrow-pred" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+                    <path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path>
+                  </marker>
+                </defs>
+              </svg>
+            </div>
+
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span>O valor <strong style="color:var(--cyan-neon);">48</strong> é copiado para o nó <strong style="color:#f87171;">50</strong>; o 48 original é removido.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 22: IMPLEMENTAÇÃO DA REMOÇÃO EM C (removeNode) -->
+    <section class="slide" id="slide-22">
+      <div class="slide-content-clean" style="gap:20px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              Remoção em BST • Código em C
+            </div>
+            <h2 class="slide-title-modern">Implementação: <span class="gradient-text">remover nó</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Recursiva &amp; completa</div>
+        </div>
+
+        <!-- Grid: código C (maior) + mapa dos casos -->
+        <div class="fibo-sim-grid" style="grid-template-columns:1.55fr 1fr;">
+
+          <!-- Coluna 1: Código C -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots">
+                <div class="code-dot" style="background:#ef4444;"></div>
+                <div class="code-dot" style="background:#f59e0b;"></div>
+                <div class="code-dot" style="background:#10b981;"></div>
+              </div>
+              <span>remove.c</span>
+              <span style="color:var(--text-dim);">BST</span>
+            </div>
+
+            <div class="c-code-lines" style="font-size:0.8rem;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="fn">node</span><span class="op">*</span> <span class="fn">removeNode</span>(<span class="kw">int</span> num, <span class="fn">node</span> <span class="op">*</span>n) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">if</span> (n <span class="op">==</span> <span class="kw">NULL</span>) <span class="kw">return</span> <span class="kw">NULL</span>;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="kw">if</span> (num <span class="op">&lt;</span> n<span class="op">-&gt;</span>number)</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">        n<span class="op">-&gt;</span>left <span class="op">=</span> <span class="fn">removeNode</span>(num, n<span class="op">-&gt;</span>left);</span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">    <span class="kw">else if</span> (num <span class="op">&gt;</span> n<span class="op">-&gt;</span>number)</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">        n<span class="op">-&gt;</span>right <span class="op">=</span> <span class="fn">removeNode</span>(num, n<span class="op">-&gt;</span>right);</span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">    <span class="kw">else</span> {</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">        <span class="cm">// caso 2: sem filho esquerdo</span></span></div>
+              <div class="c-line"><span class="c-num">10</span><span class="c-code">        <span class="kw">if</span> (n<span class="op">-&gt;</span>left <span class="op">==</span> <span class="kw">NULL</span>) {</span></div>
+              <div class="c-line"><span class="c-num">11</span><span class="c-code">            <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">12</span><span class="c-code">            <span class="fn">free</span>(n); <span class="kw">return</span> temp;</span></div>
+              <div class="c-line"><span class="c-num">13</span><span class="c-code">        } <span class="kw">else if</span> (n<span class="op">-&gt;</span>right <span class="op">==</span> <span class="kw">NULL</span>) {</span></div>
+              <div class="c-line"><span class="c-num">14</span><span class="c-code">            <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">15</span><span class="c-code">            <span class="fn">free</span>(n); <span class="kw">return</span> temp;</span></div>
+              <div class="c-line"><span class="c-num">16</span><span class="c-code">        }</span></div>
+              <div class="c-line"><span class="c-num">17</span><span class="c-code">        <span class="cm">// caso 3: maior da subárvore esquerda</span></span></div>
+              <div class="c-line"><span class="c-num">18</span><span class="c-code">        <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">19</span><span class="c-code">        <span class="kw">while</span> (temp<span class="op">-&gt;</span>right <span class="op">!=</span> <span class="kw">NULL</span>)</span></div>
+              <div class="c-line"><span class="c-num">20</span><span class="c-code">            temp <span class="op">=</span> temp<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">21</span><span class="c-code">        n<span class="op">-&gt;</span>number <span class="op">=</span> temp<span class="op">-&gt;</span>number;</span></div>
+              <div class="c-line"><span class="c-num">22</span><span class="c-code">        n<span class="op">-&gt;</span>left <span class="op">=</span> <span class="fn">removeNode</span>(temp<span class="op">-&gt;</span>number, n<span class="op">-&gt;</span>left);</span></div>
+              <div class="c-line"><span class="c-num">23</span><span class="c-code">    }</span></div>
+              <div class="c-line"><span class="c-num">24</span><span class="c-code">    <span class="kw">return</span> n;</span></div>
+              <div class="c-line"><span class="c-num">25</span><span class="c-code">}</span></div>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Mapa dos trechos -->
+          <div class="fibo-stack-box interactive-element">
+            <div class="fibo-stack-header">
+              <div style="font-weight:700; font-size:0.9rem; font-family:var(--font-mono); color:var(--text-main);">
+                Mapa do Código
+              </div>
+            </div>
+
+            <div class="clean-item" style="margin:0;">
+              <span class="clean-badge cyan">L2</span>
+              Caso base: árvore vazia retorna <strong>NULL</strong>.
+            </div>
+            <div class="clean-item" style="margin:0;">
+              <span class="clean-badge cyan">L4–7</span>
+              <strong>Busca</strong>: desce à esquerda/direita comparando com <code>num</code>.
+            </div>
+            <div class="clean-item" style="margin:0;">
+              <span class="clean-badge emerald">L10–16</span>
+              Achou: nó com <strong>0 ou 1 filho</strong> — devolve o filho (ou NULL).
+            </div>
+            <div class="clean-item" style="margin:0;">
+              <span class="clean-badge purple">L18–22</span>
+              <strong>Dois filhos</strong>: pega o maior da esquerda, copia e remove recursivamente.
+            </div>
+            <div class="clean-item" style="margin:0; border-left:3px solid var(--cyan-neon); background:rgba(0,242,254,0.05);">
+              <strong>L24</strong>: retorna <code>n</code> — religando a subárvore ao pai a cada nível.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 23: CASO FOLHA — CÓDIGO + EXEMPLO -->
+    <section class="slide" id="slide-23">
+      <div class="slide-content-clean" style="gap:20px;">
+
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="6" r="3"></circle><circle cx="7" cy="18" r="3"></circle><path d="M10.5 8.5L8.5 15.5"></path>
+              </svg>
+              removeNode() • Caso Folha
+            </div>
+            <h2 class="slide-title-modern">Na Prática: <span class="gradient-text">Nó Folha</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">0 filhos</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.25fr 1fr;">
+          <!-- Código: trecho do caso 0/1 filho que resolve a folha -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>remove.c • folha</span>
+              <span style="color:var(--text-dim);">0 filhos</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.8rem;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code">    <span class="kw">else</span> { <span class="cm">// achou o nó</span></span></div>
+              <div class="c-line active-line"><span class="c-num">2</span><span class="c-code">        <span class="kw">if</span> (n<span class="op">-&gt;</span>left <span class="op">==</span> <span class="kw">NULL</span>) {</span></div>
+              <div class="c-line active-line"><span class="c-num">3</span><span class="c-code">            <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>right; <span class="cm">// NULL</span></span></div>
+              <div class="c-line active-line"><span class="c-num">4</span><span class="c-code">            <span class="fn">free</span>(n);</span></div>
+              <div class="c-line active-line"><span class="c-num">5</span><span class="c-code">            <span class="kw">return</span> temp; <span class="cm">// devolve NULL</span></span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">        }</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">    }</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.78rem; margin: 14px 14px 2px;"">
+              <span>Folha: <code>left</code> e <code>right</code> são NULL &rarr; <code>temp</code> = NULL é devolvido ao pai.</span>
+            </div>
+          </div>
+
+          <!-- Exemplo -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">Remover 10</span>
+              <span class="frame-badge">folha</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:200px;">
+              <svg viewBox="0 0 360 200" style="width:100%; height:100%;">
+                <text x="90" y="22" class="level-text-label" style="fill:#f87171; text-anchor:middle;">antes</text>
+                <line x1="110" y1="50" x2="75" y2="115" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="110" cy="50" r="16" class="svg-node-circle"></circle><text x="110" y="50" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="75" cy="115" r="14" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="75" y="115" class="svg-node-text">10</text></g>
+                <path d="M165 90 h35" stroke="var(--cyan-neon)" stroke-width="2" marker-end="url(#arr-c1)"></path>
+                <defs><marker id="arr-c1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path></marker></defs>
+                <text x="285" y="22" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">depois</text>
+                <line x1="285" y1="50" x2="250" y2="115" stroke="rgba(239,68,68,0.35)" stroke-width="2" stroke-dasharray="5"></line>
+                <g class="svg-node-group"><circle cx="285" cy="50" r="16" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="285" y="50" class="svg-node-text">20</text></g>
+                <text x="250" y="119" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">NULL</text>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span>O pai (<strong>20</strong>) passa a apontar para <strong style="color:#f87171;">NULL</strong>.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 24: CASO UM FILHO — CÓDIGO + EXEMPLO -->
+    <section class="slide" id="slide-24">
+      <div class="slide-content-clean" style="gap:20px;">
+
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="6" r="3"></circle><circle cx="12" cy="18" r="3"></circle><path d="M12 9v6"></path>
+              </svg>
+              removeNode() • Caso Um Filho
+            </div>
+            <h2 class="slide-title-modern">Na Prática: <span class="gradient-text">Um Filho</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">1 filho</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.25fr 1fr;">
+          <!-- Código: trecho que devolve o único filho -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>remove.c • um filho</span>
+              <span style="color:var(--text-dim);">1 filho</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.8rem;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code">    <span class="kw">else</span> { <span class="cm">// achou o nó</span></span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">        <span class="kw">if</span> (n<span class="op">-&gt;</span>left <span class="op">==</span> <span class="kw">NULL</span>) {</span></div>
+              <div class="c-line active-line"><span class="c-num">3</span><span class="c-code">            <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line active-line"><span class="c-num">4</span><span class="c-code">            <span class="fn">free</span>(n); <span class="kw">return</span> temp;</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">        } <span class="kw">else if</span> (n<span class="op">-&gt;</span>right <span class="op">==</span> <span class="kw">NULL</span>) {</span></div>
+              <div class="c-line active-line"><span class="c-num">6</span><span class="c-code">            <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line active-line"><span class="c-num">7</span><span class="c-code">            <span class="fn">free</span>(n); <span class="kw">return</span> temp;</span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">        }</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">    }</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.78rem;  margin: 0 14px 14px;">
+              <span>Um lado é NULL &rarr; <code>temp</code> recebe o outro filho e é devolvido ao pai.</span>
+            </div>
+          </div>
+
+          <!-- Exemplo -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">Remover 10</span>
+              <span class="frame-badge">15 sobe</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:220px;">
+              <svg viewBox="0 0 360 230" style="width:100%; height:100%;">
+                <text x="95" y="20" class="level-text-label" style="fill:#f87171; text-anchor:middle;">antes</text>
+                <line x1="115" y1="42" x2="75" y2="105" class="svg-tree-edge" />
+                <line x1="75" y1="105" x2="110" y2="168" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="115" cy="42" r="15" class="svg-node-circle"></circle><text x="115" y="42" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="75" cy="105" r="13" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="75" y="105" class="svg-node-text">10</text></g>
+                <g class="svg-node-group"><circle cx="110" cy="168" r="12" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.2);"></circle><text x="110" y="168" class="svg-node-text">15</text></g>
+                <path d="M180 115 h30" stroke="var(--cyan-neon)" stroke-width="2" marker-end="url(#arr-c2)"></path>
+                <defs><marker id="arr-c2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path></marker></defs>
+                <text x="300" y="20" class="level-text-label" style="fill:var(--emerald-neon); text-anchor:middle;">depois</text>
+                <line x1="300" y1="55" x2="265" y2="120" class="svg-tree-edge" />
+                <g class="svg-node-group"><circle cx="300" cy="55" r="15" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="300" y="55" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="265" cy="120" r="13" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.2);"></circle><text x="265" y="120" class="svg-node-text">15</text></g>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span><strong style="color:var(--cyan-neon);">15</strong> (único filho) toma o lugar do <strong style="color:#f87171;">10</strong>.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 25: CASO DOIS FILHOS — CÓDIGO + EXEMPLO -->
+    <section class="slide" id="slide-25">
+      <div class="slide-content-clean" style="gap:20px;">
+
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="5" r="3"></circle><circle cx="6" cy="19" r="3"></circle><circle cx="18" cy="19" r="3"></circle><path d="M12 8v4m-3.5 3.5L10 14m4 0l1.5 1.5"></path>
+              </svg>
+              removeNode() • Caso Dois Filhos
+            </div>
+            <h2 class="slide-title-modern">Na Prática: <span class="gradient-text">Dois Filhos</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">2 filhos · predecessor</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.25fr 1fr;">
+          <!-- Código: trecho do maior da esquerda -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>remove.c • dois filhos</span>
+              <span style="color:var(--text-dim);">2 filhos</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.8rem;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code">    <span class="kw">else</span> { <span class="cm">// achou o nó (2 filhos)</span></span></div>
+              <div class="c-line active-line"><span class="c-num">2</span><span class="c-code">        <span class="fn">node</span> <span class="op">*</span>temp <span class="op">=</span> n<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line active-line"><span class="c-num">3</span><span class="c-code">        <span class="kw">while</span> (temp<span class="op">-&gt;</span>right <span class="op">!=</span> <span class="kw">NULL</span>)</span></div>
+              <div class="c-line active-line"><span class="c-num">4</span><span class="c-code">            temp <span class="op">=</span> temp<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line active-line"><span class="c-num">5</span><span class="c-code">        n<span class="op">-&gt;</span>number <span class="op">=</span> temp<span class="op">-&gt;</span>number;</span></div>
+              <div class="c-line active-line"><span class="c-num">6</span><span class="c-code">        n<span class="op">-&gt;</span>left <span class="op">=</span> <span class="fn">removeNode</span>(temp<span class="op">-&gt;</span>number, n<span class="op">-&gt;</span>left);</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">    }</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.78rem;  margin: 14px 14px 2px;">
+              <span>Desce à esquerda e segue à direita até o maior (<code>temp</code>); copia e remove recursivo.</span>
+            </div>
+          </div>
+
+          <!-- Exemplo -->
+          <div class="tree-diagram-container interactive-element">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.85rem; font-weight:700; color:var(--text-main);">Remover 50</span>
+              <span class="frame-badge">48 sobe</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:220px;">
+              <svg viewBox="0 0 360 230" style="width:100%; height:100%;">
+                <line x1="180" y1="38" x2="110" y2="98" class="svg-tree-edge" style="stroke:var(--purple-neon); stroke-width:2.5;" />
+                <line x1="180" y1="38" x2="300" y2="98" class="svg-tree-edge" />
+                <line x1="110" y1="98" x2="75" y2="160" class="svg-tree-edge" />
+                <line x1="110" y1="98" x2="150" y2="160" class="svg-tree-edge" style="stroke:var(--purple-neon); stroke-width:2.5;" />
+                <g class="svg-node-group"><circle cx="180" cy="38" r="16" class="svg-node-circle" style="stroke:#ef4444; fill:rgba(239,68,68,0.25);"></circle><text x="180" y="38" class="svg-node-text">50</text></g>
+                <text x="180" y="18" class="avl-factor-tag" style="fill:#f87171; text-anchor:middle;">remover</text>
+                <g class="svg-node-group"><circle cx="300" cy="98" r="14" class="svg-node-circle"></circle><text x="300" y="98" class="svg-node-text">70</text></g>
+                <g class="svg-node-group"><circle cx="110" cy="98" r="14" class="svg-node-circle" style="stroke:var(--purple-neon);"></circle><text x="110" y="98" class="svg-node-text">30</text></g>
+                <g class="svg-node-group"><circle cx="75" cy="160" r="12" class="svg-node-circle"></circle><text x="75" y="160" class="svg-node-text">20</text></g>
+                <g class="svg-node-group"><circle cx="150" cy="160" r="12" class="svg-node-circle" style="stroke:var(--cyan-neon); fill:rgba(0,242,254,0.25);"></circle><text x="150" y="160" class="svg-node-text">48</text></g>
+                <text x="186" y="164" class="avl-factor-tag" style="fill:var(--cyan-neon);">maior esq.</text>
+                <path d="M150 146 C 150 100, 170 70, 180 56" fill="none" stroke="var(--cyan-neon)" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arr-c3)"></path>
+                <defs><marker id="arr-c3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="var(--cyan-neon)"></path></marker></defs>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.78rem;">
+              <span><strong style="color:var(--cyan-neon);">48</strong> (maior da esquerda) é copiado para <strong style="color:#f87171;">50</strong>.</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 26: IMPLEMENTAÇÃO DO FATOR DE BALANCEAMENTO -->
+    <section class="slide" id="slide-26">
+      <div class="slide-content-clean" style="gap:18px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+              Árvores AVL • Implementação do FB
+            </div>
+            <h2 class="slide-title-modern">Calculando o <span class="gradient-text">Fator de Balanceamento</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Struct → altura → FB</div>
+        </div>
+
+        <!-- 3 Blocos de código em sequência -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1.1fr; gap:16px; align-items:stretch;">
+
+          <!-- 1. Struct com campo FB -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>node.h</span>
+              <span class="clean-badge cyan" style="font-size:0.65rem;">1 • struct</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.78rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="kw">typedef</span> <span class="kw">struct</span> <span class="fn">Node</span> {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">int</span> val;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="kw">struct</span> <span class="fn">Node</span><span class="op">*</span> right;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="kw">struct</span> <span class="fn">Node</span><span class="op">*</span> left;</span></div>
+              <div class="c-line active-line"><span class="c-num">5</span><span class="c-code">    <span class="kw">int</span> FB;</span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">} <span class="fn">Node</span>;</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.74rem; margin:0 14px 14px;">
+              <span>Novo campo <code>FB</code> guarda o fator em cada nó.</span>
+            </div>
+          </div>
+
+          <!-- 2. tree_height -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>height.c</span>
+              <span class="clean-badge purple" style="font-size:0.65rem;">2 • altura</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.76rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="kw">int</span> <span class="fn">tree_height</span>(<span class="fn">node</span> <span class="op">*</span>n) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">if</span> (n <span class="op">==</span> <span class="kw">NULL</span>)</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">        <span class="kw">return</span> <span class="num">0</span>;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="kw">return</span> (<span class="fn">tree_height</span>(n<span class="op">-&gt;</span>left) <span class="op">&gt;</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">            <span class="fn">tree_height</span>(n<span class="op">-&gt;</span>right)</span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">            <span class="op">?</span> <span class="fn">tree_height</span>(n<span class="op">-&gt;</span>left)</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">            <span class="op">:</span> <span class="fn">tree_height</span>(n<span class="op">-&gt;</span>right)) <span class="op">+</span> <span class="num">1</span>;</span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.74rem; margin:0 14px 14px;">
+              <span>Altura = 1 + a maior altura entre os filhos.</span>
+            </div>
+          </div>
+
+          <!-- 3. calculateFB -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>fb.c</span>
+              <span class="clean-badge emerald" style="font-size:0.65rem;">3 • FB</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.76rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="kw">void</span> <span class="fn">calculateFB</span>(<span class="fn">Node</span><span class="op">*</span> n) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">if</span> (n <span class="op">==</span> <span class="kw">NULL</span>) <span class="kw">return</span>;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="fn">calculateFB</span>(n<span class="op">-&gt;</span>left);</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">    <span class="fn">calculateFB</span>(n<span class="op">-&gt;</span>right);</span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code"></span></div>
+              <div class="c-line active-line"><span class="c-num">7</span><span class="c-code">    n<span class="op">-&gt;</span>FB <span class="op">=</span> <span class="fn">height</span>(n<span class="op">-&gt;</span>left)</span></div>
+              <div class="c-line active-line"><span class="c-num">8</span><span class="c-code">           <span class="op">-</span> <span class="fn">height</span>(n<span class="op">-&gt;</span>right);</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.74rem; margin:0 14px 14px;">
+              <span>Percorre em <strong>pós-ordem</strong> e grava o FB de cada nó.</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Encadeamento -->
+        <div class="fibo-state-banner" style="border-left:3px solid var(--cyan-neon); justify-content:center; gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan-neon)" stroke-width="2.5"><path d="M20 6L9 17l-5-5"></path></svg>
+          <span style="color:var(--text-main);">A struct guarda o <strong>FB</strong> · <code>tree_height</code> mede a altura · <code>calculateFB</code> preenche o fator de <strong>todos os nós</strong>.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 27: USO REAL DO FB — IDENTIFICAR A ROTAÇÃO -->
+    <section class="slide" id="slide-27">
+      <div class="slide-content-clean" style="gap:20px;">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7m0 5h5"></path>
+              </svg>
+              Árvores AVL • Uso Real do FB
+            </div>
+            <h2 class="slide-title-modern">Identificando a <span class="gradient-text">Rotação</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">FB do nó + FB do filho</div>
+        </div>
+
+        <!-- Grid: código C + mapa de decisão -->
+        <div class="fibo-sim-grid" style="grid-template-columns:1.45fr 1fr;">
+
+          <!-- Coluna 1: Código identifyRotations -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>identify.c</span>
+              <span style="color:var(--text-dim);">AVL</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.78rem;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="kw">void</span> <span class="fn">identifyRotations</span>(<span class="fn">Node</span><span class="op">*</span> n) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">if</span> (n <span class="op">==</span> <span class="kw">NULL</span>) <span class="kw">return</span>;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="fn">identifyRotations</span>(n<span class="op">-&gt;</span>left);</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="fn">identifyRotations</span>(n<span class="op">-&gt;</span>right);</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">    <span class="kw">if</span> (n<span class="op">-&gt;</span>FB <span class="op">&gt;</span> <span class="num">1</span>) {</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">        <span class="kw">if</span> (n<span class="op">-&gt;</span>left<span class="op">-&gt;</span>FB <span class="op">&gt;=</span> <span class="num">0</span>)</span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">            <span class="fn">printf</span>(<span class="cm">"No %d: rotacao LL\n"</span>, n<span class="op">-&gt;</span>val);</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">        <span class="kw">else</span></span></div>
+              <div class="c-line"><span class="c-num">10</span><span class="c-code">            <span class="fn">printf</span>(<span class="cm">"No %d: rotacao LR\n"</span>, n<span class="op">-&gt;</span>val);</span></div>
+              <div class="c-line"><span class="c-num">11</span><span class="c-code">    }</span></div>
+              <div class="c-line"><span class="c-num">12</span><span class="c-code">    <span class="kw">else if</span> (n<span class="op">-&gt;</span>FB <span class="op">&lt;</span> <span class="op">-</span><span class="num">1</span>) {</span></div>
+              <div class="c-line"><span class="c-num">13</span><span class="c-code">        <span class="kw">if</span> (n<span class="op">-&gt;</span>right<span class="op">-&gt;</span>FB <span class="op">&lt;=</span> <span class="num">0</span>)</span></div>
+              <div class="c-line"><span class="c-num">14</span><span class="c-code">            <span class="fn">printf</span>(<span class="cm">"No %d: rotacao RR\n"</span>, n<span class="op">-&gt;</span>val);</span></div>
+              <div class="c-line"><span class="c-num">15</span><span class="c-code">        <span class="kw">else</span></span></div>
+              <div class="c-line"><span class="c-num">16</span><span class="c-code">            <span class="fn">printf</span>(<span class="cm">"No %d: rotacao RL\n"</span>, n<span class="op">-&gt;</span>val);</span></div>
+              <div class="c-line"><span class="c-num">17</span><span class="c-code">    }</span></div>
+              <div class="c-line"><span class="c-num">18</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem; margin:0 14px 14px;">
+              <span>Com o <code>FB</code> pronto, decidir a rotação é só comparar sinais.</span>
+            </div>
+          </div>
+
+          <!-- Coluna 2: Mapa de decisão -->
+          <div class="fibo-stack-box interactive-element">
+            <div class="fibo-stack-header">
+              <div style="font-weight:700; font-size:0.9rem; font-family:var(--font-mono); color:var(--text-main);">
+                Tabela de Decisão
+              </div>
+            </div>
+
+            <div class="rotation-case">
+              <span class="clean-badge emerald">LL</span>
+              <span class="rotation-desc">FB(n) &gt; 1 &nbsp;e&nbsp; FB(esq) ≥ 0</span>
+              <span class="rotation-dir" style="color:var(--emerald-neon);">→ dir</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge purple">LR</span>
+              <span class="rotation-desc">FB(n) &gt; 1 &nbsp;e&nbsp; FB(esq) &lt; 0</span>
+              <span class="rotation-dir" style="color:#c084fc;">← esq, → dir</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge emerald">RR</span>
+              <span class="rotation-desc">FB(n) &lt; −1 &nbsp;e&nbsp; FB(dir) ≤ 0</span>
+              <span class="rotation-dir" style="color:var(--emerald-neon);">← esq</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge purple">RL</span>
+              <span class="rotation-desc">FB(n) &lt; −1 &nbsp;e&nbsp; FB(dir) &gt; 0</span>
+              <span class="rotation-dir" style="color:#c084fc;">→ dir, ← esq</span>
+            </div>
+
+            <div class="fibo-state-banner" style="font-size:0.76rem; border-left:3px solid var(--cyan-neon);">
+              <span>Percurso em <strong>pós-ordem</strong>: corrige os nós <strong>de baixo para cima</strong>.</span>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 28: TRANSIÇÃO — DO printf PARA OS MÉTODOS DE ROTAÇÃO -->
+    <section class="slide" id="slide-28">
+      <div class="slide-content-clean">
+
+        <!-- Header Minimalista -->
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7m0 5h5"></path>
+              </svg>
+              Árvores AVL • Aplicando as Rotações
+            </div>
+            <h2 class="slide-title-modern">Do <span class="gradient-text">printf</span> à Rotação Real</h2>
+          </div>
+          <div class="slide-subtitle-tag">4 métodos</div>
+        </div>
+
+        <!-- 2 Colunas: de -> para, e lista dos 4 métodos -->
+        <div class="clean-two-cols">
+
+          <!-- Coluna 1: a mudança -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"></path>
+              </svg>
+              De Diagnóstico para Correção
+            </div>
+
+            <div class="clean-item clean-item-alert">
+              <span class="clean-badge red">Antes</span>
+              O <code>printf</code> apenas <strong>identificava</strong> qual rotação era necessária.
+            </div>
+
+            <div class="clean-item" style="border-left:3px solid var(--emerald-neon); background:rgba(16,185,129,0.05);">
+              <span class="clean-badge emerald">Agora</span>
+              Métodos que <strong>reorganizam os ponteiros</strong> e aplicam a rotação de fato.
+            </div>
+
+            <div class="clean-item">
+              <span class="clean-badge cyan">Padrão</span>
+              Cada método recebe o nó, religa <code>a</code>, <code>b</code> (e <code>c</code>), chama <code>calculateFB()</code> e <strong>retorna a nova raiz</strong>.
+            </div>
+          </div>
+
+          <!-- Coluna 2: os 4 métodos -->
+          <div class="clean-card interactive-element">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                <path d="M3 9h18M9 3v18"></path>
+              </svg>
+              Os 4 Métodos
+            </div>
+
+            <div class="rotation-case">
+              <span class="clean-badge emerald">LL</span>
+              <span class="rotation-desc"><code>rotateRight()</code></span>
+              <span class="rotation-dir" style="color:var(--emerald-neon);">→ dir</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge emerald">RR</span>
+              <span class="rotation-desc"><code>rotateLeft()</code></span>
+              <span class="rotation-dir" style="color:var(--emerald-neon);">← esq</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge purple">LR</span>
+              <span class="rotation-desc"><code>rotateLeftRight()</code></span>
+              <span class="rotation-dir" style="color:#c084fc;">← esq, → dir</span>
+            </div>
+            <div class="rotation-case">
+              <span class="clean-badge purple">RL</span>
+              <span class="rotation-desc"><code>rotateRightLeft()</code></span>
+              <span class="rotation-dir" style="color:#c084fc;">→ dir, ← esq</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Nota -->
+        <div class="fibo-state-banner" style="border-left:3px solid var(--purple-neon); justify-content:center; gap:10px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple-neon)" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path></svg>
+          <span style="color:var(--text-main);">Cada rotação atualiza o <strong>FB</strong> da subárvore via <code>calculateFB()</code> e devolve a nova raiz ao chamador.</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SLIDE 29: rotateRight (LL) -->
+    <section class="slide" id="slide-29">
+      <div class="slide-content-clean" style="gap:20px;">
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12a8 8 0 1 1 2.3 5.6M4 12V7m0 5h5"></path></svg>
+              Rotações • Código + Animação
+            </div>
+            <h2 class="slide-title-modern">LL: <span class="gradient-text">rotateRight()</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">simples à direita</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.3fr 1fr;">
+          <!-- Código -->
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>rotateRight.c</span><span style="color:var(--text-dim);">LL</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.8rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="fn">Node</span> <span class="op">*</span><span class="fn">rotateRight</span>(<span class="fn">Node</span> <span class="op">*</span>node) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>a <span class="op">=</span> node;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>b <span class="op">=</span> a<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">    a<span class="op">-&gt;</span>left <span class="op">=</span> b<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">    b<span class="op">-&gt;</span>right <span class="op">=</span> a;</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">    <span class="fn">calculateFB</span>(b);</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">    <span class="kw">return</span> b;</span></div>
+              <div class="c-line"><span class="c-num">10</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem; margin:0 14px 14px;">
+              <span><code>b</code> (filho esq.) sobe; <code>a</code> desce à direita.</span>
+            </div>
+          </div>
+
+          <!-- Resultado estático -->
+          <div class="tree-diagram-container interactive-element" style="min-width:0;">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--emerald-neon);">Resultado</span>
+              <span class="frame-badge">b na raiz</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:200px; flex:1;">
+              <svg viewBox="0 0 220 200" style="width:100%; height:100%;">
+                <line class="svg-tree-edge" x1="110" y1="60" x2="70" y2="135" />
+                <line class="svg-tree-edge" x1="110" y1="60" x2="150" y2="135" />
+                <g class="svg-node-group"><circle cx="110" cy="60" r="16" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="110" y="60" class="svg-node-text">b</text></g>
+                <g class="svg-node-group"><circle cx="70" cy="135" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="70" y="135" class="svg-node-text">a</text></g>
+                <g class="svg-node-group"><circle cx="150" cy="135" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="150" y="135" class="svg-node-text">c</text></g>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem;">
+              <span><code>b</code> sobe à raiz; <code>a</code> desce à direita.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 30: rotateLeft (RR) -->
+    <section class="slide" id="slide-30">
+      <div class="slide-content-clean" style="gap:20px;">
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 12a8 8 0 1 0-2.3 5.6M20 12V7m0 5h-5"></path></svg>
+              Rotações • Código + Animação
+            </div>
+            <h2 class="slide-title-modern">RR: <span class="gradient-text">rotateLeft()</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">simples à esquerda</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.3fr 1fr;">
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>rotateLeft.c</span><span style="color:var(--text-dim);">RR</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.8rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="fn">Node</span> <span class="op">*</span><span class="fn">rotateLeft</span>(<span class="fn">Node</span> <span class="op">*</span>node) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>a <span class="op">=</span> node;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>b <span class="op">=</span> a<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code">    a<span class="op">-&gt;</span>right <span class="op">=</span> b<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">    b<span class="op">-&gt;</span>left <span class="op">=</span> a;</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">    <span class="fn">calculateFB</span>(b);</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">    <span class="kw">return</span> b;</span></div>
+              <div class="c-line"><span class="c-num">10</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem; margin:0 14px 14px;">
+              <span><code>b</code> (filho dir.) sobe; <code>a</code> desce à esquerda.</span>
+            </div>
+          </div>
+
+          <div class="tree-diagram-container interactive-element" style="min-width:0;">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--emerald-neon);">Resultado</span>
+              <span class="frame-badge">b na raiz</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:200px; flex:1;">
+              <svg viewBox="0 0 220 200" style="width:100%; height:100%;">
+                <line class="svg-tree-edge" x1="110" y1="60" x2="70" y2="135" />
+                <line class="svg-tree-edge" x1="110" y1="60" x2="150" y2="135" />
+                <g class="svg-node-group"><circle cx="110" cy="60" r="16" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="110" y="60" class="svg-node-text">b</text></g>
+                <g class="svg-node-group"><circle cx="70" cy="135" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="70" y="135" class="svg-node-text">a</text></g>
+                <g class="svg-node-group"><circle cx="150" cy="135" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="150" y="135" class="svg-node-text">c</text></g>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem;">
+              <span><code>b</code> sobe à raiz; <code>a</code> desce à esquerda.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 31: rotateLeftRight (LR) -->
+    <section class="slide" id="slide-31">
+      <div class="slide-content-clean" style="gap:20px;">
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"></path></svg>
+              Rotações • Código + Animação
+            </div>
+            <h2 class="slide-title-modern">LR: <span class="gradient-text">rotateLeftRight()</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">dupla esquerda-direita</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.3fr 1fr;">
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>rotateLeftRight.c</span><span style="color:var(--text-dim);">LR</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.78rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="fn">Node</span> <span class="op">*</span><span class="fn">rotateLeftRight</span>(<span class="fn">Node</span> <span class="op">*</span>node) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>a <span class="op">=</span> node;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>b <span class="op">=</span> a<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>c <span class="op">=</span> b<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">    b<span class="op">-&gt;</span>right <span class="op">=</span> c<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">    a<span class="op">-&gt;</span>left <span class="op">=</span> c<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">    c<span class="op">-&gt;</span>left <span class="op">=</span> b;</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">    c<span class="op">-&gt;</span>right <span class="op">=</span> a;</span></div>
+              <div class="c-line"><span class="c-num">10</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">11</span><span class="c-code">    <span class="fn">calculateFB</span>(c);</span></div>
+              <div class="c-line"><span class="c-num">12</span><span class="c-code">    <span class="kw">return</span> c;</span></div>
+              <div class="c-line"><span class="c-num">13</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem; margin:0 14px 14px;">
+              <span><code>c</code> (neto) sobe como raiz entre <code>b</code> e <code>a</code>.</span>
+            </div>
+          </div>
+
+          <div class="tree-diagram-container interactive-element" style="min-width:0;">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--purple-neon);">Resultado</span>
+              <span class="frame-badge">b na raiz</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:180px; flex:1;">
+              <svg viewBox="0 0 220 180" style="width:100%; height:100%;">
+                <line class="svg-tree-edge" x1="110" y1="50" x2="70" y2="120" />
+                <line class="svg-tree-edge" x1="110" y1="50" x2="150" y2="120" />
+                <g class="svg-node-group"><circle cx="110" cy="50" r="16" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="110" y="50" class="svg-node-text">b</text></g>
+                <g class="svg-node-group"><circle cx="70" cy="120" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="70" y="120" class="svg-node-text">a</text></g>
+                <g class="svg-node-group"><circle cx="150" cy="120" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="150" y="120" class="svg-node-text">c</text></g>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem;">
+              <span><code>c</code> gira à esquerda sobre <code>b</code>, depois <code>a</code> gira à direita.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 32: rotateRightLeft (RL) -->
+    <section class="slide" id="slide-32">
+      <div class="slide-content-clean" style="gap:20px;">
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"></path></svg>
+              Rotações • Código + Animação
+            </div>
+            <h2 class="slide-title-modern">RL: <span class="gradient-text">rotateRightLeft()</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">dupla direita-esquerda</div>
+        </div>
+
+        <div class="fibo-sim-grid" style="grid-template-columns:1.3fr 1fr;">
+          <div class="c-code-box interactive-element">
+            <div class="c-code-header">
+              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
+              <span>rotateRightLeft.c</span><span style="color:var(--text-dim);">RL</span>
+            </div>
+            <div class="c-code-lines" style="font-size:0.78rem; flex:1;">
+              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="fn">Node</span> <span class="op">*</span><span class="fn">rotateRightLeft</span>(<span class="fn">Node</span> <span class="op">*</span>node) {</span></div>
+              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>a <span class="op">=</span> node;</span></div>
+              <div class="c-line"><span class="c-num">3</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>b <span class="op">=</span> a<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">4</span><span class="c-code">    <span class="fn">Node</span> <span class="op">*</span>c <span class="op">=</span> b<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">5</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">6</span><span class="c-code">    a<span class="op">-&gt;</span>right <span class="op">=</span> c<span class="op">-&gt;</span>left;</span></div>
+              <div class="c-line"><span class="c-num">7</span><span class="c-code">    b<span class="op">-&gt;</span>left <span class="op">=</span> c<span class="op">-&gt;</span>right;</span></div>
+              <div class="c-line"><span class="c-num">8</span><span class="c-code">    c<span class="op">-&gt;</span>right <span class="op">=</span> b;</span></div>
+              <div class="c-line"><span class="c-num">9</span><span class="c-code">    c<span class="op">-&gt;</span>left <span class="op">=</span> a;</span></div>
+              <div class="c-line"><span class="c-num">10</span><span class="c-code"></span></div>
+              <div class="c-line"><span class="c-num">11</span><span class="c-code">    <span class="fn">calculateFB</span>(c);</span></div>
+              <div class="c-line"><span class="c-num">12</span><span class="c-code">    <span class="kw">return</span> c;</span></div>
+              <div class="c-line"><span class="c-num">13</span><span class="c-code">}</span></div>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem; margin:0 14px 14px;">
+              <span><code>c</code> (neto) sobe como raiz entre <code>a</code> e <code>b</code>.</span>
+            </div>
+          </div>
+
+          <div class="tree-diagram-container interactive-element" style="min-width:0;">
+            <div class="tree-diagram-header">
+              <span style="font-family:var(--font-mono); font-size:0.9rem; font-weight:700; color:var(--purple-neon);">Resultado</span>
+              <span class="frame-badge">b na raiz</span>
+            </div>
+            <div class="tree-interactive-stage" style="height:180px; flex:1;">
+              <svg viewBox="0 0 220 180" style="width:100%; height:100%;">
+                <line class="svg-tree-edge" x1="110" y1="50" x2="70" y2="120" />
+                <line class="svg-tree-edge" x1="110" y1="50" x2="150" y2="120" />
+                <g class="svg-node-group"><circle cx="110" cy="50" r="16" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="110" y="50" class="svg-node-text">b</text></g>
+                <g class="svg-node-group"><circle cx="70" cy="120" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="70" y="120" class="svg-node-text">a</text></g>
+                <g class="svg-node-group"><circle cx="150" cy="120" r="14" class="svg-node-circle" style="stroke:var(--emerald-neon);"></circle><text x="150" y="120" class="svg-node-text">c</text></g>
+              </svg>
+            </div>
+            <div class="fibo-state-banner" style="font-size:0.76rem;">
+              <span><code>c</code> gira à direita sobre <code>b</code>, depois <code>a</code> gira à esquerda.</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
 
   <!-- Discreta barra de progresso (indicador) -->
@@ -2030,7 +4230,29 @@
     <div class="progress-dot" title="Árvore Binária: Definição & Struct" onclick="goToSlide(6)"></div>
     <div class="progress-dot" title="Lógica da Árvore Binária" onclick="goToSlide(7)"></div>
     <div class="progress-dot" title="BST: Propriedade de Ordenação" onclick="goToSlide(8)"></div>
-    <div class="progress-dot" title="Percursos: Pré, Em & Pós-ordem" onclick="goToSlide(9)"></div>
+    <div class="progress-dot" title="Busca: search() Recursivo" onclick="goToSlide(9)"></div>
+    <div class="progress-dot" title="Percursos: Pré, Em & Pós-ordem" onclick="goToSlide(10)"></div>
+    <div class="progress-dot" title="Árvores AVL: Introdução" onclick="goToSlide(11)"></div>
+    <div class="progress-dot" title="Fator de Balanceamento" onclick="goToSlide(12)"></div>
+    <div class="progress-dot" title="FB: Cálculo & Interpretação" onclick="goToSlide(13)"></div>
+    <div class="progress-dot" title="Como identificar a Rotação" onclick="goToSlide(14)"></div>
+    <div class="progress-dot" title="Rotações Simples: LL & RR" onclick="goToSlide(15)"></div>
+    <div class="progress-dot" title="Rotações Duplas: LR & RL" onclick="goToSlide(16)"></div>
+    <div class="progress-dot" title="Remoção em BST" onclick="goToSlide(17)"></div>
+    <div class="progress-dot" title="Remoção: Nó Folha" onclick="goToSlide(18)"></div>
+    <div class="progress-dot" title="Remoção: Nó com Um Filho" onclick="goToSlide(19)"></div>
+    <div class="progress-dot" title="Remoção: Nó com Dois Filhos" onclick="goToSlide(20)"></div>
+    <div class="progress-dot" title="Remoção: Código em C" onclick="goToSlide(21)"></div>
+    <div class="progress-dot" title="Remoção na Prática: Folha" onclick="goToSlide(22)"></div>
+    <div class="progress-dot" title="Remoção na Prática: Um Filho" onclick="goToSlide(23)"></div>
+    <div class="progress-dot" title="Remoção na Prática: Dois Filhos" onclick="goToSlide(24)"></div>
+    <div class="progress-dot" title="Implementação do FB" onclick="goToSlide(25)"></div>
+    <div class="progress-dot" title="Uso Real do FB: Identificar Rotação" onclick="goToSlide(26)"></div>
+    <div class="progress-dot" title="Do printf à Rotação Real" onclick="goToSlide(27)"></div>
+    <div class="progress-dot" title="LL: rotateRight()" onclick="goToSlide(28)"></div>
+    <div class="progress-dot" title="RR: rotateLeft()" onclick="goToSlide(29)"></div>
+    <div class="progress-dot" title="LR: rotateLeftRight()" onclick="goToSlide(30)"></div>
+    <div class="progress-dot" title="RL: rotateRightLeft()" onclick="goToSlide(31)"></div>
   </div>
 
   <!-- Script de Animação e Navegação -->
@@ -2640,7 +4862,7 @@
     }
 
     /* ========================================================
-       10. SIMULADOR DE PERCURSOS (Slide 10 — Pré / Em / Pós-ordem)
+       11. SIMULADOR DE PERCURSOS (Slide 11 — Pré / Em / Pós-ordem)
        ======================================================== */
     // Árvore da simulação (mesma dos diagramas): valor + filhos
     const travTree = {
@@ -2794,7 +5016,7 @@
     }
 
     function clearTravNodes() {
-      document.querySelectorAll('#slide-10 .svg-node-group').forEach(g => {
+      document.querySelectorAll('#slide-11 .svg-node-group').forEach(g => {
         g.classList.remove('visiting', 'visited');
       });
     }
@@ -2909,6 +5131,388 @@
 
     // Estado inicial: percurso Pré-ordem (mostra só a função correspondente)
     setTraversal('pre');
+
+    /* ========================================================
+       12. SIMULADOR DE BUSCA (Slide 10 — search recursivo na BST)
+       ======================================================== */
+    // Mesma árvore dos demais diagramas
+    const searchTree = {
+      value: 50,
+      left:  { value: 30, left: { value: 20, left: null, right: null }, right: { value: 40, left: null, right: null } },
+      right: { value: 70, left: { value: 60, left: null, right: null }, right: { value: 80, left: null, right: null } }
+    };
+
+    // Código C de search() renderizado dinamicamente (linhas a partir de 1).
+    const CODE_SEARCH = [
+      '<span class="fn">Node</span><span class="op">*</span> <span class="fn">search</span>(<span class="fn">Node</span> <span class="op">*</span>n, <span class="kw">int</span> target) {',
+      '    <span class="kw">if</span> (n <span class="op">==</span> <span class="kw">NULL</span> <span class="op">||</span> n<span class="op">-&gt;</span>val <span class="op">==</span> target) {',
+      '        <span class="kw">return</span> n;',
+      '    }',
+      '    <span class="kw">if</span> (n<span class="op">-&gt;</span>val <span class="op">&gt;</span> target) {',
+      '        <span class="kw">return</span> <span class="fn">search</span>(n<span class="op">-&gt;</span>left, target);',
+      '    }',
+      '    <span class="kw">return</span> <span class="fn">search</span>(n<span class="op">-&gt;</span>right, target);',
+      '}'
+    ];
+    // Linhas-chave (1-based) dentro de CODE_SEARCH
+    const SL = { header: 1, ifBase: 2, returnN: 3, ifGreater: 5, returnLeft: 6, returnRight: 8 };
+
+    const searchTargets = [40, 60, 55]; // 40 e 60 presentes, 55 ausente
+    let searchTarget = 40;
+    let currentSearchStep = -1;
+    let searchSteps = [];
+
+    function renderSearchCode() {
+      const container = document.getElementById('search-code-lines');
+      container.innerHTML = CODE_SEARCH.map((html, i) =>
+        `<div class="c-line" id="sline-${i + 1}"><span class="c-num">${i + 1}</span><span class="c-code">${html}</span></div>`
+      ).join('');
+    }
+
+    // Gera os passos da busca simulando a recursão (igual ao tracer de percursos)
+    function buildSearchSteps(target) {
+      const steps = [];
+      const stack = [];
+
+      function snapshot(line, focus, state, desc) {
+        steps.push({
+          line,
+          stack: stack.map((f, i) => ({ label: f.label, isNull: f.isNull, top: i === stack.length - 1 })),
+          focus,            // nó em foco (ou null)
+          state,            // 'found' | 'notfound' | null
+          desc
+        });
+      }
+
+      function visit(node) {
+        // enter: empilha frame e destaca o cabeçalho
+        const label = node === null ? 'search(NULL)' : `search(${node.value})`;
+        stack.push({ label, isNull: node === null });
+        snapshot(SL.header, node ? node.value : null,
+          node === null ? 'notfound' : null,
+          `Chamada <strong>${label}</strong>: frame empilhado.`);
+
+        // if (n == NULL || n->val == target)
+        if (node === null) {
+          snapshot(SL.ifBase, null, 'notfound',
+            `<code>n == NULL</code> é verdadeiro: alvo <strong>${target}</strong> não está na árvore.`);
+          snapshot(SL.returnN, null, 'notfound',
+            `<code>return n</code> devolve <strong>NULL</strong> (não encontrado).`);
+          stack.pop();
+          return;
+        }
+        if (node.value === target) {
+          snapshot(SL.ifBase, node.value, 'found',
+            `<code>${node.value} == ${target}</code> é verdadeiro: alvo encontrado!`);
+          snapshot(SL.returnN, node.value, 'found',
+            `<code>return n</code> devolve o nó <strong>${node.value}</strong>.`);
+          stack.pop();
+          return;
+        }
+        // if base falso -> testa o lado
+        snapshot(SL.ifBase, node.value, null,
+          `<code>${node.value} == ${target}</code>? Não. E não é NULL. Continua.`);
+
+        if (node.value > target) {
+          snapshot(SL.ifGreater, node.value, null,
+            `<code>${node.value} &gt; ${target}</code>: o alvo é menor, desce à <strong>esquerda</strong>.`);
+          snapshot(SL.returnLeft, node.value, null,
+            `<code>return search(n-&gt;left, ${target})</code>.`);
+          visit(node.left);
+        } else {
+          snapshot(SL.ifGreater, node.value, null,
+            `<code>${node.value} &gt; ${target}</code>? Não. O alvo é maior, desce à <strong>direita</strong>.`);
+          snapshot(SL.returnRight, node.value, null,
+            `<code>return search(n-&gt;right, ${target})</code>.`);
+          visit(node.right);
+        }
+        stack.pop();
+      }
+
+      visit(searchTree);
+      return steps;
+    }
+
+    function clearSearchNodes() {
+      document.querySelectorAll('#slide-10 .svg-node-group').forEach(g => {
+        g.classList.remove('visiting', 'visited', 'found');
+      });
+    }
+
+    function clearSearchCodeLines() {
+      document.querySelectorAll('#search-code-lines .c-line').forEach(l => l.classList.remove('active-line'));
+    }
+
+    function setSearchTarget(target) {
+      searchTarget = target;
+      currentSearchStep = -1;
+      searchSteps = buildSearchSteps(target);
+
+      searchTargets.forEach(t => {
+        document.getElementById(`btn-search-${t}`).classList.toggle('active', t === target);
+      });
+
+      renderSearchCode();
+      document.getElementById('search-target-badge').textContent = `Alvo: ${target}`;
+      renderSearchStep();
+    }
+
+    function renderSearchStep() {
+      clearSearchNodes();
+      clearSearchCodeLines();
+
+      const statusEl = document.getElementById('search-exec-status');
+      const compareEl = document.getElementById('search-compare');
+      const tagEl = document.getElementById('search-step-tag');
+      const descEl = document.getElementById('search-step-desc');
+      const stackEl = document.getElementById('search-callstack');
+      const depthBadge = document.getElementById('search-depth-badge');
+      const prevBtn = document.getElementById('btn-search-prev');
+      const nextBtn = document.getElementById('btn-search-next');
+
+      statusEl.textContent = `Passo: ${currentSearchStep + 1} / ${searchSteps.length}`;
+      prevBtn.disabled = (currentSearchStep <= -1);
+      nextBtn.disabled = (currentSearchStep >= searchSteps.length - 1);
+
+      if (currentSearchStep < 0) {
+        compareEl.textContent = '—';
+        tagEl.textContent = 'Pronto';
+        tagEl.style.color = 'var(--emerald-neon)';
+        descEl.innerHTML = `Buscar <strong>${searchTarget}</strong> — clique em <strong>"Próximo Passo"</strong>.`;
+        stackEl.innerHTML = '<span class="trav-stack-empty">pilha vazia</span>';
+        depthBadge.textContent = 'Frames: 0';
+        return;
+      }
+
+      const step = searchSteps[currentSearchStep];
+
+      // Destaca a linha C ativa
+      const activeLine = document.getElementById(`sline-${step.line}`);
+      if (activeLine) activeLine.classList.add('active-line');
+
+      // Realça o caminho: nós já visitados em todos os passos até aqui
+      const pathSoFar = [];
+      for (let i = 0; i <= currentSearchStep; i++) {
+        const f = searchSteps[i].focus;
+        if (f !== null && f !== undefined && !pathSoFar.includes(f)) pathSoFar.push(f);
+      }
+      pathSoFar.forEach(val => {
+        const node = document.getElementById(`search-node-${val}`);
+        if (node) node.classList.add('visited');
+      });
+      // Nó em foco agora
+      if (step.focus !== null && step.focus !== undefined) {
+        const node = document.getElementById(`search-node-${step.focus}`);
+        if (node) {
+          node.classList.remove('visited');
+          node.classList.add(step.state === 'found' ? 'found' : 'visiting');
+        }
+      }
+
+      // Comparação / resultado
+      if (step.state === 'found') {
+        compareEl.textContent = `${searchTarget} encontrado`;
+        tagEl.textContent = 'encontrado';
+        tagEl.style.color = 'var(--emerald-neon)';
+      } else if (step.state === 'notfound') {
+        compareEl.textContent = `${searchTarget} ausente`;
+        tagEl.textContent = 'não encontrado';
+        tagEl.style.color = '#f87171';
+      } else {
+        compareEl.textContent = step.focus != null ? `nó ${step.focus} vs ${searchTarget}` : '—';
+        tagEl.textContent = `linha ${step.line}`;
+        tagEl.style.color = 'var(--text-muted)';
+      }
+
+      // Call stack
+      depthBadge.textContent = `Frames: ${step.stack.length}`;
+      if (step.stack.length === 0) {
+        stackEl.innerHTML = '<span class="trav-stack-empty">pilha vazia</span>';
+      } else {
+        stackEl.innerHTML = step.stack.map(f => {
+          const cls = 'trav-frame' + (f.isNull ? ' null-frame' : (f.top ? ' top' : ''));
+          return `<span class="${cls}">${f.label}</span>`;
+        }).join('');
+      }
+
+      descEl.innerHTML = step.desc;
+    }
+
+    function nextSearchStep() {
+      if (currentSearchStep < searchSteps.length - 1) {
+        currentSearchStep++;
+        renderSearchStep();
+      }
+    }
+
+    function prevSearchStep() {
+      if (currentSearchStep > -1) {
+        currentSearchStep--;
+        renderSearchStep();
+      }
+    }
+
+    function resetSearchSim() {
+      currentSearchStep = -1;
+      renderSearchStep();
+    }
+
+    // Estado inicial: alvo 40
+    setSearchTarget(40);
+
+    /* ========================================================
+       13. ROTAÇÕES SIMPLES ANIMADAS (Slide 16 — LL e RR)
+       ======================================================== */
+    const rotationConfig = {
+      ll: {
+        nodes: ['ll-node-a', 'll-node-b', 'll-node-c'],
+        // arestas: [id, do-estado, posicoes from, posicoes to]
+        edges: [
+          { id: 'll-edge-cb', from: { x1:140, y1:35, x2:95, y2:95 },  to: { x1:110, y1:60, x2:70,  y2:130 } },
+          { id: 'll-edge-ba', from: { x1:95,  y1:95, x2:55, y2:155 }, to: { x1:110, y1:60, x2:150, y2:130 } }
+        ],
+        badge: 'll-state-badge', caption: 'll-caption',
+        initCaption: '<strong style="color:#f87171;">C</strong> com FB=+2. Clique para rotacionar.',
+        doneCaption: '<strong style="color:var(--emerald-neon);">B</strong> virou raiz; A à esquerda, C à direita. Balanceada!'
+      },
+      rr: {
+        nodes: ['rr-node-a', 'rr-node-b', 'rr-node-c'],
+        edges: [
+          { id: 'rr-edge-ab', from: { x1:80,  y1:35, x2:125, y2:95 },  to: { x1:110, y1:60, x2:70,  y2:130 } },
+          { id: 'rr-edge-bc', from: { x1:125, y1:95, x2:165, y2:155 }, to: { x1:110, y1:60, x2:150, y2:130 } }
+        ],
+        badge: 'rr-state-badge', caption: 'rr-caption',
+        initCaption: '<strong style="color:#f87171;">A</strong> com FB=−2. Clique para rotacionar.',
+        doneCaption: '<strong style="color:var(--emerald-neon);">B</strong> virou raiz; A à esquerda, C à direita. Balanceada!'
+      }
+    };
+
+    const rotationState = { ll: false, rr: false }; // false = desbalanceada
+
+    // Posiciona um nó pelo transform (x,y) do grupo
+    function placeRotNode(id, x, y) {
+      const g = document.getElementById(id);
+      if (g) g.setAttribute('transform', `translate(${x}, ${y})`);
+    }
+
+    // Coloca todos os nós/arestas no estado inicial (desbalanceado)
+    function resetRotation(which) {
+      const cfg = rotationConfig[which];
+      cfg.nodes.forEach(id => {
+        const g = document.getElementById(id);
+        placeRotNode(id, g.dataset.fromX, g.dataset.fromY);
+        g.classList.remove('balanced');
+        const fb = g.querySelector('.rot-fb');
+        if (fb) fb.textContent = g.dataset.fbFrom;
+      });
+      cfg.edges.forEach(e => {
+        const el = document.getElementById(e.id);
+        el.setAttribute('x1', e.from.x1); el.setAttribute('y1', e.from.y1);
+        el.setAttribute('x2', e.from.x2); el.setAttribute('y2', e.from.y2);
+        el.classList.remove('balanced');
+      });
+      rotationState[which] = false;
+      document.getElementById(cfg.badge).textContent = 'desbalanceada';
+      if (cfg.initCaption) document.getElementById(cfg.caption).innerHTML = cfg.initCaption;
+    }
+
+    // Alterna entre desbalanceada <-> balanceada com animação
+    function animateRotation(which) {
+      const cfg = rotationConfig[which];
+      if (rotationState[which]) { resetRotation(which); return; }
+
+      cfg.nodes.forEach(id => {
+        const g = document.getElementById(id);
+        placeRotNode(id, g.dataset.toX, g.dataset.toY);
+        g.classList.add('balanced');
+        const fb = g.querySelector('.rot-fb');
+        if (fb) fb.textContent = g.dataset.fbTo;
+      });
+      cfg.edges.forEach(e => {
+        const el = document.getElementById(e.id);
+        el.setAttribute('x1', e.to.x1); el.setAttribute('y1', e.to.y1);
+        el.setAttribute('x2', e.to.x2); el.setAttribute('y2', e.to.y2);
+        el.classList.add('balanced');
+      });
+      rotationState[which] = true;
+      document.getElementById(cfg.badge).textContent = 'balanceada ✓';
+      if (cfg.caption) document.getElementById(cfg.caption).innerHTML = cfg.doneCaption;
+    }
+
+    // Inicializa no estado desbalanceado
+    resetRotation('ll');
+    resetRotation('rr');
+
+    /* ========================================================
+       14. ROTAÇÕES DUPLAS ANIMADAS (Slide 17 — LR e RL, 3 estados)
+       ======================================================== */
+    const doubleConfig = {
+      lr: {
+        nodes: ['lr-node-a', 'lr-node-b', 'lr-node-c'],
+        // arestas por estado: [estado0, estado1, estado2]
+        edges: {
+          'lr-edge-1': [ {x1:150,y1:35,x2:70,y2:90},  {x1:150,y1:35,x2:110,y2:90}, {x1:110,y1:60,x2:70,y2:130} ],
+          'lr-edge-2': [ {x1:70,y1:90,x2:110,y2:145}, {x1:110,y1:90,x2:70,y2:145}, {x1:110,y1:60,x2:150,y2:130} ]
+        },
+        badge: 'lr-state-badge', caption: 'lr-caption', btn: 'lr-btn-label',
+        labels: ['Rotacionar filho (esquerda)', 'Rotacionar nó (direita)', 'Reiniciar'],
+        captions: [
+          '<strong style="color:#f87171;">C</strong> com FB=+2 e filho A com FB&lt;0. Precisa de 2 rotações.',
+          'Passo 1: filho esquerdo girou à esquerda. Agora virou o caso LL.',
+          '<strong style="color:var(--emerald-neon);">B</strong> virou raiz. Árvore balanceada!'
+        ]
+      },
+      rl: {
+        nodes: ['rl-node-a', 'rl-node-b', 'rl-node-c'],
+        edges: {
+          'rl-edge-1': [ {x1:70,y1:35,x2:150,y2:90},  {x1:70,y1:35,x2:110,y2:90},  {x1:110,y1:60,x2:70,y2:130} ],
+          'rl-edge-2': [ {x1:150,y1:90,x2:110,y2:145}, {x1:110,y1:90,x2:150,y2:145}, {x1:110,y1:60,x2:150,y2:130} ]
+        },
+        badge: 'rl-state-badge', caption: 'rl-caption', btn: 'rl-btn-label',
+        labels: ['Rotacionar filho (direita)', 'Rotacionar nó (esquerda)', 'Reiniciar'],
+        captions: [
+          '<strong style="color:#f87171;">A</strong> com FB=−2 e filho C com FB&gt;0. Precisa de 2 rotações.',
+          'Passo 1: filho direito girou à direita. Agora virou o caso RR.',
+          '<strong style="color:var(--emerald-neon);">B</strong> virou raiz. Árvore balanceada!'
+        ]
+      }
+    };
+
+    const doubleState = { lr: 0, rl: 0 };
+
+    function applyDoubleState(which, s) {
+      const cfg = doubleConfig[which];
+      // nós
+      cfg.nodes.forEach(id => {
+        const g = document.getElementById(id);
+        placeRotNode(id, g.dataset[`s${s}X`], g.dataset[`s${s}Y`]);
+        const fb = g.querySelector('.rot-fb');
+        if (fb) fb.textContent = g.dataset[`fb${s}`];
+        g.classList.toggle('balanced', s === 2);
+      });
+      // arestas
+      Object.keys(cfg.edges).forEach(eid => {
+        const pos = cfg.edges[eid][s];
+        const el = document.getElementById(eid);
+        el.setAttribute('x1', pos.x1); el.setAttribute('y1', pos.y1);
+        el.setAttribute('x2', pos.x2); el.setAttribute('y2', pos.y2);
+        el.classList.toggle('balanced', s === 2);
+      });
+      // textos auxiliares
+      document.getElementById(cfg.badge).textContent = `etapa ${s} / 2`;
+      if (cfg.caption) document.getElementById(cfg.caption).innerHTML = cfg.captions[s];
+      document.getElementById(cfg.btn).textContent = cfg.labels[s];
+    }
+
+    // Avança 0 → 1 → 2 → (volta a 0)
+    function stepDouble(which) {
+      doubleState[which] = (doubleState[which] + 1) % 3;
+      applyDoubleState(which, doubleState[which]);
+    }
+
+    // Inicializa no estado 0
+    applyDoubleState('lr', 0);
+    applyDoubleState('rl', 0);
 
   </script>
 </body>
