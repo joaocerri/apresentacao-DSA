@@ -647,7 +647,7 @@
           </div>
 
           <div class="tree-diagram-container">
-            <div class="tree-diagram-header"><span class="diagram-title">Consulta em O(1)</span><span class="frame-badge">espaço ∝ V²</span></div>
+            <div class="tree-diagram-header"><span class="diagram-title">Consulta direta</span><span class="frame-badge">N × N</span></div>
             <div class="tree-interactive-stage" style="height:240px;">
               <svg viewBox="0 0 300 240" style="width:100%;height:100%;">
                 <line class="g-edge" x1="70" y1="60" x2="220" y2="60"></line>
@@ -738,7 +738,7 @@
             </div>
             <h2 class="slide-title-modern">Matriz de Incidência: <span class="gradient-text">Definição</span></h2>
           </div>
-          <div class="slide-subtitle-tag">V × A · vértices × arestas</div>
+          <div class="slide-subtitle-tag">vértices × arestas</div>
         </div>
 
         <div class="clean-two-cols">
@@ -747,14 +747,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
               Como funciona
             </div>
-            <div class="clean-item"><span class="clean-badge cyan">Dimensão</span> <strong>V × A</strong> — linhas = vértices, colunas = arestas.</div>
+            <div class="clean-item"><span class="clean-badge cyan">Dimensão</span> <strong>linhas = vértices</strong> · <strong>colunas = arestas</strong>.</div>
             <div class="clean-item"><span class="clean-badge emerald">Não dir.</span> <strong>1</strong> = o vértice participa da aresta · <strong>0</strong> = não participa.</div>
             <div class="clean-item"><span class="clean-badge purple">Direcionado</span> <strong>−1</strong> = origem · <strong>+1</strong> = destino · <strong>0</strong> = não participa.</div>
             <div class="clean-item"><span class="clean-badge amber">Pesos</span> Armazenados à parte, num vetor associado às colunas.</div>
           </div>
 
           <div class="tree-diagram-container">
-            <div class="tree-diagram-header"><span class="diagram-title">Vértices × Arestas</span><span class="frame-badge">espaço ∝ V × A</span></div>
+            <div class="tree-diagram-header"><span class="diagram-title">Vértices × Arestas</span><span class="frame-badge">cada coluna = 1 aresta</span></div>
             <div class="tree-interactive-stage" style="height:240px;">
               <svg viewBox="0 0 300 240" style="width:100%;height:100%;">
                 <line class="g-edge" x1="80" y1="60" x2="80" y2="170"></line>
@@ -858,7 +858,7 @@
               Ideia central
             </div>
             <div class="clean-item"><span class="clean-badge cyan">Por vértice</span> Cada vértice tem uma <strong>lista ligada</strong> com seus vizinhos.</div>
-            <div class="clean-item"><span class="clean-badge emerald">Econômica</span> Armazena <strong>só as conexões existentes</strong> (espaço ∝ V + A).</div>
+            <div class="clean-item"><span class="clean-badge emerald">Econômica</span> Armazena <strong>só as conexões existentes</strong>.</div>
             <div class="clean-item"><span class="clean-badge purple">vs Matriz</span> A matriz N×N guarda zeros; a lista guarda apenas o que existe.</div>
             <div class="clean-item"><span class="clean-badge amber">Vizinhos</span> Percorrer vizinhos de um vértice é direto e rápido.</div>
           </div>
@@ -949,44 +949,110 @@
         <div class="three-cols">
           <div class="tree-diagram-container">
             <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--emerald-neon);">Não direcionado</span></div>
-            <div style="display:flex;justify-content:center;padding:4px 0;">
-              <table class="matrix-table" style="font-size:0.8rem;">
-                <tr><th>Vértice</th><th>Conectado a</th></tr>
-                <tr><td class="rowhead">v1</td><td>v2, v3</td></tr>
-                <tr><td class="rowhead">v2</td><td>v1, v3</td></tr>
-                <tr><td class="rowhead">v3</td><td>v1, v2, v4</td></tr>
-                <tr><td class="rowhead">v4</td><td>v3</td></tr>
-              </table>
+            <div class="tree-interactive-stage" style="height:220px;">
+              <svg viewBox="0 0 300 220" style="width:100%;height:100%;">
+                <defs><marker id="ll-nd" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" class="g-arrow"></path></marker></defs>
+                <!-- v1 -> v2 -> v3 -->
+                <rect x="6" y="14" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--emerald-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="27" style="font-size:11px;">v1</text>
+                <line class="g-edge" x1="40" y1="27" x2="66" y2="27" marker-end="url(#ll-nd)"></line>
+                <rect x="68" y="14" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="27" style="font-size:10px;">v2</text>
+                <line class="g-edge" x1="102" y1="27" x2="128" y2="27" marker-end="url(#ll-nd)"></line>
+                <rect x="130" y="14" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="147" y="27" style="font-size:10px;">v3</text>
+                <text x="176" y="31" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+                <!-- v2 -> v1 -> v3 -->
+                <rect x="6" y="64" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--emerald-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="77" style="font-size:11px;">v2</text>
+                <line class="g-edge" x1="40" y1="77" x2="66" y2="77" marker-end="url(#ll-nd)"></line>
+                <rect x="68" y="64" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="77" style="font-size:10px;">v1</text>
+                <line class="g-edge" x1="102" y1="77" x2="128" y2="77" marker-end="url(#ll-nd)"></line>
+                <rect x="130" y="64" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="147" y="77" style="font-size:10px;">v3</text>
+                <text x="176" y="81" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+                <!-- v3 -> v1 -> v2 -> v4 -->
+                <rect x="6" y="114" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--emerald-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="127" style="font-size:11px;">v3</text>
+                <line class="g-edge" x1="40" y1="127" x2="66" y2="127" marker-end="url(#ll-nd)"></line>
+                <rect x="68" y="114" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="127" style="font-size:10px;">v1</text>
+                <line class="g-edge" x1="102" y1="127" x2="128" y2="127" marker-end="url(#ll-nd)"></line>
+                <rect x="130" y="114" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="147" y="127" style="font-size:10px;">v2</text>
+                <line class="g-edge" x1="164" y1="127" x2="190" y2="127" marker-end="url(#ll-nd)"></line>
+                <rect x="192" y="114" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="209" y="127" style="font-size:10px;">v4</text>
+                <text x="232" y="131" style="fill:var(--text-dim);font-size:10px;">⊥</text>
+                <!-- v4 -> v3 -->
+                <rect x="6" y="164" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--emerald-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="177" style="font-size:11px;">v4</text>
+                <line class="g-edge" x1="40" y1="177" x2="66" y2="177" marker-end="url(#ll-nd)"></line>
+                <rect x="68" y="164" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="177" style="font-size:10px;">v3</text>
+                <text x="112" y="181" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+              </svg>
             </div>
             <div class="matrix-caption">conexão registrada nos <strong>dois</strong> vértices</div>
           </div>
 
           <div class="tree-diagram-container">
             <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--cyan-neon);">Direcionado</span></div>
-            <div style="display:flex;justify-content:center;padding:4px 0;">
-              <table class="matrix-table" style="font-size:0.8rem;">
-                <tr><th>Vértice</th><th>Conectado a</th></tr>
-                <tr><td class="rowhead">v1</td><td>v2, v3</td></tr>
-                <tr><td class="rowhead">v2</td><td>v3</td></tr>
-                <tr><td class="rowhead">v3</td><td>v4</td></tr>
-                <tr><td class="rowhead">v4</td><td>v1</td></tr>
-              </table>
+            <div class="tree-interactive-stage" style="height:220px;">
+              <svg viewBox="0 0 300 220" style="width:100%;height:100%;">
+                <defs><marker id="ll-di" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" class="g-arrow"></path></marker></defs>
+                <!-- v1 -> v2 -> v3 -->
+                <rect x="6" y="14" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--cyan-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="27" style="font-size:11px;">v1</text>
+                <line class="g-edge" x1="40" y1="27" x2="66" y2="27" marker-end="url(#ll-di)"></line>
+                <rect x="68" y="14" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="27" style="font-size:10px;">v2</text>
+                <line class="g-edge" x1="102" y1="27" x2="128" y2="27" marker-end="url(#ll-di)"></line>
+                <rect x="130" y="14" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="147" y="27" style="font-size:10px;">v3</text>
+                <text x="176" y="31" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+                <!-- v2 -> v3 -->
+                <rect x="6" y="64" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--cyan-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="77" style="font-size:11px;">v2</text>
+                <line class="g-edge" x1="40" y1="77" x2="66" y2="77" marker-end="url(#ll-di)"></line>
+                <rect x="68" y="64" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="77" style="font-size:10px;">v3</text>
+                <text x="112" y="81" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+                <!-- v3 -> v4 -->
+                <rect x="6" y="114" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--cyan-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="127" style="font-size:11px;">v3</text>
+                <line class="g-edge" x1="40" y1="127" x2="66" y2="127" marker-end="url(#ll-di)"></line>
+                <rect x="68" y="114" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="127" style="font-size:10px;">v4</text>
+                <text x="112" y="131" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+                <!-- v4 -> v1 -->
+                <rect x="6" y="164" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--cyan-neon)" stroke-width="2"></rect><text class="g-node-label" x="23" y="177" style="font-size:11px;">v4</text>
+                <line class="g-edge" x1="40" y1="177" x2="66" y2="177" marker-end="url(#ll-di)"></line>
+                <rect x="68" y="164" width="34" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="85" y="177" style="font-size:10px;">v1</text>
+                <text x="112" y="181" style="fill:var(--text-dim);font-size:10px;">NULL</text>
+              </svg>
             </div>
             <div class="matrix-caption">só os <strong>destinos</strong> que partem do vértice</div>
           </div>
 
           <div class="tree-diagram-container">
             <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--amber-neon);">Ponderado</span></div>
-            <div style="display:flex;justify-content:center;padding:4px 0;">
-              <table class="matrix-table" style="font-size:0.8rem;">
-                <tr><th>Vértice</th><th>Conectado a (peso)</th></tr>
-                <tr><td class="rowhead">v1</td><td>v2 <span class="w" style="padding:1px 5px;">5</span>, v3 <span class="w" style="padding:1px 5px;">8</span></td></tr>
-                <tr><td class="rowhead">v2</td><td>v1 (5), v3 (10)</td></tr>
-                <tr><td class="rowhead">v3</td><td>v1 (8), v2 (10), v4 (7)</td></tr>
-                <tr><td class="rowhead">v4</td><td>v3 (7)</td></tr>
-              </table>
+            <div class="tree-interactive-stage" style="height:220px;">
+              <svg viewBox="0 0 300 220" style="width:100%;height:100%;">
+                <defs><marker id="ll-pw" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" class="g-arrow"></path></marker></defs>
+                <!-- v1 -> v2|5 -> v3|8 -->
+                <rect x="6" y="14" width="30" height="26" rx="5" fill="#0c1427" stroke="var(--amber-neon)" stroke-width="2"></rect><text class="g-node-label" x="21" y="27" style="font-size:11px;">v1</text>
+                <line class="g-edge" x1="36" y1="27" x2="58" y2="27" marker-end="url(#ll-pw)"></line>
+                <rect x="60" y="14" width="56" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="88" y="27" style="font-size:9px;">v2 | 5</text>
+                <line class="g-edge" x1="116" y1="27" x2="138" y2="27" marker-end="url(#ll-pw)"></line>
+                <rect x="140" y="14" width="56" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="168" y="27" style="font-size:9px;">v3 | 8</text>
+                <text x="202" y="31" style="fill:var(--text-dim);font-size:9px;">⊥</text>
+                <!-- v2 -> v1|5 -> v3|10 -->
+                <rect x="6" y="64" width="30" height="26" rx="5" fill="#0c1427" stroke="var(--amber-neon)" stroke-width="2"></rect><text class="g-node-label" x="21" y="77" style="font-size:11px;">v2</text>
+                <line class="g-edge" x1="36" y1="77" x2="58" y2="77" marker-end="url(#ll-pw)"></line>
+                <rect x="60" y="64" width="56" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="88" y="77" style="font-size:9px;">v1 | 5</text>
+                <line class="g-edge" x1="116" y1="77" x2="138" y2="77" marker-end="url(#ll-pw)"></line>
+                <rect x="140" y="64" width="56" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="168" y="77" style="font-size:9px;">v3 | 10</text>
+                <text x="202" y="81" style="fill:var(--text-dim);font-size:9px;">⊥</text>
+                <!-- v3 -> v1|8 -> v2|10 -> v4|7 -->
+                <rect x="6" y="114" width="30" height="26" rx="5" fill="#0c1427" stroke="var(--amber-neon)" stroke-width="2"></rect><text class="g-node-label" x="21" y="127" style="font-size:11px;">v3</text>
+                <line class="g-edge" x1="36" y1="127" x2="52" y2="127" marker-end="url(#ll-pw)"></line>
+                <rect x="54" y="114" width="52" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="80" y="127" style="font-size:9px;">v1 | 8</text>
+                <line class="g-edge" x1="106" y1="127" x2="120" y2="127" marker-end="url(#ll-pw)"></line>
+                <rect x="122" y="114" width="56" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="150" y="127" style="font-size:9px;">v2 | 10</text>
+                <line class="g-edge" x1="178" y1="127" x2="192" y2="127" marker-end="url(#ll-pw)"></line>
+                <rect x="194" y="114" width="52" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="220" y="127" style="font-size:9px;">v4 | 7</text>
+                <text x="250" y="131" style="fill:var(--text-dim);font-size:9px;">⊥</text>
+                <!-- v4 -> v3|7 -->
+                <rect x="6" y="164" width="30" height="26" rx="5" fill="#0c1427" stroke="var(--amber-neon)" stroke-width="2"></rect><text class="g-node-label" x="21" y="177" style="font-size:11px;">v4</text>
+                <line class="g-edge" x1="36" y1="177" x2="58" y2="177" marker-end="url(#ll-pw)"></line>
+                <rect x="60" y="164" width="56" height="26" rx="5" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="1.5"></rect><text class="g-node-label" x="88" y="177" style="font-size:9px;">v3 | 7</text>
+                <text x="122" y="181" style="fill:var(--text-dim);font-size:9px;">⊥</text>
+              </svg>
             </div>
-            <div class="matrix-caption">cada elemento guarda <strong>destino + peso</strong></div>
+            <div class="matrix-caption">cada nó guarda <strong>destino + peso</strong></div>
           </div>
         </div>
       </div>
@@ -1009,19 +1075,19 @@
         <div class="three-cols">
           <div class="clean-card">
             <div class="clean-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Adjacência</div>
-            <div class="clean-item"><span class="clean-badge cyan">V × V</span> Consulta de aresta em <strong>O(1)</strong>.</div>
-            <div class="clean-item">Espaço proporcional a <strong>V²</strong>.</div>
+            <div class="clean-item"><span class="clean-badge cyan">N × N</span> Consulta <strong>direta</strong> de uma posição da matriz.</div>
+            <div class="clean-item">Guarda zeros para as conexões que <strong>não existem</strong>.</div>
             <div class="clean-item">Ideal para grafos <strong>densos</strong>.</div>
           </div>
           <div class="clean-card">
             <div class="clean-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18M3 9h18"></path></svg>Incidência</div>
-            <div class="clean-item"><span class="clean-badge purple">V × A</span> Relaciona vértices e arestas diretamente.</div>
-            <div class="clean-item">Espaço proporcional a <strong>V × A</strong>.</div>
+            <div class="clean-item"><span class="clean-badge purple">V × arestas</span> Relaciona vértices e arestas diretamente.</div>
+            <div class="clean-item">Cada <strong>coluna</strong> representa uma aresta.</div>
             <div class="clean-item">Boa para analisar quais vértices formam cada aresta.</div>
           </div>
           <div class="clean-card">
             <div class="clean-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"></path></svg>Lista</div>
-            <div class="clean-item"><span class="clean-badge emerald">V + A</span> Guarda só o que existe.</div>
+            <div class="clean-item"><span class="clean-badge emerald">Listas ligadas</span> Guarda só o que existe.</div>
             <div class="clean-item">Percorre vizinhos com facilidade.</div>
             <div class="clean-item">Ideal para grafos <strong>esparsos</strong>.</div>
           </div>
@@ -1046,7 +1112,7 @@
         <div style="display:flex;justify-content:center;">
           <table class="matrix-table" style="font-size:0.9rem;width:100%;max-width:1000px;">
             <tr><th>Cenário</th><th>Melhor escolha</th><th>Motivo</th></tr>
-            <tr><td class="rowhead" style="text-align:left;">Grafos densos</td><td class="one">Matriz de adjacência</td><td style="text-align:left;color:var(--text-muted);">Consulta O(1) e espaço competitivo com muitas conexões.</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Grafos densos</td><td class="one">Matriz de adjacência</td><td style="text-align:left;color:var(--text-muted);">Consulta direta e espaço competitivo com muitas conexões.</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Grafos esparsos</td><td class="w">Lista de adjacência</td><td style="text-align:left;color:var(--text-muted);">Armazena somente conexões existentes.</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Existe aresta?</td><td class="one">Matriz de adjacência</td><td style="text-align:left;color:var(--text-muted);">Basta acessar uma posição da matriz.</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Percorrer vizinhos</td><td class="w">Lista de adjacência</td><td style="text-align:left;color:var(--text-muted);">Percorre direto as conexões de cada vértice.</td></tr>
@@ -1492,7 +1558,7 @@
           </div>
           <div class="code-explain">
             <div class="explain-step"><span class="num-badge">1</span><strong>Conexão principal</strong>: cria o nó para o destino <code>vf</code> (3).</div>
-            <div class="explain-step"><span class="num-badge">2</span><strong>Inserção no início</strong> da lista de <code>vi</code> — O(1): o novo aponta para o antigo início (4-5).</div>
+            <div class="explain-step"><span class="num-badge">2</span><strong>Inserção no início</strong> da lista de <code>vi</code>: o novo nó aponta para o antigo início (4-5).</div>
             <div class="explain-step"><span class="num-badge">3</span>Se <strong>não direcionado</strong>, cria a <strong>conexão inversa</strong> em <code>vf</code> (6-10).</div>
             <div class="explain-step"><span class="num-badge">4</span><strong>numArestas</strong> incrementado <strong>uma única vez</strong> (11).</div>
           </div>
@@ -2200,7 +2266,7 @@
           </div>
           <div class="tree-diagram-container">
             <div class="tree-diagram-header"><span class="diagram-title">Grafo de exemplo</span><span class="frame-badge">origem A</span></div>
-            <div class="tree-interactive-stage">
+            <div class="tree-interactive-stage" style="height:150px;">
               <svg viewBox="0 0 320 240" style="width:100%;height:100%;">
                 <line class="g-edge weighted" x1="60" y1="120" x2="160" y2="45"></line>
                 <rect x="100" y="73" width="22" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="111" y="83">4</text>
@@ -2218,16 +2284,16 @@
                 <g class="g-node-group"><circle class="g-node" cx="260" cy="120" r="22"></circle><text class="g-node-label" x="260" y="120">D</text></g>
               </svg>
             </div>
-            <div class="state-banner" style="flex-direction:column;align-items:stretch;gap:6px;">
-              <span>Evolução das distâncias a partir de <strong>A</strong> (∞ = ainda inalcançável):</span>
-              <table class="matrix-table" style="font-size:0.7rem;">
+            <div class="state-banner" style="flex-direction:column;align-items:stretch;gap:5px;">
+              <span style="font-size:0.78rem;">Evolução das distâncias a partir de <strong>A</strong> (∞ = inalcançável):</span>
+              <table class="matrix-table" style="font-size:0.68rem;">
                 <tr><th>fixa</th><th>A</th><th>B</th><th>C</th><th>D</th></tr>
                 <tr><td class="rowhead">init</td><td class="zero">0</td><td>∞</td><td>∞</td><td>∞</td></tr>
                 <tr><td class="rowhead">A(0)</td><td class="zero">0</td><td>4</td><td class="w">1</td><td>∞</td></tr>
                 <tr><td class="rowhead">C(1)</td><td class="zero">0</td><td class="w">3</td><td class="w">1</td><td>4</td></tr>
                 <tr><td class="rowhead">B(3)</td><td class="zero">0</td><td class="w">3</td><td class="w">1</td><td class="w">4</td></tr>
               </table>
-              <span>Menor A→D: <strong style="color:var(--emerald-neon);">A→C→D = 1+3 = 4</strong></span>
+              <span style="font-size:0.78rem;">Menor A→D: <strong style="color:var(--emerald-neon);">A→C→D = 1+3 = 4</strong></span>
             </div>
           </div>
         </div>
@@ -2397,7 +2463,7 @@
             <div class="explain-step" style="border-left-color:var(--red-neon);"><span class="num-badge" style="background:rgba(239,68,68,0.15);color:var(--red-neon);">!</span><strong>Inalcançáveis</strong>: se <code>dist[i]</code> continua <code>INT_MAX</code>, não há caminho da origem até <code>i</code> — tratamos esse caso à parte em vez de imprimir o número gigante (2-3).</div>
             <div class="explain-step"><span class="num-badge">1</span>Nos demais, <code>dist[i]</code> tem a <strong>menor distância</strong> da origem a cada vértice (4-5).</div>
             <div class="explain-step"><span class="num-badge">2</span><strong>Libera</strong> os vetores <code>dist</code> e <code>visitado</code> (7-8).</div>
-            <div class="explain-step" style="border-left-color:var(--amber-neon);"><span class="num-badge" style="background:rgba(251,191,36,0.15);color:var(--amber-neon);">i</span>Este código calcula só as <strong>distâncias</strong>, não <strong>reconstrói os caminhos</strong>. Para isso, guarde um vetor <code>anterior[v]</code> no relaxamento e percorra-o de trás para frente. Complexidade: <strong>O(V²)</strong> (ou O(E log V) com heap).</div>
+            <div class="explain-step" style="border-left-color:var(--amber-neon);"><span class="num-badge" style="background:rgba(251,191,36,0.15);color:var(--amber-neon);">i</span>Este código calcula só as <strong>distâncias</strong>, não <strong>reconstrói os caminhos</strong>. Para isso, guarde um vetor <code>anterior[v]</code> no relaxamento e percorra-o de trás para frente.</div>
           </div>
         </div>
       </div>
@@ -2426,7 +2492,7 @@
             <div class="clean-item"><span class="clean-badge purple">Objetivo</span> Calcula a <strong>menor distância entre todos os pares</strong> de vértices de uma só vez.</div>
             <div class="clean-item"><span class="clean-badge cyan">Técnica</span> <strong>Programação dinâmica</strong>: parte da matriz de pesos e a melhora iterativamente.</div>
             <div class="clean-item"><span class="clean-badge emerald">Ideia central</span> Testa cada vértice <code>k</code> como <strong>parada intermediária</strong> em todos os caminhos.</div>
-            <div class="clean-item"><span class="clean-badge amber">Complexidade</span> Três laços aninhados → <strong>O(V³)</strong>. Vale quando precisamos de <strong>todos os pares</strong>.</div>
+            <div class="clean-item"><span class="clean-badge amber">Quando usar</span> Três laços aninhados (um por intermediário). Vale quando precisamos de <strong>todos os pares</strong>.</div>
           </div>
           <div class="tree-diagram-container">
             <div class="tree-diagram-header"><span class="diagram-title">Matriz de distâncias D</span><span class="frame-badge">linha = origem · coluna = destino</span></div>
@@ -2459,35 +2525,30 @@
           <div class="slide-subtitle-tag">O vértice k no meio do caminho</div>
         </div>
 
-        <div class="code-grid">
-          <div class="c-code-box">
-            <div class="c-code-header">
-              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
-              <span>floydWarshall()</span><span style="color:var(--text-dim);">O(V³)</span>
+        <div class="clean-two-cols">
+          <div class="clean-card">
+            <div class="clean-card-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+              Passo a passo
             </div>
-            <div class="c-code-lines" style="font-size:0.76rem;">
-              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="kw">void</span> <span class="fn">floydWarshall</span>(<span class="kw">int</span> D[][N], <span class="kw">int</span> n) {</span></div>
-              <div class="c-line"><span class="c-num">2</span><span class="c-code">    <span class="kw">for</span> (<span class="kw">int</span> k <span class="op">=</span> <span class="num">0</span>; k <span class="op">&lt;</span> n; k<span class="op">++</span>)</span></div>
-              <div class="c-line"><span class="c-num">3</span><span class="c-code">        <span class="kw">for</span> (<span class="kw">int</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;</span> n; i<span class="op">++</span>)</span></div>
-              <div class="c-line"><span class="c-num">4</span><span class="c-code">            <span class="kw">for</span> (<span class="kw">int</span> j <span class="op">=</span> <span class="num">0</span>; j <span class="op">&lt;</span> n; j<span class="op">++</span>)</span></div>
-              <div class="c-line"><span class="c-num">5</span><span class="c-code">                <span class="kw">if</span> (D[i][k] <span class="op">+</span> D[k][j] <span class="op">&lt;</span> D[i][j])</span></div>
-              <div class="c-line"><span class="c-num">6</span><span class="c-code">                    D[i][j] <span class="op">=</span> D[i][k] <span class="op">+</span> D[k][j];</span></div>
-              <div class="c-line"><span class="c-num">7</span><span class="c-code">}</span></div>
-            </div>
+            <div class="clean-item"><span class="clean-badge amber">Intermediário k</span> Testa, um a um, cada vértice como <strong>parada intermediária</strong> dos caminhos.</div>
+            <div class="clean-item"><span class="clean-badge cyan">Pares i, j</span> Para cada <strong>origem i</strong> e <strong>destino j</strong>, verifica se desviar por <strong>k</strong> encurta o caminho.</div>
+            <div class="clean-item" style="border-left:3px solid var(--emerald-neon);"><span class="clean-badge emerald">Atualiza</span> Se ir de <strong>i</strong> a <strong>j</strong> <strong>passando por k</strong> for mais barato, a matriz D guarda esse novo valor.</div>
+            <div class="clean-item"><span class="clean-badge purple">Resultado</span> Depois de testar todos os intermediários, <strong>D</strong> tem o menor custo entre todos os pares.</div>
           </div>
-          <div class="code-explain">
-            <div class="explain-step"><span class="num-badge">1</span><code>k</code> — vértice <strong>intermediário</strong> testado (laço mais externo) (2).</div>
-            <div class="explain-step"><span class="num-badge">2</span><code>i</code> e <code>j</code> — <strong>origem</strong> e <strong>destino</strong> de cada par (3-4).</div>
-            <div class="explain-step" style="border-left-color:var(--emerald-neon);"><span class="num-badge" style="background:rgba(16,185,129,0.15);color:var(--emerald-neon);">★</span>Se ir de <code>i</code> a <code>j</code> <strong>passando por k</strong> for mais barato, atualiza <code>D[i][j]</code> (5-6).</div>
-            <div class="explain-step" style="flex-direction:column;align-items:stretch;gap:6px;">
-              <span><strong>Matriz inicial D</strong> — direto da matriz de pesos:</span>
-              <table class="matrix-table" style="font-size:0.72rem;">
+          <div class="tree-diagram-container">
+            <div class="tree-diagram-header"><span class="diagram-title">Matriz inicial D</span><span class="frame-badge">direto da matriz de pesos</span></div>
+            <div style="display:flex;justify-content:center;padding:10px 0;">
+              <table class="matrix-table">
                 <tr><th>&nbsp;</th><th>A</th><th>B</th><th>C</th></tr>
                 <tr><td class="rowhead">A</td><td class="zero">0</td><td class="w">3</td><td class="w">10</td></tr>
                 <tr><td class="rowhead">B</td><td>∞</td><td class="zero">0</td><td class="w">4</td></tr>
                 <tr><td class="rowhead">C</td><td>∞</td><td>∞</td><td class="zero">0</td></tr>
               </table>
-              <span style="font-size:0.74rem;"><strong style="color:var(--cyan-neon);">Diagonal = 0</strong> (custo de um vértice a ele mesmo) · <strong style="color:var(--text-dim);">∞</strong> = sem conexão direta.</span>
+            </div>
+            <div class="state-banner" style="flex-direction:column;align-items:flex-start;gap:4px;">
+              <span><strong style="color:var(--cyan-neon);">Diagonal = 0</strong> — custo de um vértice a ele mesmo.</span>
+              <span><strong style="color:var(--text-dim);">∞</strong> — ainda não há caminho (sem conexão direta).</span>
             </div>
           </div>
         </div>
@@ -2521,7 +2582,7 @@
           </div>
           <div class="tree-diagram-container">
             <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--emerald-neon);">Exemplo: A → C via B</span><span class="frame-badge">k = B</span></div>
-            <div class="tree-interactive-stage">
+            <div class="tree-interactive-stage" style="height:130px;">
               <svg viewBox="0 0 320 200" style="width:100%;height:100%;">
                 <line class="g-edge weighted" x1="50" y1="150" x2="270" y2="150"></line>
                 <rect x="147" y="138" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="160" y="148">10</text>
@@ -2534,12 +2595,11 @@
                 <g class="g-node-group"><circle class="g-node" cx="270" cy="150" r="22"></circle><text class="g-node-label" x="270" y="150">C</text></g>
               </svg>
             </div>
-            <div class="state-banner" style="flex-direction:column;align-items:stretch;gap:6px;">
-              <span>min( <strong style="color:var(--text-dim);">10</strong> , <strong style="color:var(--emerald-neon);">3+4</strong> ) = <strong style="color:var(--emerald-neon);">7</strong> — com <strong>k = B</strong></span>
+            <div class="state-banner" style="flex-direction:column;align-items:stretch;gap:5px;">
               <div style="display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;">
                 <div style="text-align:center;">
-                  <div style="font-size:0.68rem;color:var(--text-dim);margin-bottom:3px;">Antes (k = B)</div>
-                  <table class="matrix-table" style="font-size:0.66rem;">
+                  <div style="font-size:0.66rem;color:var(--text-dim);margin-bottom:2px;">Antes</div>
+                  <table class="matrix-table" style="font-size:0.64rem;">
                     <tr><th>&nbsp;</th><th>A</th><th>B</th><th>C</th></tr>
                     <tr><td class="rowhead">A</td><td class="zero">0</td><td class="w">3</td><td class="neg">10</td></tr>
                     <tr><td class="rowhead">B</td><td>∞</td><td class="zero">0</td><td class="w">4</td></tr>
@@ -2548,8 +2608,8 @@
                 </div>
                 <span style="color:var(--emerald-neon);font-weight:700;">→</span>
                 <div style="text-align:center;">
-                  <div style="font-size:0.68rem;color:var(--emerald-neon);margin-bottom:3px;">Depois</div>
-                  <table class="matrix-table" style="font-size:0.66rem;">
+                  <div style="font-size:0.66rem;color:var(--emerald-neon);margin-bottom:2px;">Depois (via B)</div>
+                  <table class="matrix-table" style="font-size:0.64rem;">
                     <tr><th>&nbsp;</th><th>A</th><th>B</th><th>C</th></tr>
                     <tr><td class="rowhead">A</td><td class="zero">0</td><td class="w">3</td><td class="w">7</td></tr>
                     <tr><td class="rowhead">B</td><td>∞</td><td class="zero">0</td><td class="w">4</td></tr>
@@ -2557,7 +2617,7 @@
                   </table>
                 </div>
               </div>
-              <span style="text-align:center;">D[A][C]: <strong style="color:var(--text-dim);">10</strong> → <strong style="color:var(--emerald-neon);">7</strong></span>
+              <span style="text-align:center;font-size:0.8rem;">min( <strong style="color:var(--text-dim);">10</strong> , <strong style="color:var(--emerald-neon);">3+4</strong> ) = <strong style="color:var(--emerald-neon);">7</strong> · D[A][C]: 10 → 7</span>
             </div>
           </div>
         </div>
@@ -2581,12 +2641,12 @@
         <div class="tree-diagram-container" style="max-width:none;">
           <div class="tree-diagram-header"><span class="diagram-title">Resumo comparativo</span><span class="frame-badge">V = vértices · E = arestas</span></div>
           <div class="tree-interactive-stage" style="align-items:center;justify-content:center;height:auto;padding:0.6rem;">
-            <table class="matrix-table" style="font-size:0.82rem;">
-              <tr><th class="rowhead">Algoritmo</th><th>Para quê</th><th>Estrutura</th><th>Pesos</th><th>Complexidade</th></tr>
-              <tr><th class="rowhead" style="color:var(--cyan-neon);">BFS</th><td>Menor nº de arestas</td><td>Fila</td><td>Não</td><td>O(V + E)</td></tr>
-              <tr><th class="rowhead" style="color:var(--purple-neon);">DFS</th><td>Percurso / conectividade</td><td>Pilha / recursão</td><td>Não</td><td>O(V + E)</td></tr>
-              <tr><th class="rowhead" style="color:var(--emerald-neon);">Dijkstra</th><td>Menor custo (1 origem)</td><td>Guloso</td><td>≥ 0</td><td>O(V²) · O(E log V)</td></tr>
-              <tr><th class="rowhead" style="color:var(--amber-neon);">Floyd-Warshall</th><td>Menor custo (todos os pares)</td><td>Prog. dinâmica</td><td>Negativos ok*</td><td>O(V³)</td></tr>
+            <table class="matrix-table" style="font-size:0.9rem;">
+              <tr><th class="rowhead">Algoritmo</th><th>Para quê</th><th>Estrutura</th><th>Pesos</th></tr>
+              <tr><th class="rowhead" style="color:var(--cyan-neon);">BFS</th><td>Menor nº de arestas</td><td>Fila</td><td>Não</td></tr>
+              <tr><th class="rowhead" style="color:var(--purple-neon);">DFS</th><td>Percurso / conectividade</td><td>Pilha / recursão</td><td>Não</td></tr>
+              <tr><th class="rowhead" style="color:var(--emerald-neon);">Dijkstra</th><td>Menor custo (1 origem)</td><td>Guloso</td><td>≥ 0</td></tr>
+              <tr><th class="rowhead" style="color:var(--amber-neon);">Floyd-Warshall</th><td>Menor custo (todos os pares)</td><td>Prog. dinâmica</td><td>Negativos ok*</td></tr>
             </table>
           </div>
           <div class="state-banner"><span>* Floyd-Warshall aceita pesos negativos, desde que <strong>não haja ciclos negativos</strong>.</span></div>
