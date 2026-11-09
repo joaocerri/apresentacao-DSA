@@ -682,159 +682,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Conectividade é sobre conseguir alcançar os vértices. Num grafo não direcionado ele é conexo se existe caminho entre qualquer par. Nos direcionados a direção importa: é fortemente conexo se dá para ir e voltar entre todos respeitando as setas, e apenas fracamente conexo se só ficaria conexo ao ignorar as direções. Essa é exatamente a pergunta que as buscas BFS e DFS vão responder na prática.</div>
     </section>
 
-    <!-- ============ SLIDE 6: PONDERADOS x NÃO PONDERADOS ============ -->
+    <!-- ============ SLIDE 6: MATRIZ DE ADJACÊNCIA — DEFINIÇÃO ============ -->
     <section class="slide" id="slide-6">
-      <div class="slide-content-clean">
-        <div class="slide-header-minimal">
-          <div>
-            <div class="slide-eyebrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18M5 8l7-5 7 5M4 21h16"></path></svg>
-              01 · Conceitos
-            </div>
-            <h2 class="slide-title-modern">Arestas com custo: <span class="gradient-text">grafos ponderados</span></h2>
-          </div>
-          <div class="slide-subtitle-tag">Quando a conexão tem um valor</div>
-        </div>
-
-        <div class="clean-two-cols">
-          <div class="tree-diagram-container">
-            <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--cyan-neon);">Não ponderado</span><span class="frame-badge">rede de amizades</span></div>
-            <div class="tree-interactive-stage" style="height:200px;">
-              <svg viewBox="0 0 320 200" style="width:100%;height:100%;">
-                <line class="g-edge" x1="70" y1="60" x2="250" y2="60"></line>
-                <line class="g-edge" x1="70" y1="60" x2="110" y2="160"></line>
-                <line class="g-edge" x1="250" y1="60" x2="210" y2="160"></line>
-                <line class="g-edge" x1="110" y1="160" x2="210" y2="160"></line>
-                <g class="g-node-group"><circle class="g-node" cx="70" cy="60" r="20"></circle><text class="g-node-label" x="70" y="60">A</text></g>
-                <g class="g-node-group"><circle class="g-node" cx="250" cy="60" r="20"></circle><text class="g-node-label" x="250" y="60">B</text></g>
-                <g class="g-node-group"><circle class="g-node" cx="110" cy="160" r="20"></circle><text class="g-node-label" x="110" y="160">C</text></g>
-                <g class="g-node-group"><circle class="g-node" cx="210" cy="160" r="20"></circle><text class="g-node-label" x="210" y="160">D</text></g>
-              </svg>
-            </div>
-            <div class="state-banner" style="flex-direction:column;align-items:flex-start;gap:4px;">
-              <span><strong style="color:var(--cyan-neon);">Def.:</strong> arestas <strong>sem peso</strong> — só importa se a conexão existe.</span>
-              <span>Aplicações: amizades, páginas web, pré-requisitos.</span>
-            </div>
-          </div>
-
-          <div class="tree-diagram-container">
-            <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--amber-neon);">Ponderado</span><span class="frame-badge">rede de cidades (km)</span></div>
-            <div class="tree-interactive-stage" style="height:200px;">
-              <svg viewBox="0 0 320 200" style="width:100%;height:100%;">
-                <line class="g-edge weighted" x1="70" y1="60" x2="250" y2="60"></line>
-                <rect x="148" y="48" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="161" y="58">5</text>
-                <line class="g-edge weighted" x1="70" y1="60" x2="110" y2="160"></line>
-                <rect x="76" y="100" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="89" y="110">8</text>
-                <line class="g-edge weighted" x1="250" y1="60" x2="210" y2="160"></line>
-                <rect x="218" y="100" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="231" y="110">3</text>
-                <line class="g-edge weighted" x1="110" y1="160" x2="210" y2="160"></line>
-                <rect x="147" y="150" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="160" y="160">7</text>
-                <g class="g-node-group"><circle class="g-node" cx="70" cy="60" r="20"></circle><text class="g-node-label" x="70" y="60">A</text></g>
-                <g class="g-node-group"><circle class="g-node" cx="250" cy="60" r="20"></circle><text class="g-node-label" x="250" y="60">B</text></g>
-                <g class="g-node-group"><circle class="g-node" cx="110" cy="160" r="20"></circle><text class="g-node-label" x="110" y="160">C</text></g>
-                <g class="g-node-group"><circle class="g-node" cx="210" cy="160" r="20"></circle><text class="g-node-label" x="210" y="160">D</text></g>
-              </svg>
-            </div>
-            <div class="state-banner" style="flex-direction:column;align-items:flex-start;gap:4px;">
-              <span><strong style="color:var(--amber-neon);">Def.:</strong> cada aresta tem um <strong>peso</strong> (distância, custo, tempo).</span>
-              <span>Aplicações: mapas (km), redes (latência), logística (R$).</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="speaker-notes"><strong>Fala:</strong> O segundo eixo é o peso. Num grafo não ponderado só importa se a conexão existe — amizades, pré-requisitos, páginas que se linkam. Num grafo ponderado cada aresta carrega um valor: quilômetros, latência, custo em reais. Essa diferença é a razão de termos BFS para distância em arestas e Dijkstra/Floyd-Warshall para distância em peso. Já antecipo isso aqui no bloco de conceitos.</div>
-    </section>
-
-    <!-- ============ SLIDE 7: REPRESENTAÇÃO DOS PESOS ============ -->
-    <section class="slide" id="slide-7">
-      <div class="slide-content-clean">
-        <div class="slide-header-minimal">
-          <div>
-            <div class="slide-eyebrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18M5 8l7-5 7 5M4 21h16"></path></svg>
-              02 · Representações
-            </div>
-            <h2 class="slide-title-modern">Como guardar <span class="gradient-text">pesos em cada representação</span></h2>
-          </div>
-          <div class="slide-subtitle-tag">Sentinela 0 = sem aresta</div>
-        </div>
-
-        <div class="tree-diagram-header" style="justify-content:center;gap:28px;margin-bottom:10px;">
-          <span class="diagram-title">Grafo base ponderado</span>
-          <svg viewBox="0 0 360 90" style="height:72px;">
-            <line class="g-edge weighted" x1="40" y1="45" x2="140" y2="20"></line>
-            <rect x="78" y="22" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="88" y="31">5</text>
-            <line class="g-edge weighted" x1="40" y1="45" x2="140" y2="70"></line>
-            <rect x="78" y="54" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="88" y="63">8</text>
-            <line class="g-edge weighted" x1="140" y1="20" x2="140" y2="70"></line>
-            <rect x="130" y="37" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="140" y="46">10</text>
-            <line class="g-edge weighted" x1="140" y1="70" x2="240" y2="70"></line>
-            <rect x="180" y="62" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="190" y="71">7</text>
-            <g class="g-node-group"><circle class="g-node" cx="40" cy="45" r="15"></circle><text class="g-node-label" x="40" y="45" style="font-size:11px;">v1</text></g>
-            <g class="g-node-group"><circle class="g-node" cx="140" cy="20" r="15"></circle><text class="g-node-label" x="140" y="20" style="font-size:11px;">v2</text></g>
-            <g class="g-node-group"><circle class="g-node" cx="140" cy="70" r="15"></circle><text class="g-node-label" x="140" y="70" style="font-size:11px;">v3</text></g>
-            <g class="g-node-group"><circle class="g-node" cx="240" cy="70" r="15"></circle><text class="g-node-label" x="240" y="70" style="font-size:11px;">v4</text></g>
-          </svg>
-          <span class="frame-badge">v1–v2=5 · v1–v3=8 · v2–v3=10 · v3–v4=7</span>
-        </div>
-
-        <div class="clean-two-cols">
-          <div class="tree-diagram-container">
-            <div class="tree-diagram-header"><span class="diagram-title">Matriz de adjacência ponderada</span><span class="frame-badge">não dir. · simétrica</span></div>
-            <div style="display:flex;justify-content:center;padding:6px 0;">
-              <table class="matrix-table">
-                <tr><th>&nbsp;</th><th>v1</th><th>v2</th><th>v3</th><th>v4</th></tr>
-                <tr><td class="rowhead">v1</td><td class="zero">0</td><td class="w">5</td><td class="w">8</td><td class="zero">0</td></tr>
-                <tr><td class="rowhead">v2</td><td class="w">5</td><td class="zero">0</td><td class="w">10</td><td class="zero">0</td></tr>
-                <tr><td class="rowhead">v3</td><td class="w">8</td><td class="w">10</td><td class="zero">0</td><td class="w">7</td></tr>
-                <tr><td class="rowhead">v4</td><td class="zero">0</td><td class="zero">0</td><td class="w">7</td><td class="zero">0</td></tr>
-              </table>
-            </div>
-            <div class="matrix-caption">cada célula guarda o <strong>peso</strong>; <span style="color:var(--text-dim);">0</span> = sem aresta</div>
-          </div>
-
-          <div class="tree-diagram-container">
-            <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--purple-neon);">Incidência + vetor de pesos</span></div>
-            <div style="display:flex;justify-content:center;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
-              <table class="matrix-table" style="font-size:0.72rem;">
-                <tr><th>&nbsp;</th><th>e1</th><th>e2</th><th>e3</th><th>e4</th></tr>
-                <tr><td class="rowhead">v1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
-                <tr><td class="rowhead">v2</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
-                <tr><td class="rowhead">v3</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
-                <tr><td class="rowhead">v4</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
-              </table>
-              <table class="matrix-table" style="font-size:0.72rem;">
-                <tr><th>pesos[]</th></tr>
-                <tr><td class="w">5</td></tr>
-                <tr><td class="w">8</td></tr>
-                <tr><td class="w">10</td></tr>
-                <tr><td class="w">7</td></tr>
-              </table>
-            </div>
-            <div class="matrix-caption">a matriz só marca participação (e1=v1–v2, e2=v1–v3, e3=v2–v3, e4=v3–v4); o <strong>peso</strong> fica no vetor</div>
-            <div class="tree-diagram-header" style="margin-top:8px;"><span class="diagram-title" style="color:var(--emerald-neon);">Lista ponderada (destino + peso)</span></div>
-            <div style="display:flex;justify-content:center;padding:4px 0;">
-              <svg viewBox="0 0 300 54" style="height:48px;">
-                <defs><marker id="ar-wp" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" class="g-arrow"></path></marker></defs>
-                <rect x="6" y="14" width="40" height="28" rx="6" fill="#0c1427" stroke="var(--emerald-neon)" stroke-width="2"></rect>
-                <text class="g-node-label" x="26" y="28" style="font-size:11px;">v1</text>
-                <line class="g-edge" x1="46" y1="28" x2="86" y2="28" marker-end="url(#ar-wp)"></line>
-                <rect x="88" y="14" width="74" height="28" rx="6" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="2"></rect>
-                <text class="g-node-label" x="125" y="28" style="font-size:10px;">v2 | p=5</text>
-                <line class="g-edge" x1="162" y1="28" x2="200" y2="28" marker-end="url(#ar-wp)"></line>
-                <rect x="202" y="14" width="74" height="28" rx="6" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="2"></rect>
-                <text class="g-node-label" x="239" y="28" style="font-size:10px;">v3 | p=8</text>
-              </svg>
-            </div>
-            <div class="matrix-caption"><span style="color:var(--text-dim);">0</span> = sem aresta (sentinela, pois os pesos são ≥ 1 aqui) · não dir. ponderado continua simétrico</div>
-          </div>
-        </div>
-      </div>
-      <div class="speaker-notes"><strong>Fala:</strong> Com o mesmo grafo base, veja como cada representação guarda o peso. Na matriz de adjacência a célula passa a guardar o próprio peso; 0 significa que não há aresta. Na incidência a matriz continua marcando só participação, e os pesos vão num vetor paralelo indexado por aresta. Na lista, cada nó carrega destino e peso juntos. Atenção ao combinado da apresentação: ausência de aresta é sempre 0 — isso só não serve se precisarmos de arestas de peso zero.</div>
-    </section>
-
-    <!-- ============ SLIDE 8: MATRIZ DE ADJACÊNCIA — DEFINIÇÃO ============ -->
-    <section class="slide" id="slide-8">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -880,8 +729,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A matriz de adjacência é a representação mais direta: uma tabela N por N em que a linha é a origem e a coluna é o destino. Um 1 na célula diz que existe aresta; 0 diz que não existe — e num grafo ponderado guardamos o peso na célula. Perguntar se existe aresta vira um simples acesso a uma posição. O preço é o espaço: mesmo sem conexão, cada célula ocupa lugar.</div>
     </section>
 
-    <!-- ============ SLIDE 9: MATRIZ DE ADJACÊNCIA — EXEMPLOS ============ -->
-    <section class="slide" id="slide-9">
+    <!-- ============ SLIDE 7: MATRIZ DE ADJACÊNCIA — EXEMPLOS ============ -->
+    <section class="slide" id="slide-7">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -942,8 +791,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> O mesmo conjunto de arestas gera duas matrizes diferentes conforme a orientação. No caso não direcionado a matriz é simétrica: se M[v1][v2] é 1, M[v2][v1] também é, porque a aresta vale nos dois sentidos. No direcionado só marcamos a posição origem-destino, então a matriz deixa de ser espelhada. Reparar nessa simetria é um bom teste rápido de que você montou a matriz certa.</div>
     </section>
 
-    <!-- ============ SLIDE 10: MATRIZ DE INCIDÊNCIA — DEFINIÇÃO ============ -->
-    <section class="slide" id="slide-10">
+    <!-- ============ SLIDE 8: MATRIZ DE INCIDÊNCIA — DEFINIÇÃO ============ -->
+    <section class="slide" id="slide-8">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -991,8 +840,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A matriz de incidência muda o eixo: as linhas são os vértices e as colunas são as arestas. Cada coluna representa uma única aresta e toca exatamente dois vértices. No caso não direcionado marcamos 1 nos dois; no direcionado usamos −1 na origem e +1 no destino, então o sinal já conta de onde para onde a aresta vai. Os pesos ficam num vetor separado, uma posição por coluna.</div>
     </section>
 
-    <!-- ============ SLIDE 11: MATRIZ DE INCIDÊNCIA — EXEMPLOS ============ -->
-    <section class="slide" id="slide-11">
+    <!-- ============ SLIDE 9: MATRIZ DE INCIDÊNCIA — EXEMPLOS ============ -->
+    <section class="slide" id="slide-9">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1057,8 +906,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Este é o mesmo grafo de quatro arestas das matrizes de adjacência, agora na incidência — assim dá para comparar as três representações lado a lado. Cada coluna é uma aresta. No não direcionado marcamos 1 nos dois vértices que a aresta toca. No direcionado o sinal carrega a orientação: −1 em quem a aresta sai e +1 em quem ela chega. Some uma coluna e o resultado é sempre zero, o que confirma que cada aresta tem uma origem e um destino.</div>
     </section>
 
-    <!-- ============ SLIDE 12: LISTA DE ADJACÊNCIA — DEFINIÇÃO ============ -->
-    <section class="slide" id="slide-12">
+    <!-- ============ SLIDE 10: LISTA DE ADJACÊNCIA — DEFINIÇÃO ============ -->
+    <section class="slide" id="slide-10">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1138,8 +987,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A lista de adjacência inverte a lógica da matriz: em vez de reservar espaço para toda conexão possível, guarda só o que existe. Cada vértice aponta para uma lista ligada com seus vizinhos. Para grafos esparsos, onde há poucas arestas, isso economiza muita memória — compare a matriz cheia de zeros com as listas enxutas à direita. O custo é que verificar uma aresta específica exige percorrer a lista.</div>
     </section>
 
-    <!-- ============ SLIDE 13: LISTA DE ADJACÊNCIA — EXEMPLOS ============ -->
-    <section class="slide" id="slide-13">
+    <!-- ============ SLIDE 11: LISTA DE ADJACÊNCIA — EXEMPLOS ============ -->
+    <section class="slide" id="slide-11">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1280,8 +1129,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A mesma estrutura de lista se adapta aos três tipos de grafo. No não direcionado cada aresta aparece duas vezes, uma em cada ponta. No direcionado a lista guarda apenas os destinos que partem do vértice. No ponderado cada nó carrega destino e peso juntos. Repare que os valores de peso aqui são os mesmos do slide anterior — v1–v2 custa 5, v1–v3 custa 8 — mantendo tudo coerente entre as representações.</div>
     </section>
 
-    <!-- ============ SLIDE 14: COMPARAÇÃO DAS REPRESENTAÇÕES ============ -->
-    <section class="slide" id="slide-14">
+    <!-- ============ SLIDE 12: COMPARAÇÃO DAS REPRESENTAÇÕES ============ -->
+    <section class="slide" id="slide-12">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1318,8 +1167,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Cada representação tem seu ponto forte. A matriz de adjacência responde na hora se existe uma aresta entre dois vértices, por isso combina com grafos densos. A lista guarda só as conexões que existem e percorre vizinhos com facilidade, ideal para grafos esparsos. Já a matriz de incidência deixa explícita a relação entre vértices e arestas. Escolha pela operação que você mais repete.</div>
     </section>
 
-    <!-- ============ SLIDE 15: COMO ESCOLHER A REPRESENTAÇÃO ============ -->
-    <section class="slide" id="slide-15">
+    <!-- ============ SLIDE 13: COMO ESCOLHER A REPRESENTAÇÃO ============ -->
+    <section class="slide" id="slide-13">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1346,8 +1195,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Na prática a escolha segue o cenário. Grafo denso e muitas consultas de existe aresta pedem matriz de adjacência. Grafo esparso e muita travessia de vizinhos pedem lista. E quando o foco é a relação entre vértices e arestas em si, a matriz de incidência brilha. Não existe representação perfeita — existe a que combina com a operação que você mais repete.</div>
     </section>
 
-    <!-- ============ SLIDE 16: MATRIZ ADJ — ESTRUTURA ============ -->
-    <section class="slide" id="slide-16">
+    <!-- ============ SLIDE 14: MATRIZ ADJ — ESTRUTURA ============ -->
+    <section class="slide" id="slide-14">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1385,8 +1234,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Começamos a implementação em C pela matriz de adjacência. A struct guarda contadores de vértices e arestas e um ponteiro duplo int** para a matriz: um vetor de ponteiros, cada um apontando para uma linha. O typedef já define Grafo como ponteiro para a struct, então passamos o grafo às funções sem copiar a estrutura inteira. O erro clássico aqui é esquecer que são duas alocações: o vetor de linhas e depois cada linha.</div>
     </section>
 
-    <!-- ============ SLIDE 17: MATRIZ ADJ — INICIALIZAÇÃO ============ -->
-    <section class="slide" id="slide-17">
+    <!-- ============ SLIDE 15: MATRIZ ADJ — INICIALIZAÇÃO ============ -->
+    <section class="slide" id="slide-15">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1431,8 +1280,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A alocação acontece em camadas. Primeiro o malloc da struct, e logo checamos se ele falhou: sem essa validação, o próximo acesso a g seria um crash. Depois alocamos o vetor de linhas e, no laço, cada linha com calloc — que já zera tudo, representando a ausência de arestas. O bug mais comum é usar malloc em vez de calloc nas linhas e esquecer de zerar, deixando lixo de memória que parece aresta.</div>
     </section>
 
-    <!-- ============ SLIDE 18: MATRIZ ADJ — CRIAÇÃO DE ARESTA ============ -->
-    <section class="slide" id="slide-18">
+    <!-- ============ SLIDE 16: MATRIZ ADJ — CRIAÇÃO DE ARESTA ============ -->
+    <section class="slide" id="slide-16">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1482,8 +1331,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Aqui está a diferença que costuma confundir. A versão não ponderada só marca 1: serve para dizer que a conexão existe. Mas o Dijkstra lê a própria célula como custo, então precisamos da versão ponderada, que grava o peso em M[vi][vf]. Nas duas, ausência de aresta é 0 — a convenção única desta apresentação. O bug mais comum é usar a versão sem peso e depois rodar Dijkstra, que passaria a tratar toda aresta como custo 1.</div>
     </section>
 
-    <!-- ============ SLIDE 19: MATRIZ INCIDÊNCIA — ESTRUTURA ============ -->
-    <section class="slide" id="slide-19">
+    <!-- ============ SLIDE 17: MATRIZ INCIDÊNCIA — ESTRUTURA ============ -->
+    <section class="slide" id="slide-17">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1523,8 +1372,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> Na incidência a struct precisa de um dado novo: maxArestas, a capacidade de colunas, porque cada aresta ocupa uma coluna e precisamos reservar espaço de antemão. numArestas funciona como índice da próxima coluna livre. A matriz é V por maxArestas, e os pesos ficam num vetor separado, indexado por coluna. O cuidado é não deixar numArestas ultrapassar maxArestas — veremos a checagem na inserção.</div>
     </section>
 
-    <!-- ============ SLIDE 20: MATRIZ INCIDÊNCIA — INICIALIZAÇÃO ============ -->
-    <section class="slide" id="slide-20">
+    <!-- ============ SLIDE 18: MATRIZ INCIDÊNCIA — INICIALIZAÇÃO ============ -->
+    <section class="slide" id="slide-18">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1570,8 +1419,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A inicialização segue o mesmo padrão da matriz de adjacência, com a validação do malloc logo após alocar a struct. A diferença é que agora a matriz tem maxArestas colunas, não V, e alocamos à parte o vetor de pesos com uma posição por aresta possível. Usar calloc nas linhas garante que começamos com zeros, ou seja, nenhum vértice participa de nenhuma aresta ainda.</div>
     </section>
 
-    <!-- ============ SLIDE 21: MATRIZ INCIDÊNCIA — CRIAÇÃO DE ARESTA ============ -->
-    <section class="slide" id="slide-21">
+    <!-- ============ SLIDE 19: MATRIZ INCIDÊNCIA — CRIAÇÃO DE ARESTA ============ -->
+    <section class="slide" id="slide-19">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1620,8 +1469,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A inserção na incidência agora começa validando os índices vi e vf, igual fizemos na matriz de adjacência — antes isso faltava. Em seguida checamos a capacidade: se já enchemos as colunas, paramos. A variável e é o índice da coluna nova. Para arestas direcionadas gravamos −1 na origem e +1 no destino; para não direcionadas, 1 nos dois. O peso vai no vetor paralelo. Esquecer a checagem de maxArestas é o caminho rápido para estourar a matriz.</div>
     </section>
 
-    <!-- ============ SLIDE 22: LISTA ADJ — ESTRUTURAS ============ -->
-    <section class="slide" id="slide-22">
+    <!-- ============ SLIDE 20: LISTA ADJ — ESTRUTURAS ============ -->
+    <section class="slide" id="slide-20">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1669,8 +1518,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A lista precisa de três structs encaixadas. Adjacencia é um nó da lista ligada, com destino, peso e ponteiro para o próximo. Vertice guarda um id e o ponteiro inicio para o começo da sua lista de vizinhos. E Grafo reúne o vetor de vértices. A relação é em cascata: o grafo tem um vetor de vértices, e cada vértice aponta para uma cadeia de Adjacencia. Entender essa hierarquia evita confundir qual ponteiro percorrer.</div>
     </section>
 
-    <!-- ============ SLIDE 23: LISTA ADJ — INICIALIZAÇÃO ============ -->
-    <section class="slide" id="slide-23">
+    <!-- ============ SLIDE 21: LISTA ADJ — INICIALIZAÇÃO ============ -->
+    <section class="slide" id="slide-21">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1716,8 +1565,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> A criação do grafo com listas aloca a struct — validando o malloc — e depois o vetor de vértices. No laço, cada vértice recebe seu id e, o mais importante, inicio igual a NULL. Esse NULL é o que diz lista vazia. O bug clássico é esquecer de inicializar inicio: aí o ponteiro aponta para lixo e a primeira travessia já quebra. Com NULL, o grafo nasce sem nenhuma aresta, pronto para receber conexões.</div>
     </section>
 
-    <!-- ============ SLIDE 24: LISTA ADJ — CRIAÇÃO DE NÓ ============ -->
-    <section class="slide" id="slide-24">
+    <!-- ============ SLIDE 22: LISTA ADJ — CRIAÇÃO DE NÓ ============ -->
+    <section class="slide" id="slide-22">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1759,8 +1608,8 @@
       <div class="speaker-notes"><strong>Fala:</strong> criaAdj é uma fábrica de nós: aloca um Adjacencia, valida o malloc e preenche destino, peso e prox igual a NULL. Devolver o nó com prox em NULL é o que permite encaixá-lo com segurança em qualquer lista depois. O erro comum é não validar o retorno do malloc e já sair usando o ponteiro — em um programa pequeno passa despercebido, mas sob pressão de memória vira falha de segmentação.</div>
     </section>
 
-    <!-- ============ SLIDE 25: LISTA ADJ — CRIAÇÃO DE ARESTA ============ -->
-    <section class="slide" id="slide-25">
+    <!-- ============ SLIDE 23: LISTA ADJ — CRIAÇÃO DE ARESTA ============ -->
+    <section class="slide" id="slide-23">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -1807,6 +1656,157 @@
       <div class="speaker-notes"><strong>Fala:</strong> A inserção valida índices e usa criaAdj para montar o nó. O detalhe importante é que inserimos no início da lista: o novo nó passa a apontar para o antigo começo. Isso inverte a ordem — o último vizinho inserido é o primeiro a ser visitado. Por isso, para as buscas imprimirem exatamente A B C D E F na BFS e A B D E C F na DFS, as arestas de cada vértice devem ser inseridas do último vizinho para o primeiro. É a pegadinha número um quando a saída sai fora de ordem.</div>
     </section>
 
+    <!-- ============ SLIDE 24: PONDERADOS x NÃO PONDERADOS ============ -->
+    <section class="slide" id="slide-24">
+      <div class="slide-content-clean">
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18M5 8l7-5 7 5M4 21h16"></path></svg>
+              04 · Grafos ponderados
+            </div>
+            <h2 class="slide-title-modern">Arestas com custo: <span class="gradient-text">grafos ponderados</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Quando a conexão tem um valor</div>
+        </div>
+
+        <div class="clean-two-cols">
+          <div class="tree-diagram-container">
+            <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--cyan-neon);">Não ponderado</span><span class="frame-badge">rede de amizades</span></div>
+            <div class="tree-interactive-stage" style="height:200px;">
+              <svg viewBox="0 0 320 200" style="width:100%;height:100%;">
+                <line class="g-edge" x1="70" y1="60" x2="250" y2="60"></line>
+                <line class="g-edge" x1="70" y1="60" x2="110" y2="160"></line>
+                <line class="g-edge" x1="250" y1="60" x2="210" y2="160"></line>
+                <line class="g-edge" x1="110" y1="160" x2="210" y2="160"></line>
+                <g class="g-node-group"><circle class="g-node" cx="70" cy="60" r="20"></circle><text class="g-node-label" x="70" y="60">A</text></g>
+                <g class="g-node-group"><circle class="g-node" cx="250" cy="60" r="20"></circle><text class="g-node-label" x="250" y="60">B</text></g>
+                <g class="g-node-group"><circle class="g-node" cx="110" cy="160" r="20"></circle><text class="g-node-label" x="110" y="160">C</text></g>
+                <g class="g-node-group"><circle class="g-node" cx="210" cy="160" r="20"></circle><text class="g-node-label" x="210" y="160">D</text></g>
+              </svg>
+            </div>
+            <div class="state-banner" style="flex-direction:column;align-items:flex-start;gap:4px;">
+              <span><strong style="color:var(--cyan-neon);">Def.:</strong> arestas <strong>sem peso</strong> — só importa se a conexão existe.</span>
+              <span>Aplicações: amizades, páginas web, pré-requisitos.</span>
+            </div>
+          </div>
+
+          <div class="tree-diagram-container">
+            <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--amber-neon);">Ponderado</span><span class="frame-badge">rede de cidades (km)</span></div>
+            <div class="tree-interactive-stage" style="height:200px;">
+              <svg viewBox="0 0 320 200" style="width:100%;height:100%;">
+                <line class="g-edge weighted" x1="70" y1="60" x2="250" y2="60"></line>
+                <rect x="148" y="48" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="161" y="58">5</text>
+                <line class="g-edge weighted" x1="70" y1="60" x2="110" y2="160"></line>
+                <rect x="76" y="100" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="89" y="110">8</text>
+                <line class="g-edge weighted" x1="250" y1="60" x2="210" y2="160"></line>
+                <rect x="218" y="100" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="231" y="110">3</text>
+                <line class="g-edge weighted" x1="110" y1="160" x2="210" y2="160"></line>
+                <rect x="147" y="150" width="26" height="18" rx="4" fill="#0a0e17"></rect><text class="g-edge-label" x="160" y="160">7</text>
+                <g class="g-node-group"><circle class="g-node" cx="70" cy="60" r="20"></circle><text class="g-node-label" x="70" y="60">A</text></g>
+                <g class="g-node-group"><circle class="g-node" cx="250" cy="60" r="20"></circle><text class="g-node-label" x="250" y="60">B</text></g>
+                <g class="g-node-group"><circle class="g-node" cx="110" cy="160" r="20"></circle><text class="g-node-label" x="110" y="160">C</text></g>
+                <g class="g-node-group"><circle class="g-node" cx="210" cy="160" r="20"></circle><text class="g-node-label" x="210" y="160">D</text></g>
+              </svg>
+            </div>
+            <div class="state-banner" style="flex-direction:column;align-items:flex-start;gap:4px;">
+              <span><strong style="color:var(--amber-neon);">Def.:</strong> cada aresta tem um <strong>peso</strong> (distância, custo, tempo).</span>
+              <span>Aplicações: mapas (km), redes (latência), logística (R$).</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes"><strong>Fala:</strong> O segundo eixo é o peso. Num grafo não ponderado só importa se a conexão existe — amizades, pré-requisitos, páginas que se linkam. Num grafo ponderado cada aresta carrega um valor: quilômetros, latência, custo em reais. Essa diferença é a razão de termos BFS para distância em arestas e Dijkstra/Floyd-Warshall para distância em peso. Já antecipo isso aqui no bloco de conceitos.</div>
+    </section>
+
+    <!-- ============ SLIDE 25: REPRESENTAÇÃO DOS PESOS ============ -->
+    <section class="slide" id="slide-25">
+      <div class="slide-content-clean">
+        <div class="slide-header-minimal">
+          <div>
+            <div class="slide-eyebrow">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18M5 8l7-5 7 5M4 21h16"></path></svg>
+              04 · Grafos ponderados
+            </div>
+            <h2 class="slide-title-modern">Como guardar <span class="gradient-text">pesos em cada representação</span></h2>
+          </div>
+          <div class="slide-subtitle-tag">Sentinela 0 = sem aresta</div>
+        </div>
+
+        <div class="tree-diagram-header" style="justify-content:center;gap:28px;margin-bottom:10px;">
+          <span class="diagram-title">Grafo base ponderado</span>
+          <svg viewBox="0 0 360 90" style="height:72px;">
+            <line class="g-edge weighted" x1="40" y1="45" x2="140" y2="20"></line>
+            <rect x="78" y="22" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="88" y="31">5</text>
+            <line class="g-edge weighted" x1="40" y1="45" x2="140" y2="70"></line>
+            <rect x="78" y="54" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="88" y="63">8</text>
+            <line class="g-edge weighted" x1="140" y1="20" x2="140" y2="70"></line>
+            <rect x="130" y="37" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="140" y="46">10</text>
+            <line class="g-edge weighted" x1="140" y1="70" x2="240" y2="70"></line>
+            <rect x="180" y="62" width="20" height="16" rx="3" fill="#0a0e17"></rect><text class="g-edge-label" x="190" y="71">7</text>
+            <g class="g-node-group"><circle class="g-node" cx="40" cy="45" r="15"></circle><text class="g-node-label" x="40" y="45" style="font-size:11px;">v1</text></g>
+            <g class="g-node-group"><circle class="g-node" cx="140" cy="20" r="15"></circle><text class="g-node-label" x="140" y="20" style="font-size:11px;">v2</text></g>
+            <g class="g-node-group"><circle class="g-node" cx="140" cy="70" r="15"></circle><text class="g-node-label" x="140" y="70" style="font-size:11px;">v3</text></g>
+            <g class="g-node-group"><circle class="g-node" cx="240" cy="70" r="15"></circle><text class="g-node-label" x="240" y="70" style="font-size:11px;">v4</text></g>
+          </svg>
+          <span class="frame-badge">v1–v2=5 · v1–v3=8 · v2–v3=10 · v3–v4=7</span>
+        </div>
+
+        <div class="clean-two-cols">
+          <div class="tree-diagram-container">
+            <div class="tree-diagram-header"><span class="diagram-title">Matriz de adjacência ponderada</span><span class="frame-badge">não dir. · simétrica</span></div>
+            <div style="display:flex;justify-content:center;padding:6px 0;">
+              <table class="matrix-table">
+                <tr><th>&nbsp;</th><th>v1</th><th>v2</th><th>v3</th><th>v4</th></tr>
+                <tr><td class="rowhead">v1</td><td class="zero">0</td><td class="w">5</td><td class="w">8</td><td class="zero">0</td></tr>
+                <tr><td class="rowhead">v2</td><td class="w">5</td><td class="zero">0</td><td class="w">10</td><td class="zero">0</td></tr>
+                <tr><td class="rowhead">v3</td><td class="w">8</td><td class="w">10</td><td class="zero">0</td><td class="w">7</td></tr>
+                <tr><td class="rowhead">v4</td><td class="zero">0</td><td class="zero">0</td><td class="w">7</td><td class="zero">0</td></tr>
+              </table>
+            </div>
+            <div class="matrix-caption">cada célula guarda o <strong>peso</strong>; <span style="color:var(--text-dim);">0</span> = sem aresta</div>
+          </div>
+
+          <div class="tree-diagram-container">
+            <div class="tree-diagram-header"><span class="diagram-title" style="color:var(--purple-neon);">Incidência + vetor de pesos</span></div>
+            <div style="display:flex;justify-content:center;align-items:center;gap:10px;padding:6px 0;flex-wrap:wrap;">
+              <table class="matrix-table" style="font-size:0.72rem;">
+                <tr><th>&nbsp;</th><th>e1</th><th>e2</th><th>e3</th><th>e4</th></tr>
+                <tr><td class="rowhead">v1</td><td class="one">1</td><td class="one">1</td><td class="zero">0</td><td class="zero">0</td></tr>
+                <tr><td class="rowhead">v2</td><td class="one">1</td><td class="zero">0</td><td class="one">1</td><td class="zero">0</td></tr>
+                <tr><td class="rowhead">v3</td><td class="zero">0</td><td class="one">1</td><td class="one">1</td><td class="one">1</td></tr>
+                <tr><td class="rowhead">v4</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="one">1</td></tr>
+              </table>
+              <table class="matrix-table" style="font-size:0.72rem;">
+                <tr><th>pesos[]</th></tr>
+                <tr><td class="w">5</td></tr>
+                <tr><td class="w">8</td></tr>
+                <tr><td class="w">10</td></tr>
+                <tr><td class="w">7</td></tr>
+              </table>
+            </div>
+            <div class="matrix-caption">a matriz só marca participação (e1=v1–v2, e2=v1–v3, e3=v2–v3, e4=v3–v4); o <strong>peso</strong> fica no vetor</div>
+            <div class="tree-diagram-header" style="margin-top:8px;"><span class="diagram-title" style="color:var(--emerald-neon);">Lista ponderada (destino + peso)</span></div>
+            <div style="display:flex;justify-content:center;padding:4px 0;">
+              <svg viewBox="0 0 300 54" style="height:48px;">
+                <defs><marker id="ar-wp" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" class="g-arrow"></path></marker></defs>
+                <rect x="6" y="14" width="40" height="28" rx="6" fill="#0c1427" stroke="var(--emerald-neon)" stroke-width="2"></rect>
+                <text class="g-node-label" x="26" y="28" style="font-size:11px;">v1</text>
+                <line class="g-edge" x1="46" y1="28" x2="86" y2="28" marker-end="url(#ar-wp)"></line>
+                <rect x="88" y="14" width="74" height="28" rx="6" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="2"></rect>
+                <text class="g-node-label" x="125" y="28" style="font-size:10px;">v2 | p=5</text>
+                <line class="g-edge" x1="162" y1="28" x2="200" y2="28" marker-end="url(#ar-wp)"></line>
+                <rect x="202" y="14" width="74" height="28" rx="6" fill="#0c1427" stroke="var(--border-subtle)" stroke-width="2"></rect>
+                <text class="g-node-label" x="239" y="28" style="font-size:10px;">v3 | p=8</text>
+              </svg>
+            </div>
+            <div class="matrix-caption"><span style="color:var(--text-dim);">0</span> = sem aresta (sentinela, pois os pesos são ≥ 1 aqui) · não dir. ponderado continua simétrico</div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes"><strong>Fala:</strong> Com o mesmo grafo base, veja como cada representação guarda o peso. Na matriz de adjacência a célula passa a guardar o próprio peso; 0 significa que não há aresta. Na incidência a matriz continua marcando só participação, e os pesos vão num vetor paralelo indexado por aresta. Na lista, cada nó carrega destino e peso juntos. Atenção ao combinado da apresentação: ausência de aresta é sempre 0 — isso só não serve se precisarmos de arestas de peso zero.</div>
+    </section>
+
     <!-- ============ SLIDE 26: BUSCA EM GRAFOS ============ -->
     <section class="slide" id="slide-26">
       <div class="slide-content-clean">
@@ -1814,7 +1814,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">Percorrer um grafo: <span class="gradient-text">largura ou profundidade?</span></h2>
           </div>
@@ -1858,7 +1858,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7h16M4 12h16M4 17h10"></path></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">BFS: <span class="gradient-text">explora por níveis</span></h2>
           </div>
@@ -1911,7 +1911,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">BFS em C: <span class="gradient-text">fila e visitados</span></h2>
           </div>
@@ -1956,7 +1956,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">BFS em C: <span class="gradient-text">o laço da fila</span></h2>
           </div>
@@ -2007,7 +2007,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="22"></line><polyline points="6 16 12 22 18 16"></polyline></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">DFS: <span class="gradient-text">mergulha fundo</span> antes de voltar</h2>
           </div>
@@ -2060,7 +2060,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">DFS em C: <span class="gradient-text">busca recursiva</span></h2>
           </div>
@@ -2111,7 +2111,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 12h16M4 12l4-4M4 12l4 4"></path></svg>
-              04 · Buscas
+              05 · Buscas
             </div>
             <h2 class="slide-title-modern">Distância = <span class="gradient-text">número de arestas</span></h2>
           </div>
@@ -2162,7 +2162,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v18M5 8l7-5 7 5M4 21h16"></path></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Com pesos, <span class="gradient-text">a BFS não basta</span></h2>
           </div>
@@ -2208,7 +2208,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 11 9 17 21 5"></polyline></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Dijkstra ou Floyd-Warshall? <span class="gradient-text">Depende da pergunta</span></h2>
           </div>
@@ -2251,7 +2251,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v4M12 18v4M2 12h4M18 12h4"></path></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Dijkstra: <span class="gradient-text">sempre fixa o vértice mais próximo</span></h2>
           </div>
@@ -2315,7 +2315,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Dijkstra em C: <span class="gradient-text">inicialização</span></h2>
           </div>
@@ -2359,7 +2359,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Dijkstra em C: <span class="gradient-text">escolhendo o menor</span></h2>
           </div>
@@ -2403,7 +2403,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Dijkstra em C: <span class="gradient-text">relaxamento</span></h2>
           </div>
@@ -2446,7 +2446,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Dijkstra em C: <span class="gradient-text">resultados</span></h2>
           </div>
@@ -2489,7 +2489,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M3 15h18M9 3v18M15 3v18"></path></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Floyd-Warshall: <span class="gradient-text">todos os pares de uma vez</span></h2>
           </div>
@@ -2535,7 +2535,7 @@
           <div>
             <div class="slide-eyebrow">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
-              05 · Caminhos mínimos
+              06 · Caminhos mínimos
             </div>
             <h2 class="slide-title-modern">Qual algoritmo <span class="gradient-text">usar em cada situação?</span></h2>
           </div>
