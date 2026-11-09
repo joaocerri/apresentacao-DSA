@@ -2504,7 +2504,7 @@
             </div>
             <div class="clean-item"><span class="clean-badge purple">Objetivo</span> Calcula a <strong>menor distância entre todos os pares</strong> de vértices de uma só vez.</div>
             <div class="clean-item"><span class="clean-badge cyan">Técnica</span> <strong>Programação dinâmica</strong>: parte da matriz de pesos e a melhora iterativamente.</div>
-            <div class="clean-item"><span class="clean-badge emerald">Como funciona</span> Testa cada vértice <code>k</code> como <strong>parada intermediária</strong> em todos os caminhos (três laços aninhados, um por intermediário).</div>
+            <div class="clean-item"><span class="clean-badge emerald">Como funciona</span> Testa cada vértice como <strong>parada intermediária</strong>: se desviar por ele encurta o caminho entre dois vértices, atualiza a distância.</div>
             <div class="clean-item"><span class="clean-badge amber">Quando usar</span> Quando precisamos das <strong>distâncias entre todos os pares</strong> — e não só a partir de uma origem.</div>
           </div>
           <div class="tree-diagram-container">
@@ -2525,54 +2525,11 @@
           </div>
         </div>
       </div>
-      <div class="speaker-notes"><strong>Fala:</strong> O Floyd-Warshall responde a uma pergunta mais ampla: o menor custo entre todos os pares de vértices de uma vez. A técnica é programação dinâmica — parte da matriz de pesos e a melhora testando cada vértice k como parada intermediária. Como funciona são os três laços aninhados, um por intermediário. E quando usar é justamente quando precisamos de todas as distâncias, não só de uma origem. Reparem que a matriz D final é coerente com o Dijkstra: A até B custa 3, pela rota via C.</div>
+      <div class="speaker-notes"><strong>Fala:</strong> O Floyd-Warshall responde a uma pergunta mais ampla: o menor custo entre todos os pares de vértices de uma vez. A técnica é programação dinâmica — parte da matriz de pesos e a melhora testando cada vértice como parada intermediária: se passar por ele encurta o caminho entre dois vértices, a distância é atualizada. Usamos quando precisamos de todas as distâncias, não só de uma origem. Reparem que a matriz D final é coerente com o Dijkstra: A até B custa 3, pela rota via C.</div>
     </section>
 
-    <!-- ============ SLIDE 41: FLOYD-WARSHALL — CÓDIGO (TRÊS LAÇOS) ============ -->
+    <!-- ============ SLIDE 41: COMPARAÇÃO GERAL ============ -->
     <section class="slide" id="slide-41">
-      <div class="slide-content-clean">
-        <div class="slide-header-minimal">
-          <div>
-            <div class="slide-eyebrow">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-              05 · Caminhos mínimos
-            </div>
-            <h2 class="slide-title-modern">Floyd-Warshall: <span class="gradient-text">três laços e uma regra</span></h2>
-          </div>
-          <div class="slide-subtitle-tag">k é o laço mais externo</div>
-        </div>
-
-        <div class="code-grid">
-          <div class="c-code-box">
-            <div class="c-code-header">
-              <div class="code-dots"><div class="code-dot" style="background:#ef4444;"></div><div class="code-dot" style="background:#f59e0b;"></div><div class="code-dot" style="background:#10b981;"></div></div>
-              <span>floydWarshall()</span><span style="color:var(--text-dim);">D[i][j]</span>
-            </div>
-            <div class="c-code-lines" style="font-size:0.74rem;">
-              <div class="c-line"><span class="c-num">1</span><span class="c-code"><span class="cm">// D já inicializada com os pesos</span></span></div>
-              <div class="c-line"><span class="c-num">2</span><span class="c-code"><span class="cm">// (INT_MAX onde não há aresta, 0 na diagonal)</span></span></div>
-              <div class="c-line active-line"><span class="c-num">3</span><span class="c-code"><span class="kw">for</span> (<span class="kw">int</span> k <span class="op">=</span> <span class="num">0</span>; k <span class="op">&lt;</span> n; k<span class="op">++</span>)</span></div>
-              <div class="c-line"><span class="c-num">4</span><span class="c-code">  <span class="kw">for</span> (<span class="kw">int</span> i <span class="op">=</span> <span class="num">0</span>; i <span class="op">&lt;</span> n; i<span class="op">++</span>)</span></div>
-              <div class="c-line"><span class="c-num">5</span><span class="c-code">    <span class="kw">for</span> (<span class="kw">int</span> j <span class="op">=</span> <span class="num">0</span>; j <span class="op">&lt;</span> n; j<span class="op">++</span>)</span></div>
-              <div class="c-line active-line"><span class="c-num">6</span><span class="c-code">      <span class="kw">if</span> (D[i][k] <span class="op">!=</span> <span class="ty">INT_MAX</span> <span class="op">&amp;&amp;</span></span></div>
-              <div class="c-line active-line"><span class="c-num">7</span><span class="c-code">          D[k][j] <span class="op">!=</span> <span class="ty">INT_MAX</span> <span class="op">&amp;&amp;</span></span></div>
-              <div class="c-line active-line"><span class="c-num">8</span><span class="c-code">          D[i][k] <span class="op">+</span> D[k][j] <span class="op">&lt;</span> D[i][j])</span></div>
-              <div class="c-line active-line"><span class="c-num">9</span><span class="c-code">        D[i][j] <span class="op">=</span> D[i][k] <span class="op">+</span> D[k][j];</span></div>
-            </div>
-          </div>
-          <div class="code-explain">
-            <div class="state-banner" style="justify-content:center;font-size:0.95rem;padding:0.8rem 1rem;"><span style="font-family:var(--font-mono);"><strong style="color:var(--purple-neon);">D[i][j]</strong> = min( <strong>D[i][j]</strong> , <strong style="color:var(--emerald-neon);">D[i][k] + D[k][j]</strong> )</span></div>
-            <div class="explain-step" style="border-left-color:var(--amber-neon);"><span class="num-badge" style="background:rgba(251,191,36,0.15);color:var(--amber-neon);">!</span><strong>Ordem dos laços importa</strong>: <code>k</code> precisa ser o <strong>mais externo</strong>. Ele é o intermediário liberado a cada rodada; i e j variam por dentro.</div>
-            <div class="explain-step" style="border-left-color:var(--red-neon);"><span class="num-badge" style="background:rgba(239,68,68,0.15);color:var(--red-neon);">i</span><strong>Guarda contra overflow</strong>: só soma se <code>D[i][k]</code> e <code>D[k][j]</code> forem diferentes de <code>INT_MAX</code> — somar ao infinito estouraria o inteiro.</div>
-            <div class="explain-step" style="border-left-color:var(--emerald-neon);"><span class="num-badge" style="background:rgba(16,185,129,0.15);color:var(--emerald-neon);">★</span><strong>A regra</strong>: para cada par (i, j), pergunta se desviar por <code>k</code> encurta o caminho. Depois de testar todos os k, <code>D</code> tem o menor custo entre todos os pares.</div>
-          </div>
-        </div>
-      </div>
-      <div class="speaker-notes"><strong>Fala:</strong> E aqui está a única implementação que faltava: o Floyd-Warshall em si. São três laços, e a regra é uma só — D de i a j vira o mínimo entre o valor atual e o caminho que passa por k. O detalhe que mais gera bug é a ordem: k tem que ser o laço mais externo, porque ele é o intermediário que vamos liberando aos poucos; inverter isso dá respostas erradas. E o teste contra INT_MAX é essencial: somar peso ao infinito estoura o inteiro e produz distâncias negativas fantasmas.</div>
-    </section>
-
-    <!-- ============ SLIDE 42: COMPARAÇÃO GERAL ============ -->
-    <section class="slide" id="slide-42">
       <div class="slide-content-clean">
         <div class="slide-header-minimal">
           <div>
@@ -2608,7 +2565,7 @@
   <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
 
   <!-- Contador -->
-  <div class="slide-counter"><b id="nav-current">1</b> / <span id="nav-total">42</span></div>
+  <div class="slide-counter"><b id="nav-current">1</b> / <span id="nav-total">41</span></div>
 
   <!-- Botão do menu seletor -->
   <button class="menu-toggle interactive-element" id="menu-toggle" aria-label="Abrir menu de slides">
