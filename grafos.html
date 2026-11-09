@@ -1291,10 +1291,10 @@
             </div>
             <h2 class="slide-title-modern">Matriz × lista × incidência: <span class="gradient-text">o que muda?</span></h2>
           </div>
-          <div class="slide-subtitle-tag">Espaço e custo de cada operação</div>
+          <div class="slide-subtitle-tag">Pontos fortes de cada representação</div>
         </div>
 
-        <div class="three-cols" style="margin-bottom:16px;">
+        <div class="three-cols">
           <div class="clean-card">
             <div class="clean-card-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M9 3v18M15 3v18M3 9h18M3 15h18"></path></svg>Adjacência</div>
             <div class="clean-item"><span class="clean-badge cyan">N × N</span> Consulta <strong>direta</strong> de uma posição da matriz.</div>
@@ -1314,17 +1314,8 @@
             <div class="clean-item">Ideal para grafos <strong>esparsos</strong>.</div>
           </div>
         </div>
-
-        <div style="display:flex;justify-content:center;">
-          <table class="matrix-table" style="font-size:0.85rem;width:100%;max-width:1000px;">
-            <tr><th>Operação</th><th>Matriz de adjacência</th><th>Lista de adjacência</th><th>Matriz de incidência</th></tr>
-            <tr><td class="rowhead" style="text-align:left;">Espaço</td><td class="w">O(V²)</td><td class="one">O(V + E)</td><td style="color:#c084fc;font-weight:700;">O(V · E)</td></tr>
-            <tr><td class="rowhead" style="text-align:left;">Existe aresta?</td><td class="one">O(1)</td><td class="w">O(grau)</td><td style="color:var(--text-muted);">O(E)</td></tr>
-            <tr><td class="rowhead" style="text-align:left;">Percorrer vizinhos</td><td class="w">O(V)</td><td class="one">O(grau)</td><td style="color:var(--text-muted);">O(E)</td></tr>
-          </table>
-        </div>
       </div>
-      <div class="speaker-notes"><strong>Fala:</strong> Esta tabela resume o trade-off. Em espaço, a matriz de adjacência gasta O(V²), a lista gasta O(V+E) e a de incidência O(V·E). Para a pergunta existe aresta, a matriz responde em O(1) com um acesso direto, enquanto a lista precisa de O(grau). Mas para percorrer vizinhos a lista vence com O(grau), contra O(V) da matriz, que precisa varrer a linha inteira. Em resumo: matriz para grafos densos e consultas pontuais, lista para grafos esparsos e travessia.</div>
+      <div class="speaker-notes"><strong>Fala:</strong> Cada representação tem seu ponto forte. A matriz de adjacência responde na hora se existe uma aresta entre dois vértices, por isso combina com grafos densos. A lista guarda só as conexões que existem e percorre vizinhos com facilidade, ideal para grafos esparsos. Já a matriz de incidência deixa explícita a relação entre vértices e arestas. Escolha pela operação que você mais repete.</div>
     </section>
 
     <!-- ============ SLIDE 15: COMO ESCOLHER A REPRESENTAÇÃO ============ -->
@@ -1346,8 +1337,8 @@
             <tr><th>Cenário</th><th>Melhor escolha</th><th>Motivo</th></tr>
             <tr><td class="rowhead" style="text-align:left;">Grafos densos</td><td class="one">Matriz de adjacência</td><td style="text-align:left;color:var(--text-muted);">Consulta direta e espaço competitivo com muitas conexões.</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Grafos esparsos</td><td class="w">Lista de adjacência</td><td style="text-align:left;color:var(--text-muted);">Armazena somente conexões existentes.</td></tr>
-            <tr><td class="rowhead" style="text-align:left;">Existe aresta?</td><td class="one">Matriz de adjacência</td><td style="text-align:left;color:var(--text-muted);">Basta acessar uma posição da matriz — O(1).</td></tr>
-            <tr><td class="rowhead" style="text-align:left;">Percorrer vizinhos</td><td class="w">Lista de adjacência</td><td style="text-align:left;color:var(--text-muted);">Percorre direto as conexões de cada vértice — O(grau).</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Existe aresta?</td><td class="one">Matriz de adjacência</td><td style="text-align:left;color:var(--text-muted);">Basta acessar uma posição da matriz.</td></tr>
+            <tr><td class="rowhead" style="text-align:left;">Percorrer vizinhos</td><td class="w">Lista de adjacência</td><td style="text-align:left;color:var(--text-muted);">Percorre direto as conexões de cada vértice.</td></tr>
             <tr><td class="rowhead" style="text-align:left;">Relação vértice × aresta</td><td style="color:#c084fc;font-weight:700;">Matriz de incidência</td><td style="text-align:left;color:var(--text-muted);">Cada coluna é uma aresta e indica seus vértices.</td></tr>
           </table>
         </div>
@@ -1813,7 +1804,7 @@
           </div>
         </div>
       </div>
-      <div class="speaker-notes"><strong>Fala:</strong> A inserção valida índices e usa criaAdj para montar o nó. O detalhe importante é que inserimos no início da lista: o novo nó passa a apontar para o antigo começo. Isso é O(1), mas inverte a ordem — o último vizinho inserido é o primeiro a ser visitado. Por isso, para as buscas imprimirem exatamente A B C D E F na BFS e A B D E C F na DFS, as arestas de cada vértice devem ser inseridas do último vizinho para o primeiro. É a pegadinha número um quando a saída sai fora de ordem.</div>
+      <div class="speaker-notes"><strong>Fala:</strong> A inserção valida índices e usa criaAdj para montar o nó. O detalhe importante é que inserimos no início da lista: o novo nó passa a apontar para o antigo começo. Isso inverte a ordem — o último vizinho inserido é o primeiro a ser visitado. Por isso, para as buscas imprimirem exatamente A B C D E F na BFS e A B D E C F na DFS, as arestas de cada vértice devem ser inseridas do último vizinho para o primeiro. É a pegadinha número um quando a saída sai fora de ordem.</div>
     </section>
 
     <!-- ============ SLIDE 26: BUSCA EM GRAFOS ============ -->
@@ -2402,7 +2393,7 @@
           </div>
         </div>
       </div>
-      <div class="speaker-notes"><strong>Fala:</strong> Este laço é o passo guloso. A cada rodada varremos todos os vértices e escolhemos o não visitado com menor distância conhecida, chamado u. Se não sobrou nenhum alcançável, u fica em −1 e encerramos. O vértice escolhido é então fixado. A justificativa é a chave do algoritmo: com pesos não negativos, nenhum caminho futuro consegue baratear o vértice mais próximo, então a distância dele já é definitiva. Essa varredura linear é o que dá o custo O(V²) da versão com vetor.</div>
+      <div class="speaker-notes"><strong>Fala:</strong> Este laço é o passo guloso. A cada rodada varremos todos os vértices e escolhemos o não visitado com menor distância conhecida, chamado u. Se não sobrou nenhum alcançável, u fica em −1 e encerramos. O vértice escolhido é então fixado. A justificativa é a chave do algoritmo: com pesos não negativos, nenhum caminho futuro consegue baratear o vértice mais próximo, então a distância dele já é definitiva.</div>
     </section>
 
     <!-- ============ SLIDE 38: DIJKSTRA — RELAXAMENTO ============ -->
@@ -2595,20 +2586,20 @@
         </div>
 
         <div class="tree-diagram-container" style="max-width:none;">
-          <div class="tree-diagram-header"><span class="diagram-title">Resumo comparativo</span><span class="frame-badge">V = vértices · E = arestas</span></div>
+          <div class="tree-diagram-header"><span class="diagram-title">Resumo comparativo</span><span class="frame-badge">escolha pela pergunta</span></div>
           <div class="tree-interactive-stage" style="align-items:center;justify-content:center;height:auto;padding:0.6rem;">
-            <table class="matrix-table" style="font-size:0.82rem;">
-              <tr><th class="rowhead">Algoritmo</th><th>Para quê</th><th>Estrutura</th><th>Complexidade</th><th>Pesos</th></tr>
-              <tr><th class="rowhead" style="color:var(--cyan-neon);">BFS</th><td>Menor nº de arestas</td><td>Fila</td><td>O(V + E) com lista</td><td>Não</td></tr>
-              <tr><th class="rowhead" style="color:var(--purple-neon);">DFS</th><td>Percurso / conectividade</td><td>Pilha / recursão</td><td>O(V + E) com lista</td><td>Não</td></tr>
-              <tr><th class="rowhead" style="color:var(--emerald-neon);">Dijkstra</th><td>Menor custo (1 origem)</td><td>Guloso</td><td>O(V²) com vetor · O((V+E) log V) com heap</td><td>≥ 0</td></tr>
-              <tr><th class="rowhead" style="color:var(--amber-neon);">Floyd-Warshall</th><td>Menor custo (todos os pares)</td><td>Programação dinâmica</td><td>O(V³)</td><td>Aceita (sem ciclos negativos)</td></tr>
+            <table class="matrix-table" style="font-size:0.9rem;">
+              <tr><th class="rowhead">Algoritmo</th><th>Para quê</th><th>Estrutura</th><th>Pesos</th></tr>
+              <tr><th class="rowhead" style="color:var(--cyan-neon);">BFS</th><td>Menor nº de arestas</td><td>Fila</td><td>Não</td></tr>
+              <tr><th class="rowhead" style="color:var(--purple-neon);">DFS</th><td>Percurso / conectividade</td><td>Pilha / recursão</td><td>Não</td></tr>
+              <tr><th class="rowhead" style="color:var(--emerald-neon);">Dijkstra</th><td>Menor custo (1 origem)</td><td>Guloso</td><td>≥ 0</td></tr>
+              <tr><th class="rowhead" style="color:var(--amber-neon);">Floyd-Warshall</th><td>Menor custo (todos os pares)</td><td>Programação dinâmica</td><td>Aceita (sem ciclos negativos)</td></tr>
             </table>
           </div>
-          <div class="state-banner"><span>Dijkstra com vetor é O(V²); com fila de prioridade (heap) cai para O((V+E) log V). Floyd-Warshall é O(V³), mas dá <strong>todos os pares</strong>.</span></div>
+          <div class="state-banner"><span>Sem peso, use <strong>BFS</strong> ou <strong>DFS</strong>. Com peso: <strong>Dijkstra</strong> para uma origem, <strong>Floyd-Warshall</strong> para todos os pares.</span></div>
         </div>
       </div>
-      <div class="speaker-notes"><strong>Fala:</strong> Esta é a tabela de bolso. BFS e DFS percorrem o grafo em O(V+E) com lista de adjacência, mas ignoram pesos — BFS mede arestas, DFS serve para percurso e conectividade. Dijkstra dá o menor custo de uma origem: O(V²) na nossa versão com vetor, ou O((V+E) log V) com heap, exigindo pesos não negativos. Floyd-Warshall custa O(V³), mais caro, porém entrega todos os pares e aceita pesos negativos, desde que não haja ciclos negativos. Escolham pela pergunta que precisam responder.</div>
+      <div class="speaker-notes"><strong>Fala:</strong> Esta é a tabela de bolso. BFS e DFS percorrem o grafo mas ignoram pesos — a BFS mede distância em número de arestas, a DFS serve para percurso e conectividade. Quando há pesos, o Dijkstra dá o menor custo a partir de uma origem, exigindo pesos não negativos; o Floyd-Warshall entrega o menor custo entre todos os pares e aceita pesos negativos, desde que não haja ciclos negativos. Escolham pela pergunta que precisam responder.</div>
     </section>
 
     <!-- ============ SLIDE 43: ENCERRAMENTO ============ -->
